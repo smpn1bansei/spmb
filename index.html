@@ -1832,10 +1832,15 @@
 
                         <div class="form-group">
                             <label class="form-label" for="nisn">NISN <span class="required">*</span></label>
-                            <input type="text" class="form-control" id="nisn" name="nisn" placeholder="Masukkan 10 digit NISN" maxlength="10" inputmode="numeric" required>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="text" class="form-control" id="nisn" name="nisn" placeholder="Masukkan 10 digit NISN" maxlength="10" inputmode="numeric" required>
+                                <button type="button" class="btn btn-primary" id="btnCekNisn" onclick="cekNisn()" style="width: auto; padding: 0 1.5rem; white-space: nowrap;">Cek NISN</button>
+                            </div>
                             <div class="form-hint">Nomor Induk Siswa Nasional (10 digit)</div>
                             <div class="form-error-msg" id="error-nisn">NISN harus terdiri dari 10 digit angka</div>
                         </div>
+
+                        <fieldset id="formUtama" disabled style="border: none; padding: 0; margin: 0;">
 
                         <div class="form-group">
                             <label class="form-label" for="namaLengkap">Nama Lengkap <span class="required">*</span></label>
@@ -2002,8 +2007,8 @@
 
                         <div class="form-group">
                             <label class="form-label" for="rataIjazah">Rata - Rata Nilai Ijazah / SKL <span class="required">*</span></label>
-                            <input type="text" class="form-control" id="rataIjazah" name="rataIjazah" placeholder="Contoh: 85.50" inputmode="decimal" required oninput="this.value=this.value.replace(/,/g,'.')">
-                            <div class="form-hint">Gunakan titik (.) atau koma (,) sebagai pemisah desimal</div>
+                            <input type="text" class="form-control" id="rataIjazah" name="rataIjazah" placeholder="Contoh: 85.50" inputmode="decimal" required oninput="this.value=this.value.replace(/,/g,'.'); if(parseFloat(this.value)>100) this.value='100';">
+                            <div class="form-hint">Gunakan titik (.) atau koma (,) sebagai pemisah desimal. Maksimal 100.</div>
                             <div class="form-error-msg" id="error-rataIjazah">Nilai wajib diisi dan harus valid</div>
                         </div>
 
@@ -2091,7 +2096,7 @@
                         <div class="score-preview" id="scorePreview">
                             <div class="score-header">
                                 <div class="score-header-left">
-                                    <div class="score-header-title">Skor Penerimaan</div>
+                                    <div class="score-header-title">Skor</div>
                                 </div>
                                 <div class="score-total-display">
                                     <div class="score-total-number empty" id="scoreTotalNumber">—</div>
@@ -2140,6 +2145,7 @@
                                 📤 Kirim Pendaftaran
                             </button>
                         </div>
+                        </fieldset>
                     </form>
                 </div>
             </div>
@@ -2153,7 +2159,13 @@
                     Data Hasil Seleksi
                 </div>
                 
-                <div style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+                <div style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <select class="form-control" id="filterJalur" onchange="loadHasilSeleksi()" style="width: auto; min-width: 200px;">
+                        <option value="Domisili">Jalur Domisili</option>
+                        <option value="Prestasi">Jalur Prestasi</option>
+                        <option value="Afirmasi">Jalur Afirmasi</option>
+                        <option value="Mutasi">Jalur Mutasi</option>
+                    </select>
                     <button class="btn btn-primary" onclick="loadHasilSeleksi()" id="btnRefreshHasil" style="width: auto;">
                         🔄 Muat Ulang Data
                     </button>
@@ -2205,12 +2217,11 @@
         <div class="modal">
             <div class="modal-icon">✅</div>
             <h3>Pendaftaran Berhasil!</h3>
-            <p>Data pra pendaftaran Anda telah berhasil disimpan. Simpan nomor registrasi berikut untuk pengecekan hasil seleksi.</p>
-            <div class="registration-id" id="registrationId">-</div>
+            <p>Data pra pendaftaran Anda telah berhasil disimpan. Gunakan NISN Anda untuk mengecek hasil seleksi nanti.</p>
             <div class="modal-score" id="modalScore">
                 <div class="modal-score-total">
                     <div class="modal-score-number" id="modalScoreTotal">—</div>
-                    <div class="modal-score-label">Total Skor Penerimaan</div>
+                    <div class="modal-score-label">Total Skor</div>
                 </div>
                 <div class="modal-score-rows">
                     <div class="modal-score-row">
@@ -2597,21 +2608,17 @@
         }
 
         function hitungTka() {
-            const mat = parseFloat(document.getElementById('tkaMatematika').value) || 0;
-            const bindo = parseFloat(document.getElementById('tkaBahasa').value) || 0;
+            let matInput = document.getElementById('tkaMatematika');
+            let bindoInput = document.getElementById('tkaBahasa');
+            
+            let mat = parseFloat(matInput.value) || 0;
+            if (mat > 100) { mat = 100; matInput.value = '100'; }
+            
+            let bindo = parseFloat(bindoInput.value) || 0;
+            if (bindo > 100) { bindo = 100; bindoInput.value = '100'; }
+            
             const total = mat + bindo;
             document.getElementById('tkaTotal').value = total.toFixed(2);
-        }
-
-        // ============================================================
-        // GENERATE REGISTRATION ID
-        // ============================================================
-        function generateRegId() {
-            const now = new Date();
-            const year = now.getFullYear().toString().slice(-2);
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const random = Math.floor(Math.random() * 9000 + 1000);
-            return `SPMB-${year}${month}-${random}`;
         }
 
         // ============================================================
@@ -2630,8 +2637,6 @@
                 return;
             }
 
-            const registrationId = generateRegId();
-
             // Calculate scores
             const jarakVal = parseFloat(document.getElementById('jarakRumah').value);
             const tglLahirVal = document.getElementById('tanggalLahir').value;
@@ -2646,7 +2651,6 @@
             }
 
             const data = {
-                registrationId: registrationId,
                 jalurPendaftaran: document.getElementById('jalurPendaftaran').value,
                 nisn: document.getElementById('nisn').value.trim(),
                 namaLengkap: document.getElementById('namaLengkap').value.trim(),
@@ -2711,14 +2715,13 @@
             showLoading();
 
             try {
-                // Save to Firestore directly
-                // (Duplicate check removed because Firestore Rules prohibit read access)
-                await db.collection('pendaftar').add(cleanData);
+                // Save to Firestore directly using NISN as the document ID
+                await db.collection('pendaftar').doc(cleanData.nisn).set(cleanData);
 
                 hideLoading();
                 document.getElementById('formPendaftaran').reset();
                 clearErrors();
-                showModal(registrationId, skorJarak, skorUsia, skorTotal);
+                showModal(skorJarak, skorUsia, skorTotal);
                 updateStats();
                 resetScorePreview();
 
@@ -2774,6 +2777,7 @@
             const btn = document.getElementById('btnRefreshHasil');
             const loading = document.getElementById('hasilLoadingText');
             const tbody = document.getElementById('tableBodyHasil');
+            const filterJalur = document.getElementById('filterJalur').value;
             
             btn.disabled = true;
             loading.style.display = 'inline-block';
@@ -2781,18 +2785,42 @@
             
             try {
                 // Diperlukan Firestore Rules: allow read: if true;
-                const snapshot = await db.collection('pendaftar').orderBy('skor.total', 'desc').get();
+                const snapshot = await db.collection('pendaftar').where('jalurPendaftaran', '==', filterJalur).get();
                 
                 if (snapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-secondary);">Belum ada data pendaftar.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-secondary);">Belum ada data pendaftar untuk jalur ini.</td></tr>';
                     btn.disabled = false;
                     loading.style.display = 'none';
                     return;
                 }
                 
-                let html = '';
+                let results = [];
                 snapshot.forEach(doc => {
-                    const data = doc.data();
+                    results.push(doc.data());
+                });
+
+                // Urutkan data berdasarkan jalur
+                if (filterJalur === 'Domisili') {
+                    results.sort((a, b) => {
+                        const skorA = (a.skor?.jarak || 0) + (a.skor?.usia || 0);
+                        const skorB = (b.skor?.jarak || 0) + (b.skor?.usia || 0);
+                        return skorB - skorA; // tertinggi ke terendah
+                    });
+                } else if (filterJalur === 'Prestasi') {
+                    results.sort((a, b) => {
+                        const tkaA = a.tkaTotal || 0;
+                        const tkaB = b.tkaTotal || 0;
+                        if (tkaB !== tkaA) {
+                            return tkaB - tkaA; // TKA tertinggi
+                        }
+                        const sklA = a.rataIjazah || 0;
+                        const sklB = b.rataIjazah || 0;
+                        return sklB - sklA; // SKL tertinggi jika TKA sama
+                    });
+                }
+                
+                let html = '';
+                results.forEach(data => {
                     const statusVal = data.status || '';
                     let statusHtml = '';
                     if (statusVal === 'Lulus') {
@@ -2851,6 +2879,50 @@
             loading.style.display = 'none';
         }
 
+
+        // ============================================================
+        // CEK NISN
+        // ============================================================
+        async function cekNisn() {
+            const nisnInput = document.getElementById('nisn').value.trim();
+            const errorNisn = document.getElementById('error-nisn');
+            const btn = document.getElementById('btnCekNisn');
+            
+            if (!/^\d{10}$/.test(nisnInput)) {
+                errorNisn.textContent = 'NISN harus terdiri dari 10 digit angka';
+                errorNisn.classList.add('show');
+                document.getElementById('nisn').classList.add('error');
+                return;
+            }
+            
+            errorNisn.classList.remove('show');
+            document.getElementById('nisn').classList.remove('error');
+            
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Memeriksa...';
+            btn.disabled = true;
+            
+            try {
+                const snapshot = await db.collection('pendaftar').where('nisn', '==', nisnInput).get();
+                if (!snapshot.empty) {
+                    showToast('NISN sudah terdaftar sebelumnya!', 'error');
+                    document.getElementById('formUtama').disabled = true;
+                } else {
+                    showToast('NISN tersedia. Silakan lengkapi form.', 'success');
+                    document.getElementById('formUtama').disabled = false;
+                }
+            } catch (error) {
+                console.error("Error cekNisn:", error);
+                if (error.code === 'permission-denied') {
+                    showToast('Gagal memeriksa NISN: Akses Ditolak Firebase', 'error');
+                } else {
+                    showToast('Gagal memeriksa NISN. Periksa koneksi internet.', 'error');
+                }
+            }
+            
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
 
         // ============================================================
         // NISN INPUT - NUMBERS ONLY
@@ -3066,9 +3138,7 @@
         // ============================================================
         // MODAL WITH SCORE
         // ============================================================
-        function showModal(regId, skorJarak, skorUsia, skorTotal) {
-            document.getElementById('registrationId').textContent = regId;
-
+        function showModal(skorJarak, skorUsia, skorTotal) {
             // Score breakdown in modal
             document.getElementById('modalScoreDist').textContent = skorJarak.toFixed(2) + ' / 85';
             document.getElementById('modalScoreAge').textContent = skorUsia + ' / 15';
