@@ -1,1 +1,2712 @@
-halaman pertama
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Seleksi Penerimaan Murid Baru (SPMB) SMPN 1 Bandar Seikijang Tahun Ajaran 2025/2026. Daftar sekarang secara online.">
+    <meta name="keywords" content="SPMB, SMPN 1 Bandar Seikijang, Pendaftaran Murid Baru, 2025 2026">
+    <title>SPMB SMPN 1 Bandar Seikijang - Tahun Ajaran 2025/2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===== CSS RESET & VARIABLES ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3a8a; /* Navy Blue - SMP */
+            --primary-light: #3b82f6;
+            --primary-dark: #172554;
+            --primary-glow: rgba(30, 58, 138, 0.2);
+            --accent: #f59e0b;
+            --accent-light: #fbbf24;
+            --accent-dark: #d97706;
+            --success: #10b981;
+            --success-light: #34d399;
+            --danger: #ef4444;
+            --danger-light: #f87171;
+            --bg-dark: #f8fafc; /* Lighter background */
+            --bg-card: #ffffff; /* White cards */
+            --bg-card-hover: #f1f5f9;
+            --bg-input: #ffffff;
+            --bg-surface: #f1f5f9;
+            --text-primary: #0f172a; /* Dark text */
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0; /* Light borders */
+            --border-focus: #1e3a8a;
+            --gradient-hero: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #e0f2fe 100%); /* Light blue hero */
+            --gradient-primary: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); /* White gradient card */
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.05); /* Softer shadows */
+            --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-animation .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-animation .orb:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            top: -200px;
+            right: -200px;
+            animation-delay: 0s;
+        }
+
+        .bg-animation .orb:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -7s;
+        }
+
+        .bg-animation .orb:nth-child(3) {
+            width: 300px;
+            height: 300px;
+            background: #8b5cf6;
+            top: 50%;
+            left: 50%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -50px) scale(1.1); }
+            50% { transform: translate(-30px, 30px) scale(0.95); }
+            75% { transform: translate(40px, 20px) scale(1.05); }
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0 2rem;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .navbar-logo {
+            width: 42px;
+            height: 42px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .navbar-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar-title span:first-child {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .navbar-title span:last-child {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link {
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-link.active {
+            color: var(--primary-light);
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .nav-link-cta {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .nav-link-cta:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            padding-top: 72px;
+            min-height: 100vh;
+        }
+
+        /* ===== PAGE SECTIONS ===== */
+        .page-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .page-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            min-height: calc(100vh - 72px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .hero-badge .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero h1 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        .radio-option input[type="radio"]:checked + label::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-light);
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            line-height: 1.4;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary-light);
+            background: rgba(59, 130, 246, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-icon {
+            font-size: 1.2rem;
+        }
+
+        /* ===== FEATURES / INFO CARDS ===== */
+        .features-section {
+            padding: 4rem 2rem 6rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--gradient-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            transition: var(--transition);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .feature-icon.blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary-light);
+        }
+
+        .feature-icon.amber {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent);
+        }
+
+        .feature-icon.green {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .feature-card h3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===== INFO BAR ===== */
+        .info-bar {
+            max-width: 1100px;
+            margin: 0 auto 3rem;
+            padding: 1.5rem 2rem;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .info-bar-icon {
+            font-size: 1.5rem;
+        }
+
+        .info-bar-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .info-bar-text strong {
+            color: var(--primary-light);
+        }
+
+        /* ===== FORM PAGE ===== */
+        .form-page {
+            padding: 3rem 2rem 6rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .form-header h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .form-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ===== FORM CARD ===== */
+        .form-card {
+            background: var(--gradient-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .form-section-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section-title .section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: rgba(59, 130, 246, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.02em;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+            margin-left: 2px;
+        }
+
+        .form-label .optional {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 0.8rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-control:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            background: white;
+        }
+
+        .form-control:hover:not(:focus) {
+            border-color: rgba(51, 65, 85, 0.8);
+        }
+
+        .form-control.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        select.form-control option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-error-msg {
+            font-size: 0.78rem;
+            color: var(--danger-light);
+            margin-top: 0.35rem;
+            display: none;
+        }
+
+        .form-error-msg.show {
+            display: block;
+        }
+
+        .form-divider {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        /* ===== RADIO GROUP ===== */
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .radio-option label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            background: var(--bg-input);
+        }
+
+        .radio-option label::before {
+            content: '';
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            border-color: var(--primary-light);
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+
+        .radio-option input[type="radio"]:checked + label::before {
+            border-color: var(--primary-light);
+            background: var(--primary-light);
+            box-shadow: inset 0 0 0 3px white;
+        }
+
+        /* ===== FORM SUBMIT AREA ===== */
+        .form-actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn-submit {
+            padding: 14px 40px;
+            font-size: 1rem;
+        }
+
+        /* ===== TOAST / NOTIFICATION ===== */
+        .toast-container {
+            position: fixed;
+            top: 90px;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: toastIn 0.4s ease;
+            box-shadow: var(--shadow-lg);
+            max-width: 400px;
+        }
+
+        .toast.success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success-light);
+        }
+
+        .toast.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger-light);
+        }
+
+        .toast.info {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--primary-light);
+        }
+
+        .toast.removing {
+            animation: toastOut 0.3s ease forwards;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100px); }
+        }
+
+        /* ===== HASIL SELEKSI (PLACEHOLDER) ===== */
+        .hasil-page {
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hasil-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.2); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px 10px rgba(59, 130, 246, 0.1); }
+        }
+
+        .hasil-page h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hasil-page p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== LOADING OVERLAY ===== */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== SUCCESS MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10001;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            animation: modalIn 0.4s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .modal h3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .modal .registration-id {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+        }
+
+        /* ===== SCROLL TO TOP ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 1rem;
+            }
+
+            .navbar-menu {
+                display: none;
+                position: absolute;
+                top: 72px;
+                left: 0;
+                right: 0;
+                background: white;
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 1rem;
+                border-bottom: 1px solid var(--border-color);
+                gap: 4px;
+            }
+
+            .navbar-menu.open {
+                display: flex;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .nav-link {
+                width: 100%;
+                text-align: center;
+                padding: 12px 20px;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-card {
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-actions {
+                justify-content: stretch;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .info-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .toast-container {
+                right: 1rem;
+                left: 1rem;
+            }
+
+            .toast {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .navbar-title span:first-child {
+                font-size: 0.85rem;
+            }
+
+            .navbar-title span:last-child {
+                font-size: 0.65rem;
+            }
+        }
+
+        /* ===== COUNTER STATS ===== */
+        .stats-section {
+            padding: 0 2rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--gradient-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+        }
+
+        .stat-number {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== SCHEDULE TIMELINE ===== */
+        .schedule-section {
+            max-width: 1100px;
+            margin: 0 auto 2.5rem;
+            padding: 0 2rem;
+        }
+
+        .schedule-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 16.66%;
+            right: 16.66%;
+            height: 3px;
+            background: var(--border-color);
+            z-index: 0;
+        }
+
+        .timeline-item {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-dot {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            border: 3px solid var(--primary-light);
+            background: white;
+            color: var(--primary-light);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .timeline-date {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-day {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* ===== KUOTA TABLE ===== */
+        .kuota-section {
+            max-width: 1100px;
+            margin: 0 auto 2.5rem;
+            padding: 0 2rem;
+        }
+
+        .kuota-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .kuota-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .kuota-card {
+            background: var(--gradient-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kuota-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .kuota-card.domisili::after { background: var(--primary-light); }
+        .kuota-card.afirmasi::after { background: var(--accent); }
+        .kuota-card.prestasi::after { background: var(--success); }
+        .kuota-card.mutasi::after { background: #a78bfa; }
+
+        .kuota-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .kuota-number {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .kuota-card.domisili .kuota-number { color: var(--primary-light); }
+        .kuota-card.afirmasi .kuota-number { color: var(--accent); }
+        .kuota-card.prestasi .kuota-number { color: var(--success); }
+        .kuota-card.mutasi .kuota-number { color: #a78bfa; }
+
+        .kuota-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.15rem;
+        }
+
+        .kuota-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .kuota-total-bar {
+            margin-top: 1rem;
+            padding: 1rem 1.5rem;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: var(--radius-md);
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .kuota-total-bar strong {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .kuota-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .timeline {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .timeline::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .kuota-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* ===== GPS DISTANCE WIDGET ===== */
+        .gps-widget {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .gps-widget.success {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .gps-widget.error {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .gps-result {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .gps-result-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .gps-result-info {
+            flex: 1;
+        }
+
+        .gps-distance-value {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        .gps-distance-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .gps-coords {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-family: monospace;
+        }
+
+        .btn-gps {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--primary-light);
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-light);
+            transition: var(--transition);
+        }
+
+        .btn-gps:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-gps:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-gps .gps-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-top-color: var(--primary-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .btn-gps.loading .gps-spinner {
+            display: block;
+        }
+
+        /* ===== SCORE PREVIEW WIDGET ===== */
+        .score-preview {
+            background: var(--gradient-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-top: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .score-preview.has-score {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .score-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-header-left .section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: rgba(59, 130, 246, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .score-header-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .score-total-display {
+            text-align: center;
+        }
+
+        .score-total-number {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .score-total-number.high { color: var(--success); }
+        .score-total-number.medium { color: var(--accent); }
+        .score-total-number.low { color: var(--danger-light); }
+        .score-total-number.empty { color: var(--text-muted); }
+
+        .score-total-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+
+        .score-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .score-bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .score-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-bar-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .score-bar-value {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .score-bar-value.blue { color: var(--primary-light); }
+        .score-bar-value.amber { color: var(--accent); }
+
+        .score-bar-track {
+            width: 100%;
+            height: 10px;
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+        }
+
+        .score-bar-fill.blue {
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .score-bar-fill.amber {
+            background: linear-gradient(90deg, var(--accent-dark), var(--accent-light));
+        }
+
+        .score-bar-detail {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .score-empty-msg {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ===== MODAL SCORE BREAKDOWN ===== */
+        .modal-score {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-score-total {
+            text-align: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-score-number {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        .modal-score-number.high { color: var(--success); }
+        .modal-score-number.medium { color: var(--accent); }
+        .modal-score-number.low { color: var(--danger-light); }
+
+        .modal-score-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .modal-score-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .modal-score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .modal-score-row-label {
+            color: var(--text-secondary);
+        }
+
+        .modal-score-row-value {
+            font-weight: 700;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .modal-score-row-value.blue { color: var(--primary-light); }
+        .modal-score-row-value.amber { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a class="navbar-brand" onclick="navigateTo('home')">
+            <div class="navbar-logo">S1</div>
+            <div class="navbar-title">
+                <span>SPMB SMPN 1</span>
+                <span>Bandar Seikijang</span>
+            </div>
+        </a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">☰</button>
+        <div class="navbar-menu" id="navbarMenu">
+            <a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Beranda</a>
+            <a class="nav-link" id="nav-daftar" onclick="navigateTo('daftar')">Pra Pendaftaran</a>
+            <a class="nav-link" id="nav-hasil" onclick="navigateTo('hasil')">Hasil Seleksi</a>
+            <a class="nav-link nav-link-cta" onclick="navigateTo('daftar')">Daftar Sekarang →</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- ==================== HOME PAGE ==================== -->
+        <section class="page-section active visible" id="page-home">
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="pulse-dot"></span>
+                        Pendaftaran: 15, 17 &amp; 18 Juni 2026
+                    </div>
+                    <h1>
+                        Seleksi Penerimaan<br>
+                        <span class="gradient-text">Murid Baru</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        SMPN 1 Bandar Seikijang membuka pendaftaran calon peserta didik baru 
+                        Tahun Ajaran 2025/2026. Kuota terbatas <strong style="color: var(--accent)">192 siswa</strong>.
+                    </p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary" onclick="navigateTo('daftar')">
+                            <span class="btn-icon">📝</span>
+                            Pra Pendaftaran
+                        </button>
+                        <button class="btn btn-outline" onclick="navigateTo('hasil')">
+                            <span class="btn-icon">📊</span>
+                            Cek Hasil Seleksi
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Bar -->
+            <div class="features-section">
+                <div class="info-bar">
+                    <span class="info-bar-icon">📢</span>
+                    <div class="info-bar-text">
+                        <strong>Informasi Penting:</strong> Pendaftaran dilaksanakan tanggal <strong>15, 17, dan 18 Juni 2026</strong>. 
+                        Pastikan data yang diisi sesuai dengan dokumen resmi dan isi formulir dari lokasi rumah untuk akurasi jarak.
+                    </div>
+                </div>
+
+                <!-- Jadwal Pendaftaran -->
+                <div class="schedule-section">
+                    <h3 class="schedule-title">📅 Jadwal Pendaftaran</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot">15</div>
+                            <div class="timeline-date">15 Juni 2026</div>
+                            <div class="timeline-day">Senin — Hari Pertama</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot">17</div>
+                            <div class="timeline-date">17 Juni 2026</div>
+                            <div class="timeline-day">Rabu — Hari Kedua</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot">18</div>
+                            <div class="timeline-date">18 Juni 2026</div>
+                            <div class="timeline-day">Kamis — Hari Ketiga</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kuota Penerimaan -->
+                <div class="kuota-section">
+                    <h3 class="kuota-title">🎓 Kuota Penerimaan</h3>
+                    <div class="kuota-grid">
+                        <div class="kuota-card domisili">
+                            <div class="kuota-number">96</div>
+                            <div class="kuota-label">Jalur Domisili</div>
+                            <div class="kuota-sub">Berdasarkan jarak rumah</div>
+                        </div>
+                        <div class="kuota-card prestasi">
+                            <div class="kuota-number">48</div>
+                            <div class="kuota-label">Jalur Prestasi</div>
+                            <div class="kuota-sub">Akademik & Non-Akademik</div>
+                        </div>
+                        <div class="kuota-card afirmasi">
+                            <div class="kuota-number">38</div>
+                            <div class="kuota-label">Jalur Afirmasi</div>
+                            <div class="kuota-sub">Keluarga tidak mampu</div>
+                        </div>
+                        <div class="kuota-card mutasi">
+                            <div class="kuota-number">10</div>
+                            <div class="kuota-label">Jalur Mutasi</div>
+                            <div class="kuota-sub">Perpindahan tugas ortu</div>
+                        </div>
+                    </div>
+                    <div class="kuota-total-bar">
+                        Total Kuota: <strong>192 Siswa</strong> — Tahun Ajaran 2025/2026
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-section" style="padding: 0; margin-bottom: 2rem;">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="statPendaftar">0</div>
+                            <div class="stat-label">Total Pendaftar</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">192</div>
+                            <div class="stat-label">Kuota Siswa</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">2025/2026</div>
+                            <div class="stat-label">Tahun Ajaran</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon blue">📋</div>
+                        <h3>Pra Pendaftaran Online</h3>
+                        <p>Isi formulir pendaftaran secara online dari rumah. Sistem akan otomatis menghitung jarak ke sekolah via GPS.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon amber">📍</div>
+                        <h3>Deteksi Jarak Otomatis</h3>
+                        <p>Jarak rumah ke sekolah dihitung otomatis dari lokasi perangkat Anda. Pastikan isi formulir dari lokasi rumah.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon green">✅</div>
+                        <h3>Hasil Seleksi</h3>
+                        <p>Pantau hasil seleksi secara online menggunakan nomor registrasi atau NISN yang telah didaftarkan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PRA PENDAFTARAN PAGE ==================== -->
+        <section class="page-section" id="page-daftar">
+            <div class="form-page">
+                <div class="form-header">
+                    <h2>📝 Formulir Pra Pendaftaran</h2>
+                    <p>Lengkapi formulir berikut dengan data yang sesuai dokumen resmi</p>
+                </div>
+
+                <div class="form-card">
+                    <form id="formPendaftaran" novalidate>
+
+                        <!-- Data Pribadi -->
+                        <div class="form-section-title">
+                            <div class="section-icon">👤</div>
+                            Data Pribadi Siswa
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="nisn">NISN <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="nisn" name="nisn" placeholder="Masukkan 10 digit NISN" maxlength="10" inputmode="numeric" required>
+                            <div class="form-hint">Nomor Induk Siswa Nasional (10 digit)</div>
+                            <div class="form-error-msg" id="error-nisn">NISN harus terdiri dari 10 digit angka</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="namaLengkap">Nama Lengkap <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="namaLengkap" name="namaLengkap" placeholder="Masukkan nama lengkap sesuai akta" required>
+                            <div class="form-error-msg" id="error-namaLengkap">Nama lengkap wajib diisi</div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="jenisKelamin">Jenis Kelamin <span class="required">*</span></label>
+                                <select class="form-control" id="jenisKelamin" name="jenisKelamin" required>
+                                    <option value="">Pilih jenis kelamin</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>
+                                <div class="form-error-msg" id="error-jenisKelamin">Jenis kelamin wajib dipilih</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="agama">Agama <span class="required">*</span></label>
+                                <select class="form-control" id="agama" name="agama" required>
+                                    <option value="">Pilih agama</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Kristen">Kristen</option>
+                                    <option value="Katolik">Katolik</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Buddha">Buddha</option>
+                                    <option value="Konghucu">Konghucu</option>
+                                </select>
+                                <div class="form-error-msg" id="error-agama">Agama wajib dipilih</div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="tempatLahir">Tempat Lahir <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="tempatLahir" name="tempatLahir" placeholder="Contoh: Pekanbaru" required>
+                                <div class="form-error-msg" id="error-tempatLahir">Tempat lahir wajib diisi</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="tanggalLahir">Tanggal Lahir <span class="required">*</span></label>
+                                <input type="date" class="form-control" id="tanggalLahir" name="tanggalLahir" min="2011-07-01" value="2014-01-01" required>
+                                <div class="form-error-msg" id="error-tanggalLahir">Tanggal lahir wajib diisi dan maksimal kelahiran 1 Juli 2011</div>
+                            </div>
+                        </div>
+
+                        <hr class="form-divider">
+
+                        <!-- Kontak -->
+                        <div class="form-section-title">
+                            <div class="section-icon">📞</div>
+                            Informasi Kontak
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="hpSiswa">No. HP Siswa <span class="optional">(opsional)</span></label>
+                            <input type="tel" class="form-control" id="hpSiswa" name="hpSiswa" placeholder="Contoh: 08123456789" inputmode="tel">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="hpAyah">No. HP Ayah <span class="optional">(opsional)</span></label>
+                                <input type="tel" class="form-control" id="hpAyah" name="hpAyah" placeholder="Contoh: 08123456789" inputmode="tel">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="hpIbu">No. HP Ibu <span class="optional">(opsional)</span></label>
+                                <input type="tel" class="form-control" id="hpIbu" name="hpIbu" placeholder="Contoh: 08123456789" inputmode="tel">
+                            </div>
+                        </div>
+
+                        <hr class="form-divider">
+
+                        <!-- Alamat -->
+                        <div class="form-section-title">
+                            <div class="section-icon">🏠</div>
+                            Informasi Alamat
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="alamat">Alamat Rumah <span class="required">*</span></label>
+                            <textarea class="form-control" id="alamat" name="alamat" placeholder="Masukkan alamat lengkap (RT/RW, Desa/Kelurahan, Kecamatan)" required></textarea>
+                            <div class="form-error-msg" id="error-alamat">Alamat rumah wajib diisi</div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Tinggal Bersama <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" name="tinggalBersama" id="tinggalOrtu" value="Orang Tua" required>
+                                        <label for="tinggalOrtu">Orang Tua</label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" name="tinggalBersama" id="tinggalWali" value="Wali">
+                                        <label for="tinggalWali">Wali</label>
+                                    </div>
+                                </div>
+                                <div class="form-error-msg" id="error-tinggalBersama">Pilih salah satu opsi</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Jarak Rumah ke Sekolah <span class="required">*</span></label>
+                                <div class="gps-widget" id="gpsWidget">
+                                    <button type="button" class="btn-gps" id="btnGetLocation" onclick="getGPSLocation()">
+                                        <span class="gps-spinner"></span>
+                                        📍 Deteksi Lokasi Saya
+                                    </button>
+                                    <div class="gps-result" id="gpsResult" style="display: none;">
+                                        <div class="gps-result-icon">📍</div>
+                                        <div class="gps-result-info">
+                                            <div class="gps-distance-value" id="gpsDistanceValue">— KM</div>
+                                            <div class="gps-distance-label">Jarak ke SMPN 1 Bandar Seikijang</div>
+                                        </div>
+                                    </div>
+                                    <div class="gps-coords" id="gpsCoords"></div>
+                                    <input type="hidden" id="jarakRumah" name="jarakRumah" value="">
+                                    <input type="hidden" id="latUser" name="latUser" value="">
+                                    <input type="hidden" id="lngUser" name="lngUser" value="">
+                                </div>
+                                <div class="form-hint">Pastikan mengisi formulir dari lokasi rumah untuk akurasi jarak</div>
+                                <div class="form-error-msg" id="error-jarakRumah">Silakan deteksi lokasi terlebih dahulu</div>
+                            </div>
+                        </div>
+
+                        <hr class="form-divider">
+
+                        <!-- Skor Preview -->
+                        <div class="form-section-title">
+                            <div class="section-icon">📊</div>
+                            Estimasi Skor Seleksi
+                        </div>
+
+                        <div class="score-preview" id="scorePreview">
+                            <div class="score-header">
+                                <div class="score-header-left">
+                                    <div class="score-header-title">Skor Penerimaan</div>
+                                </div>
+                                <div class="score-total-display">
+                                    <div class="score-total-number empty" id="scoreTotalNumber">—</div>
+                                    <div class="score-total-label">dari 100 poin</div>
+                                </div>
+                            </div>
+
+                            <div id="scoreContent">
+                                <div class="score-empty-msg" id="scoreEmptyMsg">
+                                    Isi tanggal lahir dan deteksi lokasi GPS untuk melihat estimasi skor
+                                </div>
+
+                                <div class="score-bars" id="scoreBars" style="display: none;">
+                                    <div class="score-bar-item">
+                                        <div class="score-bar-header">
+                                            <span class="score-bar-label">📍 Skor Jarak (maks. 85)</span>
+                                            <span class="score-bar-value blue" id="scoreDistValue">0</span>
+                                        </div>
+                                        <div class="score-bar-track">
+                                            <div class="score-bar-fill blue" id="scoreDistBar" style="width: 0%"></div>
+                                        </div>
+                                        <div class="score-bar-detail" id="scoreDistDetail">Belum terdeteksi</div>
+                                    </div>
+                                    <div class="score-bar-item">
+                                        <div class="score-bar-header">
+                                            <span class="score-bar-label">🎂 Skor Usia (maks. 15)</span>
+                                            <span class="score-bar-value amber" id="scoreAgeValue">0</span>
+                                        </div>
+                                        <div class="score-bar-track">
+                                            <div class="score-bar-fill amber" id="scoreAgeBar" style="width: 0%"></div>
+                                        </div>
+                                        <div class="score-bar-detail" id="scoreAgeDetail">Belum diisi</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="form-divider">
+
+                        <!-- Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline" onclick="resetForm()">
+                                🔄 Reset
+                            </button>
+                            <button type="submit" class="btn btn-success btn-submit" id="btnSubmit">
+                                📤 Kirim Pendaftaran
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== HASIL SELEKSI PAGE ==================== -->
+        <section class="page-section" id="page-hasil">
+            <div class="hasil-page">
+                <div class="hasil-icon">🔍</div>
+                <h2>Hasil Seleksi</h2>
+                <p>
+                    Halaman ini sedang dalam pengembangan. Hasil seleksi akan diumumkan setelah proses seleksi selesai dilaksanakan.
+                    Silakan periksa kembali halaman ini secara berkala.
+                </p>
+                <br>
+                <button class="btn btn-primary" onclick="navigateTo('home')" style="margin-top: 1rem;">
+                    ← Kembali ke Beranda
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 SMPN 1 Bandar Seikijang — Seleksi Penerimaan Murid Baru Tahun Ajaran 2025/2026</p>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="modal-icon">✅</div>
+            <h3>Pendaftaran Berhasil!</h3>
+            <p>Data pra pendaftaran Anda telah berhasil disimpan. Simpan nomor registrasi berikut untuk pengecekan hasil seleksi.</p>
+            <div class="registration-id" id="registrationId">-</div>
+            <div class="modal-score" id="modalScore">
+                <div class="modal-score-total">
+                    <div class="modal-score-number" id="modalScoreTotal">—</div>
+                    <div class="modal-score-label">Total Skor Penerimaan</div>
+                </div>
+                <div class="modal-score-rows">
+                    <div class="modal-score-row">
+                        <span class="modal-score-row-label">📍 Skor Jarak</span>
+                        <span class="modal-score-row-value blue" id="modalScoreDist">—</span>
+                    </div>
+                    <div class="modal-score-row">
+                        <span class="modal-score-row-label">🎂 Skor Usia</span>
+                        <span class="modal-score-row-value amber" id="modalScoreAge">—</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="closeModal()" style="width: 100%; justify-content: center;">
+                Tutup & Kembali ke Beranda
+            </button>
+        </div>
+    </div>
+
+    <!-- Scroll to Top -->
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+    <!-- Firebase SDK (Compat v9) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ============================================================
+        // FIREBASE CONFIGURATION
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdkf6-EzUHc7AIrwOUz9KdAYlUBmz0QVA",
+            authDomain: "spmb26-a40eb.firebaseapp.com",
+            projectId: "spmb26-a40eb",
+            storageBucket: "spmb26-a40eb.firebasestorage.app",
+            messagingSenderId: "657771871334",
+            appId: "1:657771871334:web:108066841d19d820ae41a7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ============================================================
+        // SPA NAVIGATION
+        // ============================================================
+        const pages = ['home', 'daftar', 'hasil'];
+        let currentPage = 'home';
+        let isNavigating = false;
+
+        function navigateTo(page) {
+            if (!pages.includes(page)) page = 'home';
+
+            // Skip if already on this page or mid-navigation
+            if (page === currentPage || isNavigating) return;
+
+            isNavigating = true;
+
+            // Close mobile menu
+            document.getElementById('navbarMenu').classList.remove('open');
+
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            const navLink = document.getElementById(`nav-${page}`);
+            if (navLink) navLink.classList.add('active');
+
+            // Hide current page
+            const currentEl = document.getElementById(`page-${currentPage}`);
+            if (currentEl) {
+                currentEl.classList.remove('visible');
+            }
+
+            // After fade-out, swap pages
+            setTimeout(() => {
+                // Hide old page completely
+                if (currentEl) {
+                    currentEl.classList.remove('active');
+                }
+
+                // Show new page
+                currentPage = page;
+                const newEl = document.getElementById(`page-${page}`);
+                if (newEl) {
+                    newEl.classList.add('active');
+                    // Force reflow before adding visible class for animation
+                    void newEl.offsetHeight;
+                    newEl.classList.add('visible');
+                }
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Update hash without triggering hashchange handler
+                const newHash = page === 'home' ? '' : page;
+                history.replaceState(null, '', newHash ? `#${newHash}` : window.location.pathname);
+
+                isNavigating = false;
+            }, 350);
+        }
+
+        // Handle hash navigation on load and back/forward
+        function handleHash() {
+            const hash = window.location.hash.replace('#', '');
+            const target = (hash && pages.includes(hash)) ? hash : 'home';
+            if (target !== currentPage) {
+                // Direct swap without animation for initial load
+                document.querySelectorAll('.page-section').forEach(el => {
+                    el.classList.remove('active', 'visible');
+                });
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                const navLink = document.getElementById(`nav-${target}`);
+                if (navLink) navLink.classList.add('active');
+                currentPage = target;
+                const newEl = document.getElementById(`page-${target}`);
+                if (newEl) {
+                    newEl.classList.add('active', 'visible');
+                }
+            }
+        }
+
+        window.addEventListener('hashchange', handleHash);
+        window.addEventListener('load', handleHash);
+
+        // ============================================================
+        // MOBILE MENU
+        // ============================================================
+        document.getElementById('mobileToggle').addEventListener('click', () => {
+            const menu = document.getElementById('navbarMenu');
+            menu.classList.toggle('open');
+        });
+
+        // ============================================================
+        // NAVBAR SCROLL EFFECT
+        // ============================================================
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const scrollTop = document.getElementById('scrollTop');
+            
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            if (window.scrollY > 400) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        // ============================================================
+        // TOAST NOTIFICATIONS
+        // ============================================================
+        function showToast(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+
+            const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+            toast.innerHTML = `<span>${icons[type] || ''}</span> ${message}`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // ============================================================
+        // LOADING
+        // ============================================================
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // ============================================================
+        // MODAL
+        // ============================================================
+
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('show');
+            navigateTo('home');
+        }
+
+        // ============================================================
+        // FORM VALIDATION
+        // ============================================================
+        function validateField(id, condition) {
+            const field = document.getElementById(id);
+            const errorMsg = document.getElementById(`error-${id}`);
+
+            if (!condition) {
+                field.classList.add('error');
+                if (errorMsg) errorMsg.classList.add('show');
+                return false;
+            } else {
+                field.classList.remove('error');
+                if (errorMsg) errorMsg.classList.remove('show');
+                return true;
+            }
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.form-control.error').forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('.form-error-msg.show').forEach(el => el.classList.remove('show'));
+        }
+
+        function validateForm() {
+            clearErrors();
+            let isValid = true;
+
+            const nisn = document.getElementById('nisn').value.trim();
+            if (!validateField('nisn', /^\d{10}$/.test(nisn))) isValid = false;
+
+            const nama = document.getElementById('namaLengkap').value.trim();
+            if (!validateField('namaLengkap', nama.length > 0)) isValid = false;
+
+            const jk = document.getElementById('jenisKelamin').value;
+            if (!validateField('jenisKelamin', jk !== '')) isValid = false;
+
+            const agama = document.getElementById('agama').value;
+            if (!validateField('agama', agama !== '')) isValid = false;
+
+            const tempat = document.getElementById('tempatLahir').value.trim();
+            if (!validateField('tempatLahir', tempat.length > 0)) isValid = false;
+
+            const tglLahir = document.getElementById('tanggalLahir').value;
+            // Also validate if the date is after the min date 2011-07-01
+            const birthDate = new Date(tglLahir);
+            const minDate = new Date('2011-07-01');
+            const isValidDate = tglLahir !== '' && (!isNaN(birthDate) && birthDate >= minDate);
+            if (!validateField('tanggalLahir', isValidDate)) isValid = false;
+
+            const hpAyah = document.getElementById('hpAyah').value.trim();
+            // Optional, but if provided, should be valid length
+            if (hpAyah !== '' && hpAyah.length < 10) {
+                document.getElementById('error-hpAyah').textContent = 'No. HP tidak valid (minimal 10 digit)';
+                document.getElementById('error-hpAyah').classList.add('show');
+                document.getElementById('hpAyah').classList.add('error');
+                isValid = false;
+            }
+
+            const hpIbu = document.getElementById('hpIbu').value.trim();
+            // Optional, but if provided, should be valid length
+            if (hpIbu !== '' && hpIbu.length < 10) {
+                document.getElementById('error-hpIbu').textContent = 'No. HP tidak valid (minimal 10 digit)';
+                document.getElementById('error-hpIbu').classList.add('show');
+                document.getElementById('hpIbu').classList.add('error');
+                isValid = false;
+            }
+
+            const alamat = document.getElementById('alamat').value.trim();
+            if (!validateField('alamat', alamat.length > 0)) isValid = false;
+
+            const tinggalBersama = document.querySelector('input[name="tinggalBersama"]:checked');
+            if (!tinggalBersama) {
+                document.getElementById('error-tinggalBersama').classList.add('show');
+                isValid = false;
+            }
+
+            const jarak = document.getElementById('jarakRumah').value;
+            if (jarak === '' || parseFloat(jarak) < 0) {
+                document.getElementById('error-jarakRumah').classList.add('show');
+                document.getElementById('gpsWidget').classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('error-jarakRumah').classList.remove('show');
+                document.getElementById('gpsWidget').classList.remove('error');
+            }
+
+            return isValid;
+        }
+
+        // ============================================================
+        // FORM RESET
+        // ============================================================
+        function resetForm() {
+            document.getElementById('formPendaftaran').reset();
+            clearErrors();
+            // Reset GPS widget
+            document.getElementById('jarakRumah').value = '';
+            document.getElementById('latUser').value = '';
+            document.getElementById('lngUser').value = '';
+            document.getElementById('gpsResult').style.display = 'none';
+            document.getElementById('gpsCoords').textContent = '';
+            document.getElementById('gpsWidget').className = 'gps-widget';
+            document.getElementById('btnGetLocation').disabled = false;
+            document.getElementById('btnGetLocation').classList.remove('loading');
+            // Reset score preview
+            resetScorePreview();
+            showToast('Formulir telah direset', 'info');
+        }
+
+        // ============================================================
+        // GENERATE REGISTRATION ID
+        // ============================================================
+        function generateRegId() {
+            const now = new Date();
+            const year = now.getFullYear().toString().slice(-2);
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const random = Math.floor(Math.random() * 9000 + 1000);
+            return `SPMB-${year}${month}-${random}`;
+        }
+
+        // ============================================================
+        // FORM SUBMISSION
+        // ============================================================
+        document.getElementById('formPendaftaran').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!validateForm()) {
+                showToast('Mohon lengkapi semua field yang wajib diisi', 'error');
+                // Scroll to first error
+                const firstError = document.querySelector('.form-control.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+
+            const registrationId = generateRegId();
+
+            // Calculate scores
+            const jarakVal = parseFloat(document.getElementById('jarakRumah').value);
+            const tglLahirVal = document.getElementById('tanggalLahir').value;
+            const skorJarak = calculateDistanceScore(jarakVal);
+            const skorUsia = calculateAgeScore(tglLahirVal);
+            const skorTotal = Math.round((skorJarak + skorUsia) * 100) / 100;
+
+            const data = {
+                registrationId: registrationId,
+                nisn: document.getElementById('nisn').value.trim(),
+                namaLengkap: document.getElementById('namaLengkap').value.trim(),
+                jenisKelamin: document.getElementById('jenisKelamin').value,
+                agama: document.getElementById('agama').value,
+                tempatLahir: document.getElementById('tempatLahir').value.trim(),
+                tanggalLahir: tglLahirVal,
+                hpSiswa: document.getElementById('hpSiswa').value.trim() || null,
+                hpAyah: document.getElementById('hpAyah').value.trim(),
+                hpIbu: document.getElementById('hpIbu').value.trim(),
+                alamat: document.getElementById('alamat').value.trim(),
+                tinggalBersama: document.querySelector('input[name="tinggalBersama"]:checked').value,
+                jarakRumah: jarakVal,
+                koordinatSiswa: {
+                    lat: parseFloat(document.getElementById('latUser').value) || null,
+                    lng: parseFloat(document.getElementById('lngUser').value) || null
+                },
+                koordinatSekolah: {
+                    lat: 0.4263211352187949,
+                    lng: 101.64661693254462
+                },
+                skor: {
+                    jarak: skorJarak,
+                    usia: skorUsia,
+                    total: skorTotal
+                },
+                tanggalDaftar: new Date().toISOString(),
+                status: 'terdaftar'
+            };
+
+            showLoading();
+
+            try {
+                // Check for duplicate NISN
+                const existing = await db.collection('pendaftar')
+                    .where('nisn', '==', data.nisn)
+                    .get();
+
+                if (!existing.empty) {
+                    hideLoading();
+                    showToast('NISN sudah terdaftar sebelumnya!', 'error');
+                    return;
+                }
+
+                // Save to Firestore
+                await db.collection('pendaftar').add(data);
+
+                hideLoading();
+                document.getElementById('formPendaftaran').reset();
+                clearErrors();
+                showModal(registrationId, skorJarak, skorUsia, skorTotal);
+                updateStats();
+                resetScorePreview();
+
+            } catch (error) {
+                hideLoading();
+                console.error('Error:', error);
+                showToast('Terjadi kesalahan. Silakan coba lagi.', 'error');
+            }
+        });
+
+        // ============================================================
+        // STATS
+        // ============================================================
+        async function updateStats() {
+            try {
+                const snapshot = await db.collection('pendaftar').get();
+                const count = snapshot.size;
+                animateCounter('statPendaftar', count);
+            } catch (error) {
+                console.log('Stats unavailable:', error.message);
+            }
+        }
+
+        function animateCounter(elementId, target) {
+            const el = document.getElementById(elementId);
+            let current = 0;
+            const increment = Math.max(1, Math.floor(target / 30));
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                el.textContent = current;
+            }, 30);
+        }
+
+        // ============================================================
+        // NISN INPUT - NUMBERS ONLY
+        // ============================================================
+        document.getElementById('nisn').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+
+        // ============================================================
+        // PHONE INPUT - NUMBERS ONLY
+        // ============================================================
+        ['hpSiswa', 'hpAyah', 'hpIbu'].forEach(id => {
+            document.getElementById(id).addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^\d+\-\s]/g, '');
+            });
+        });
+
+        // ============================================================
+        // GPS DISTANCE CALCULATION
+        // ============================================================
+        const SCHOOL_LAT = 0.4263211352187949;
+        const SCHOOL_LNG = 101.64661693254462;
+
+        function haversineDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth radius in KM
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function getGPSLocation() {
+            const btn = document.getElementById('btnGetLocation');
+            const widget = document.getElementById('gpsWidget');
+            const resultDiv = document.getElementById('gpsResult');
+            const coordsDiv = document.getElementById('gpsCoords');
+
+            if (!navigator.geolocation) {
+                showToast('Browser Anda tidak mendukung GPS/Geolocation', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.classList.add('loading');
+            widget.className = 'gps-widget';
+            resultDiv.style.display = 'none';
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    const distance = haversineDistance(userLat, userLng, SCHOOL_LAT, SCHOOL_LNG);
+                    const distRounded = Math.round(distance * 100) / 100;
+
+                    document.getElementById('jarakRumah').value = distRounded;
+                    document.getElementById('latUser').value = userLat;
+                    document.getElementById('lngUser').value = userLng;
+
+                    document.getElementById('gpsDistanceValue').textContent = `${distRounded} KM`;
+                    coordsDiv.textContent = `Koordinat Anda: ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+                    resultDiv.style.display = 'flex';
+                    widget.className = 'gps-widget success';
+
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                    btn.innerHTML = '<span class="gps-spinner"></span> 🔄 Deteksi Ulang';
+
+                    // Clear any previous error
+                    document.getElementById('error-jarakRumah').classList.remove('show');
+
+                    // Update score preview
+                    updateScorePreview();
+
+                    showToast(`Lokasi terdeteksi! Jarak: ${distRounded} KM`, 'success');
+                },
+                function(error) {
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                    widget.className = 'gps-widget error';
+
+                    let msg = 'Gagal mendeteksi lokasi. ';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            msg += 'Izin lokasi ditolak. Aktifkan izin GPS di pengaturan browser.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            msg += 'Informasi lokasi tidak tersedia.';
+                            break;
+                        case error.TIMEOUT:
+                            msg += 'Permintaan lokasi timeout. Coba lagi.';
+                            break;
+                        default:
+                            msg += 'Terjadi kesalahan.';
+                    }
+                    showToast(msg, 'error', 6000);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        // ============================================================
+        // SCORING SYSTEM
+        // ============================================================
+        const MAX_DISTANCE_KM = 42.5;
+        const MAX_DISTANCE_SCORE = 85;
+        const MAX_AGE_SCORE = 15;
+        // Reference date for age calculation: July 1, 2026 (start of school year)
+        const AGE_REFERENCE_DATE = new Date(2026, 6, 1); // Month is 0-indexed, so 6 = July
+
+        function calculateDistanceScore(distanceKm) {
+            if (distanceKm === null || distanceKm === undefined || isNaN(distanceKm) || distanceKm < 0) return 0;
+            if (distanceKm >= MAX_DISTANCE_KM) return 0;
+            // Closer = higher score. Linear: 0 km = 85 pts, 42.5 km = 0 pts
+            const score = MAX_DISTANCE_SCORE * (1 - (distanceKm / MAX_DISTANCE_KM));
+            return Math.round(score * 100) / 100;
+        }
+
+        function calculateAgeScore(tanggalLahirStr) {
+            if (!tanggalLahirStr) return 0;
+            const birthDate = new Date(tanggalLahirStr);
+            if (isNaN(birthDate.getTime())) return 0;
+
+            // Calculate age in full years at reference date
+            let age = AGE_REFERENCE_DATE.getFullYear() - birthDate.getFullYear();
+            const monthDiff = AGE_REFERENCE_DATE.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && AGE_REFERENCE_DATE.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            // Score = age, capped at 15 max, min 0
+            return Math.max(0, Math.min(MAX_AGE_SCORE, age));
+        }
+
+        function updateScorePreview() {
+            const jarakVal = parseFloat(document.getElementById('jarakRumah').value);
+            const tglLahirVal = document.getElementById('tanggalLahir').value;
+
+            const hasJarak = !isNaN(jarakVal) && jarakVal >= 0;
+            const hasTgl = tglLahirVal !== '';
+
+            if (!hasJarak && !hasTgl) {
+                // Show empty state
+                document.getElementById('scoreEmptyMsg').style.display = 'block';
+                document.getElementById('scoreBars').style.display = 'none';
+                document.getElementById('scoreTotalNumber').textContent = '—';
+                document.getElementById('scoreTotalNumber').className = 'score-total-number empty';
+                document.getElementById('scorePreview').classList.remove('has-score');
+                return;
+            }
+
+            // Show score bars
+            document.getElementById('scoreEmptyMsg').style.display = 'none';
+            document.getElementById('scoreBars').style.display = 'flex';
+            document.getElementById('scorePreview').classList.add('has-score');
+
+            // Distance score
+            const distScore = hasJarak ? calculateDistanceScore(jarakVal) : 0;
+            document.getElementById('scoreDistValue').textContent = hasJarak ? distScore.toFixed(2) : '—';
+            document.getElementById('scoreDistBar').style.width = hasJarak ? `${(distScore / MAX_DISTANCE_SCORE) * 100}%` : '0%';
+            document.getElementById('scoreDistDetail').textContent = hasJarak
+                ? `Jarak: ${jarakVal} KM → ${distScore.toFixed(2)} / ${MAX_DISTANCE_SCORE} poin`
+                : 'Deteksi lokasi untuk menghitung skor jarak';
+
+            // Age score
+            const ageScore = hasTgl ? calculateAgeScore(tglLahirVal) : 0;
+            let ageDetail = 'Isi tanggal lahir untuk menghitung skor usia';
+            if (hasTgl) {
+                const birthDate = new Date(tglLahirVal);
+                let age = AGE_REFERENCE_DATE.getFullYear() - birthDate.getFullYear();
+                const monthDiff = AGE_REFERENCE_DATE.getMonth() - birthDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && AGE_REFERENCE_DATE.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                ageDetail = `Usia: ${age} tahun (per 1 Juli 2026) → ${ageScore} / ${MAX_AGE_SCORE} poin`;
+            }
+            document.getElementById('scoreAgeValue').textContent = hasTgl ? ageScore : '—';
+            document.getElementById('scoreAgeBar').style.width = hasTgl ? `${(ageScore / MAX_AGE_SCORE) * 100}%` : '0%';
+            document.getElementById('scoreAgeDetail').textContent = ageDetail;
+
+            // Total
+            if (hasJarak && hasTgl) {
+                const total = Math.round((distScore + ageScore) * 100) / 100;
+                document.getElementById('scoreTotalNumber').textContent = total.toFixed(2);
+                const cls = total >= 70 ? 'high' : total >= 40 ? 'medium' : 'low';
+                document.getElementById('scoreTotalNumber').className = `score-total-number ${cls}`;
+            } else {
+                const partial = hasJarak ? distScore : ageScore;
+                document.getElementById('scoreTotalNumber').textContent = partial.toFixed(2) + '*';
+                document.getElementById('scoreTotalNumber').className = 'score-total-number empty';
+            }
+        }
+
+        function resetScorePreview() {
+            document.getElementById('scoreEmptyMsg').style.display = 'block';
+            document.getElementById('scoreBars').style.display = 'none';
+            document.getElementById('scoreTotalNumber').textContent = '—';
+            document.getElementById('scoreTotalNumber').className = 'score-total-number empty';
+            document.getElementById('scorePreview').classList.remove('has-score');
+        }
+
+        // Listen for tanggalLahir changes to update score
+        document.getElementById('tanggalLahir').addEventListener('change', function() {
+            updateScorePreview();
+        });
+
+        // ============================================================
+        // MODAL WITH SCORE
+        // ============================================================
+        function showModal(regId, skorJarak, skorUsia, skorTotal) {
+            document.getElementById('registrationId').textContent = regId;
+
+            // Score breakdown in modal
+            document.getElementById('modalScoreDist').textContent = skorJarak.toFixed(2) + ' / 85';
+            document.getElementById('modalScoreAge').textContent = skorUsia + ' / 15';
+            document.getElementById('modalScoreTotal').textContent = skorTotal.toFixed(2);
+            const cls = skorTotal >= 70 ? 'high' : skorTotal >= 40 ? 'medium' : 'low';
+            document.getElementById('modalScoreTotal').className = `modal-score-number ${cls}`;
+
+            document.getElementById('successModal').classList.add('show');
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        updateStats();
+    </script>
+</body>
+</html>
