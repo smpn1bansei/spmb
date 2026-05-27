@@ -1664,7 +1664,6 @@
             <a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Beranda</a>
             <a class="nav-link" id="nav-daftar" onclick="navigateTo('daftar')">Pra Pendaftaran</a>
             <a class="nav-link" id="nav-hasil" onclick="navigateTo('hasil')">Hasil Seleksi</a>
-            <a class="nav-link nav-link-cta" onclick="navigateTo('daftar')">Daftar Sekarang →</a>
         </div>
     </nav>
 
@@ -1916,7 +1915,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="penghasilanAyah">Penghasilan Ayah (Rp)</label>
-                                <input type="number" class="form-control" id="penghasilanAyah" name="penghasilanAyah" placeholder="Contoh: 3000000" min="0">
+                                <input type="text" class="form-control" id="penghasilanAyah" name="penghasilanAyah" placeholder="Contoh: 3000000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                 <div class="form-error-msg" id="error-penghasilanAyah">Penghasilan tidak valid</div>
                             </div>
                         </div>
@@ -1947,7 +1946,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="penghasilanIbu">Penghasilan Ibu (Rp)</label>
-                                <input type="number" class="form-control" id="penghasilanIbu" name="penghasilanIbu" placeholder="Contoh: 2000000" min="0">
+                                <input type="text" class="form-control" id="penghasilanIbu" name="penghasilanIbu" placeholder="Contoh: 2000000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                 <div class="form-error-msg" id="error-penghasilanIbu">Penghasilan tidak valid</div>
                             </div>
                         </div>
@@ -2003,20 +2002,20 @@
 
                         <div class="form-group">
                             <label class="form-label" for="rataIjazah">Rata - Rata Nilai Ijazah / SKL <span class="required">*</span></label>
-                            <input type="number" class="form-control" id="rataIjazah" name="rataIjazah" placeholder="Contoh: 85.50" step="0.01" min="0" max="100" required>
-                            <div class="form-hint">Gunakan titik (.) sebagai pemisah desimal</div>
+                            <input type="text" class="form-control" id="rataIjazah" name="rataIjazah" placeholder="Contoh: 85.50" inputmode="decimal" required oninput="this.value=this.value.replace(/,/g,'.')">
+                            <div class="form-hint">Gunakan titik (.) atau koma (,) sebagai pemisah desimal</div>
                             <div class="form-error-msg" id="error-rataIjazah">Nilai wajib diisi dan harus valid</div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label" for="tkaMatematika">Nilai TKA Matematika</label>
-                                <input type="number" class="form-control" id="tkaMatematika" name="tkaMatematika" placeholder="0" step="0.01" min="0" max="100" oninput="hitungTka()">
+                                <input type="text" class="form-control" id="tkaMatematika" name="tkaMatematika" placeholder="0" inputmode="decimal" oninput="this.value=this.value.replace(/,/g,'.'); hitungTka()">
                                 <div class="form-error-msg" id="error-tkaMatematika">Nilai tidak valid</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="tkaBahasa">Nilai TKA Bahasa Indonesia</label>
-                                <input type="number" class="form-control" id="tkaBahasa" name="tkaBahasa" placeholder="0" step="0.01" min="0" max="100" oninput="hitungTka()">
+                                <input type="text" class="form-control" id="tkaBahasa" name="tkaBahasa" placeholder="0" inputmode="decimal" oninput="this.value=this.value.replace(/,/g,'.'); hitungTka()">
                                 <div class="form-error-msg" id="error-tkaBahasa">Nilai tidak valid</div>
                             </div>
                         </div>
@@ -2024,7 +2023,7 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label" for="tkaTotal">Total Nilai TKA</label>
-                                <input type="number" class="form-control" id="tkaTotal" name="tkaTotal" placeholder="0" readonly style="background-color: var(--bg-surface); font-weight: bold;">
+                                <input type="text" class="form-control" id="tkaTotal" name="tkaTotal" placeholder="0" readonly style="background-color: var(--bg-surface); font-weight: bold;">
                             </div>
                         </div>
 
@@ -2148,17 +2147,41 @@
 
         <!-- ==================== HASIL SELEKSI PAGE ==================== -->
         <section class="page-section" id="page-hasil">
-            <div class="hasil-page">
-                <div class="hasil-icon">🔍</div>
-                <h2>Hasil Seleksi</h2>
-                <p>
-                    Halaman ini sedang dalam pengembangan. Hasil seleksi akan diumumkan setelah proses seleksi selesai dilaksanakan.
-                    Silakan periksa kembali halaman ini secara berkala.
-                </p>
-                <br>
-                <button class="btn btn-primary" onclick="navigateTo('home')" style="margin-top: 1rem;">
-                    ← Kembali ke Beranda
-                </button>
+            <div class="hasil-page" style="text-align: left; max-width: 1200px; margin: 0 auto; width: 100%;">
+                <div class="form-section-title" style="margin-bottom: 2rem;">
+                    <div class="section-icon">🏆</div>
+                    Data Hasil Seleksi
+                </div>
+                
+                <div style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn btn-primary" onclick="loadHasilSeleksi()" id="btnRefreshHasil" style="width: auto;">
+                        🔄 Muat Ulang Data
+                    </button>
+                    <span id="hasilLoadingText" style="display: none; color: var(--text-secondary);">Mengambil data dari server...</span>
+                </div>
+
+                <div class="table-responsive" style="overflow-x: auto; background: var(--bg-surface); border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
+                        <thead>
+                            <tr style="background-color: var(--primary); color: white; text-align: left;">
+                                <th style="padding: 1rem; font-weight: 600;">NISN</th>
+                                <th style="padding: 1rem; font-weight: 600;">Nama Lengkap</th>
+                                <th style="padding: 1rem; font-weight: 600;">Asal Sekolah</th>
+                                <th style="padding: 1rem; font-weight: 600;">Total TKA</th>
+                                <th style="padding: 1rem; font-weight: 600;">Nilai SKL</th>
+                                <th style="padding: 1rem; font-weight: 600;">Skor Domisili</th>
+                                <th style="padding: 1rem; font-weight: 600;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBodyHasil">
+                            <tr>
+                                <td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-secondary);">
+                                    Klik "Muat Ulang Data" untuk memuat hasil seleksi.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -2230,6 +2253,8 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+
+
         // ============================================================
         // SPA NAVIGATION
         // ============================================================
@@ -2274,6 +2299,10 @@
                     // Force reflow before adding visible class for animation
                     void newEl.offsetHeight;
                     newEl.classList.add('visible');
+                    
+                    if (page === 'hasil') {
+                        loadHasilSeleksi();
+                    }
                 }
 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2661,22 +2690,30 @@
                 status: 'terdaftar'
             };
 
+            // Remove any NaN, undefined, or Infinity from data before sending to Firestore
+            function sanitizeData(obj) {
+                const clean = {};
+                for (const key in obj) {
+                    const val = obj[key];
+                    if (val === undefined || (typeof val === 'number' && !isFinite(val))) {
+                        clean[key] = null;
+                    } else if (val !== null && typeof val === 'object' && !Array.isArray(val)) {
+                        clean[key] = sanitizeData(val);
+                    } else {
+                        clean[key] = val;
+                    }
+                }
+                return clean;
+            }
+
+            const cleanData = sanitizeData(data);
+
             showLoading();
 
             try {
-                // Check for duplicate NISN
-                const existing = await db.collection('pendaftar')
-                    .where('nisn', '==', data.nisn)
-                    .get();
-
-                if (!existing.empty) {
-                    hideLoading();
-                    showToast('NISN sudah terdaftar sebelumnya!', 'error');
-                    return;
-                }
-
-                // Save to Firestore
-                await db.collection('pendaftar').add(data);
+                // Save to Firestore directly
+                // (Duplicate check removed because Firestore Rules prohibit read access)
+                await db.collection('pendaftar').add(cleanData);
 
                 hideLoading();
                 document.getElementById('formPendaftaran').reset();
@@ -2687,8 +2724,19 @@
 
             } catch (error) {
                 hideLoading();
-                console.error('Error:', error);
-                showToast('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                console.error('Firebase Error:', error);
+                console.error('Firebase Error Code:', error.code);
+                console.error('Firebase Error Message:', error.message);
+                
+                let errorMsg = 'Terjadi kesalahan. ';
+                if (error.code === 'permission-denied') {
+                    errorMsg += 'Akses ditolak. Periksa Firestore Security Rules di Firebase Console.';
+                } else if (error.code === 'unavailable') {
+                    errorMsg += 'Tidak dapat terhubung ke server. Periksa koneksi internet.';
+                } else {
+                    errorMsg += (error.message || 'Silakan coba lagi.');
+                }
+                showToast(errorMsg, 'error', 8000);
             }
         });
 
@@ -2718,6 +2766,91 @@
                 el.textContent = current;
             }, 30);
         }
+
+        // ============================================================
+        // HASIL SELEKSI
+        // ============================================================
+        async function loadHasilSeleksi() {
+            const btn = document.getElementById('btnRefreshHasil');
+            const loading = document.getElementById('hasilLoadingText');
+            const tbody = document.getElementById('tableBodyHasil');
+            
+            btn.disabled = true;
+            loading.style.display = 'inline-block';
+            tbody.innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center;">Sedang mengambil data dari database...</td></tr>';
+            
+            try {
+                // Diperlukan Firestore Rules: allow read: if true;
+                const snapshot = await db.collection('pendaftar').orderBy('skor.total', 'desc').get();
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-secondary);">Belum ada data pendaftar.</td></tr>';
+                    btn.disabled = false;
+                    loading.style.display = 'none';
+                    return;
+                }
+                
+                let html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const statusVal = data.status || '';
+                    let statusHtml = '';
+                    if (statusVal === 'Lulus') {
+                        statusHtml = '<span style="background: var(--success); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Lulus</span>';
+                    } else if (statusVal === 'Tidak Lulus') {
+                        statusHtml = '<span style="background: var(--error); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Tidak Lulus</span>';
+                    } else {
+                        statusHtml = '<span style="background: #e2e8f0; color: #475569; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Menunggu</span>';
+                    }
+
+                    // Skor domisili = Jarak + Usia
+                    const skorDomisili = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
+                    
+                    html += `
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 1rem;">${data.nisn || '-'}</td>
+                            <td style="padding: 1rem; font-weight: 500;">${data.namaLengkap || '-'}</td>
+                            <td style="padding: 1rem;">${data.asalSekolah || '-'}</td>
+                            <td style="padding: 1rem; text-align: center;">${data.tkaTotal || 0}</td>
+                            <td style="padding: 1rem; text-align: center;">${data.rataIjazah || 0}</td>
+                            <td style="padding: 1rem; text-align: center;">
+                                <div style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">${skorDomisili}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">Jarak: ${data.skor?.jarak?.toFixed(2) || 0} | Usia: ${data.skor?.usia || 0}</div>
+                            </td>
+                            <td style="padding: 1rem; text-align: center;">${statusHtml}</td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+            } catch (error) {
+                console.error("Error loadHasilSeleksi:", error);
+                if (error.code === 'permission-denied') {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="padding: 2rem; text-align: center; color: var(--error);">
+                                <strong>Akses Ditolak Firebase!</strong><br>
+                                Agar data tabel dapat muncul, ubah Firestore Rules Anda di Firebase Console menjadi:<br>
+                                <code>allow read: if true;</code>
+                            </td>
+                        </tr>`;
+                } else if (error.code === 'failed-precondition') {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="padding: 2rem; text-align: center; color: var(--error);">
+                                <strong>Error Indeks Firestore</strong><br>
+                                Pengurutan data membutuhkan Indeks di Firebase. Mohon periksa konsol browser Anda dan klik link pembuatan indeks yang diberikan oleh Firebase.
+                            </td>
+                        </tr>`;
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--error);">Gagal memuat data: ${error.message}</td></tr>`;
+                }
+            }
+            
+            btn.disabled = false;
+            loading.style.display = 'none';
+        }
+
 
         // ============================================================
         // NISN INPUT - NUMBERS ONLY
