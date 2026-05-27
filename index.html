@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Seleksi Penerimaan Murid Baru (SPMB) SMPN 1 Bandar Seikijang Tahun Ajaran 2025/2026. Daftar sekarang secara online.">
+    <meta name="description" content="Seleksi Penerimaan Murid Baru (SPMB) SMPN 1 Bandar Seikijang Tahun Ajaran 2026/2027. Daftar sekarang secara online.">
     <meta name="keywords" content="SPMB, SMPN 1 Bandar Seikijang, Pendaftaran Murid Baru, 2025 2026">
-    <title>SPMB SMPN 1 Bandar Seikijang - Tahun Ajaran 2025/2026</title>
+    <title>SPMB SMPN 1 Bandar Seikijang - Tahun Ajaran 2026/2027</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1686,7 +1686,7 @@
                     </h1>
                     <p class="hero-subtitle">
                         SMPN 1 Bandar Seikijang membuka pendaftaran calon peserta didik baru 
-                        Tahun Ajaran 2025/2026. Kuota terbatas <strong style="color: var(--accent)">192 siswa</strong>.
+                        Tahun Ajaran 2026/2027. Kuota terbatas <strong style="color: var(--accent)">192 siswa</strong>.
                     </p>
                     <div class="hero-actions">
                         <button class="btn btn-primary" onclick="navigateTo('daftar')">
@@ -1759,7 +1759,7 @@
                         </div>
                     </div>
                     <div class="kuota-total-bar">
-                        Total Kuota: <strong>192 Siswa</strong> — Tahun Ajaran 2025/2026
+                        Total Kuota: <strong>192 Siswa</strong> — Tahun Ajaran 2026/2027
                     </div>
                 </div>
 
@@ -1775,7 +1775,7 @@
                             <div class="stat-label">Kuota Siswa</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number">2025/2026</div>
+                            <div class="stat-number">2026/2027</div>
                             <div class="stat-label">Tahun Ajaran</div>
                         </div>
                     </div>
@@ -1817,6 +1817,18 @@
                         <div class="form-section-title">
                             <div class="section-icon">👤</div>
                             Data Pribadi Siswa
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="jalurPendaftaran">Jalur Pendaftaran <span class="required">*</span></label>
+                            <select class="form-control" id="jalurPendaftaran" name="jalurPendaftaran" required>
+                                <option value="">Pilih Jalur Pendaftaran</option>
+                                <option value="Domisili">Domisili</option>
+                                <option value="Prestasi">Prestasi</option>
+                                <option value="Afirmasi">Afirmasi (Keluarga tidak mampu)</option>
+                                <option value="Mutasi">Mutasi</option>
+                            </select>
+                            <div class="form-error-msg" id="error-jalurPendaftaran">Jalur pendaftaran wajib dipilih</div>
                         </div>
 
                         <div class="form-group">
@@ -1874,11 +1886,74 @@
 
                         <!-- Kontak -->
                         <div class="form-section-title">
-                            <div class="section-icon">📞</div>
-                            Informasi Kontak
+                            <div class="section-icon">👨‍👩‍👧‍👦</div>
+                            Data Orang Tua & Kontak
                         </div>
 
-                        <div class="form-group">
+                        <!-- Data Ayah -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="namaAyah">Nama Ayah Kandung <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="namaAyah" name="namaAyah" placeholder="Nama Lengkap Ayah" required>
+                                <div class="form-error-msg" id="error-namaAyah">Nama ayah wajib diisi</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="statusAyah">Status Ayah Kandung <span class="required">*</span></label>
+                                <select class="form-control" id="statusAyah" name="statusAyah" required>
+                                    <option value="">Pilih status</option>
+                                    <option value="Masih Hidup">Masih Hidup</option>
+                                    <option value="Sudah Meninggal">Sudah Meninggal</option>
+                                </select>
+                                <div class="form-error-msg" id="error-statusAyah">Status ayah wajib dipilih</div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="pekerjaanAyah">Pekerjaan Ayah</label>
+                                <input type="text" class="form-control" id="pekerjaanAyah" name="pekerjaanAyah" placeholder="Pekerjaan saat ini">
+                                <div class="form-error-msg" id="error-pekerjaanAyah">Pekerjaan tidak valid</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="penghasilanAyah">Penghasilan Ayah (Rp)</label>
+                                <input type="number" class="form-control" id="penghasilanAyah" name="penghasilanAyah" placeholder="Contoh: 3000000" min="0">
+                                <div class="form-error-msg" id="error-penghasilanAyah">Penghasilan tidak valid</div>
+                            </div>
+                        </div>
+
+                        <!-- Data Ibu -->
+                        <div class="form-row" style="margin-top: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="namaIbu">Nama Ibu Kandung <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="namaIbu" name="namaIbu" placeholder="Nama Lengkap Ibu" required>
+                                <div class="form-error-msg" id="error-namaIbu">Nama ibu wajib diisi</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="statusIbu">Status Ibu Kandung <span class="required">*</span></label>
+                                <select class="form-control" id="statusIbu" name="statusIbu" required>
+                                    <option value="">Pilih status</option>
+                                    <option value="Masih Hidup">Masih Hidup</option>
+                                    <option value="Sudah Meninggal">Sudah Meninggal</option>
+                                </select>
+                                <div class="form-error-msg" id="error-statusIbu">Status ibu wajib dipilih</div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="pekerjaanIbu">Pekerjaan Ibu</label>
+                                <input type="text" class="form-control" id="pekerjaanIbu" name="pekerjaanIbu" placeholder="Pekerjaan saat ini">
+                                <div class="form-error-msg" id="error-pekerjaanIbu">Pekerjaan tidak valid</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="penghasilanIbu">Penghasilan Ibu (Rp)</label>
+                                <input type="number" class="form-control" id="penghasilanIbu" name="penghasilanIbu" placeholder="Contoh: 2000000" min="0">
+                                <div class="form-error-msg" id="error-penghasilanIbu">Penghasilan tidak valid</div>
+                            </div>
+                        </div>
+
+                        <!-- Nomor Kontak -->
+                        <div class="form-group" style="margin-top: 1rem;">
                             <label class="form-label" for="hpSiswa">No. HP Siswa <span class="optional">(opsional)</span></label>
                             <input type="tel" class="form-control" id="hpSiswa" name="hpSiswa" placeholder="Contoh: 08123456789" inputmode="tel">
                         </div>
@@ -1887,10 +1962,69 @@
                             <div class="form-group">
                                 <label class="form-label" for="hpAyah">No. HP Ayah <span class="optional">(opsional)</span></label>
                                 <input type="tel" class="form-control" id="hpAyah" name="hpAyah" placeholder="Contoh: 08123456789" inputmode="tel">
+                                <div class="form-error-msg" id="error-hpAyah">No. HP tidak valid</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="hpIbu">No. HP Ibu <span class="optional">(opsional)</span></label>
                                 <input type="tel" class="form-control" id="hpIbu" name="hpIbu" placeholder="Contoh: 08123456789" inputmode="tel">
+                                <div class="form-error-msg" id="error-hpIbu">No. HP tidak valid</div>
+                            </div>
+                        </div>
+
+                        <hr class="form-divider">
+
+                        <!-- Data Sekolah Asal & Nilai -->
+                        <div class="form-section-title">
+                            <div class="section-icon">🏫</div>
+                            Data Sekolah Asal & Nilai
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="asalSekolah">Asal Sekolah <span class="required">*</span></label>
+                            <select class="form-control" id="asalSekolah" name="asalSekolah" required onchange="toggleAsalSekolahLainnya()">
+                                <option value="">Pilih Asal Sekolah</option>
+                                <option value="SDN 008 Seikijang">SDN 008 Seikijang</option>
+                                <option value="SDN 001 Seikijang">SDN 001 Seikijang</option>
+                                <option value="SDN 006 Muda Setia">SDN 006 Muda Setia</option>
+                                <option value="SDN 003 Lubuk Ogong">SDN 003 Lubuk Ogong</option>
+                                <option value="SDN 004 Lubuk Ogong">SDN 004 Lubuk Ogong</option>
+                                <option value="SDN 11 Kerinci Kiri">SDN 11 Kerinci Kiri</option>
+                                <option value="SD Permata Rantau Baru">SD Permata Rantau Baru</option>
+                                <option value="Lainnya">SD Lainnya (Ketik Manual)</option>
+                            </select>
+                            <div class="form-error-msg" id="error-asalSekolah">Asal sekolah wajib dipilih</div>
+                        </div>
+
+                        <div class="form-group" id="containerAsalSekolahLainnya" style="display: none;">
+                            <label class="form-label" for="asalSekolahLainnya">Nama SD Lainnya <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="asalSekolahLainnya" name="asalSekolahLainnya" placeholder="Ketik nama sekolah asal">
+                            <div class="form-error-msg" id="error-asalSekolahLainnya">Nama sekolah wajib diisi</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="rataIjazah">Rata - Rata Nilai Ijazah / SKL <span class="required">*</span></label>
+                            <input type="number" class="form-control" id="rataIjazah" name="rataIjazah" placeholder="Contoh: 85.50" step="0.01" min="0" max="100" required>
+                            <div class="form-hint">Gunakan titik (.) sebagai pemisah desimal</div>
+                            <div class="form-error-msg" id="error-rataIjazah">Nilai wajib diisi dan harus valid</div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="tkaMatematika">Nilai TKA Matematika</label>
+                                <input type="number" class="form-control" id="tkaMatematika" name="tkaMatematika" placeholder="0" step="0.01" min="0" max="100" oninput="hitungTka()">
+                                <div class="form-error-msg" id="error-tkaMatematika">Nilai tidak valid</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="tkaBahasa">Nilai TKA Bahasa Indonesia</label>
+                                <input type="number" class="form-control" id="tkaBahasa" name="tkaBahasa" placeholder="0" step="0.01" min="0" max="100" oninput="hitungTka()">
+                                <div class="form-error-msg" id="error-tkaBahasa">Nilai tidak valid</div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="tkaTotal">Total Nilai TKA</label>
+                                <input type="number" class="form-control" id="tkaTotal" name="tkaTotal" placeholder="0" readonly style="background-color: var(--bg-surface); font-weight: bold;">
                             </div>
                         </div>
 
@@ -2032,7 +2166,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>© 2025 SMPN 1 Bandar Seikijang — Seleksi Penerimaan Murid Baru Tahun Ajaran 2025/2026</p>
+        <p>© 2026 SMPN 1 Bandar Seikijang — Seleksi Penerimaan Murid Baru Tahun Ajaran 2026/2027</p>
     </footer>
 
     <!-- Toast Container -->
@@ -2269,6 +2403,9 @@
             clearErrors();
             let isValid = true;
 
+            const jalur = document.getElementById('jalurPendaftaran').value;
+            if (!validateField('jalurPendaftaran', jalur !== '')) isValid = false;
+
             const nisn = document.getElementById('nisn').value.trim();
             if (!validateField('nisn', /^\d{10}$/.test(nisn))) isValid = false;
 
@@ -2291,6 +2428,38 @@
             const isValidDate = tglLahir !== '' && (!isNaN(birthDate) && birthDate >= minDate);
             if (!validateField('tanggalLahir', isValidDate)) isValid = false;
 
+            const namaAyah = document.getElementById('namaAyah').value.trim();
+            if (!validateField('namaAyah', namaAyah.length > 0)) isValid = false;
+
+            const statusAyah = document.getElementById('statusAyah').value;
+            if (!validateField('statusAyah', statusAyah !== '')) isValid = false;
+
+            const pekerjaanAyah = document.getElementById('pekerjaanAyah').value.trim();
+            if (pekerjaanAyah !== '') {
+                if (!validateField('pekerjaanAyah', pekerjaanAyah.length > 0)) isValid = false;
+            } else validateField('pekerjaanAyah', true);
+
+            const penghasilanAyah = document.getElementById('penghasilanAyah').value;
+            if (penghasilanAyah !== '') {
+                if (!validateField('penghasilanAyah', parseFloat(penghasilanAyah) >= 0)) isValid = false;
+            } else validateField('penghasilanAyah', true);
+
+            const namaIbu = document.getElementById('namaIbu').value.trim();
+            if (!validateField('namaIbu', namaIbu.length > 0)) isValid = false;
+
+            const statusIbu = document.getElementById('statusIbu').value;
+            if (!validateField('statusIbu', statusIbu !== '')) isValid = false;
+
+            const pekerjaanIbu = document.getElementById('pekerjaanIbu').value.trim();
+            if (pekerjaanIbu !== '') {
+                if (!validateField('pekerjaanIbu', pekerjaanIbu.length > 0)) isValid = false;
+            } else validateField('pekerjaanIbu', true);
+
+            const penghasilanIbu = document.getElementById('penghasilanIbu').value;
+            if (penghasilanIbu !== '') {
+                if (!validateField('penghasilanIbu', parseFloat(penghasilanIbu) >= 0)) isValid = false;
+            } else validateField('penghasilanIbu', true);
+
             const hpAyah = document.getElementById('hpAyah').value.trim();
             // Optional, but if provided, should be valid length
             if (hpAyah !== '' && hpAyah.length < 10) {
@@ -2298,6 +2467,9 @@
                 document.getElementById('error-hpAyah').classList.add('show');
                 document.getElementById('hpAyah').classList.add('error');
                 isValid = false;
+            } else {
+                document.getElementById('error-hpAyah').classList.remove('show');
+                document.getElementById('hpAyah').classList.remove('error');
             }
 
             const hpIbu = document.getElementById('hpIbu').value.trim();
@@ -2307,7 +2479,34 @@
                 document.getElementById('error-hpIbu').classList.add('show');
                 document.getElementById('hpIbu').classList.add('error');
                 isValid = false;
+            } else {
+                document.getElementById('error-hpIbu').classList.remove('show');
+                document.getElementById('hpIbu').classList.remove('error');
             }
+
+            const asalSekolah = document.getElementById('asalSekolah').value;
+            if (!validateField('asalSekolah', asalSekolah !== '')) isValid = false;
+
+            if (asalSekolah === 'Lainnya') {
+                const asalLainnya = document.getElementById('asalSekolahLainnya').value.trim();
+                if (!validateField('asalSekolahLainnya', asalLainnya.length > 0)) isValid = false;
+            } else {
+                document.getElementById('error-asalSekolahLainnya').classList.remove('show');
+                document.getElementById('asalSekolahLainnya').classList.remove('error');
+            }
+
+            const rata = document.getElementById('rataIjazah').value;
+            if (!validateField('rataIjazah', rata !== '' && parseFloat(rata) >= 0 && parseFloat(rata) <= 100)) isValid = false;
+
+            const tkaMat = document.getElementById('tkaMatematika').value;
+            if (tkaMat !== '') {
+                if (!validateField('tkaMatematika', parseFloat(tkaMat) >= 0 && parseFloat(tkaMat) <= 100)) isValid = false;
+            } else validateField('tkaMatematika', true);
+
+            const tkaBahasa = document.getElementById('tkaBahasa').value;
+            if (tkaBahasa !== '') {
+                if (!validateField('tkaBahasa', parseFloat(tkaBahasa) >= 0 && parseFloat(tkaBahasa) <= 100)) isValid = false;
+            } else validateField('tkaBahasa', true);
 
             const alamat = document.getElementById('alamat').value.trim();
             if (!validateField('alamat', alamat.length > 0)) isValid = false;
@@ -2346,9 +2545,33 @@
             document.getElementById('gpsWidget').className = 'gps-widget';
             document.getElementById('btnGetLocation').disabled = false;
             document.getElementById('btnGetLocation').classList.remove('loading');
+            
+            // Reset dynamic fields
+            document.getElementById('containerAsalSekolahLainnya').style.display = 'none';
+            
             // Reset score preview
             resetScorePreview();
             showToast('Formulir telah direset', 'info');
+        }
+
+        // ============================================================
+        // DYNAMIC FORM HANDLERS
+        // ============================================================
+        function toggleAsalSekolahLainnya() {
+            const select = document.getElementById('asalSekolah');
+            const container = document.getElementById('containerAsalSekolahLainnya');
+            if (select.value === 'Lainnya') {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function hitungTka() {
+            const mat = parseFloat(document.getElementById('tkaMatematika').value) || 0;
+            const bindo = parseFloat(document.getElementById('tkaBahasa').value) || 0;
+            const total = mat + bindo;
+            document.getElementById('tkaTotal').value = total.toFixed(2);
         }
 
         // ============================================================
@@ -2387,23 +2610,43 @@
             const skorUsia = calculateAgeScore(tglLahirVal);
             const skorTotal = Math.round((skorJarak + skorUsia) * 100) / 100;
 
+            // Helper: safely parse float, return null if NaN
+            function safeFloat(val) {
+                const n = parseFloat(val);
+                return isNaN(n) ? null : n;
+            }
+
             const data = {
                 registrationId: registrationId,
+                jalurPendaftaran: document.getElementById('jalurPendaftaran').value,
                 nisn: document.getElementById('nisn').value.trim(),
                 namaLengkap: document.getElementById('namaLengkap').value.trim(),
                 jenisKelamin: document.getElementById('jenisKelamin').value,
                 agama: document.getElementById('agama').value,
                 tempatLahir: document.getElementById('tempatLahir').value.trim(),
                 tanggalLahir: tglLahirVal,
+                namaAyah: document.getElementById('namaAyah').value.trim(),
+                statusAyah: document.getElementById('statusAyah').value,
+                pekerjaanAyah: document.getElementById('pekerjaanAyah').value.trim() || null,
+                penghasilanAyah: safeFloat(document.getElementById('penghasilanAyah').value),
+                namaIbu: document.getElementById('namaIbu').value.trim(),
+                statusIbu: document.getElementById('statusIbu').value,
+                pekerjaanIbu: document.getElementById('pekerjaanIbu').value.trim() || null,
+                penghasilanIbu: safeFloat(document.getElementById('penghasilanIbu').value),
                 hpSiswa: document.getElementById('hpSiswa').value.trim() || null,
-                hpAyah: document.getElementById('hpAyah').value.trim(),
-                hpIbu: document.getElementById('hpIbu').value.trim(),
+                hpAyah: document.getElementById('hpAyah').value.trim() || null,
+                hpIbu: document.getElementById('hpIbu').value.trim() || null,
+                asalSekolah: document.getElementById('asalSekolah').value === 'Lainnya' ? document.getElementById('asalSekolahLainnya').value.trim() : document.getElementById('asalSekolah').value,
+                rataIjazah: safeFloat(document.getElementById('rataIjazah').value),
+                tkaMatematika: safeFloat(document.getElementById('tkaMatematika').value),
+                tkaBahasaIndonesia: safeFloat(document.getElementById('tkaBahasa').value),
+                tkaTotal: safeFloat(document.getElementById('tkaTotal').value) || 0,
                 alamat: document.getElementById('alamat').value.trim(),
                 tinggalBersama: document.querySelector('input[name="tinggalBersama"]:checked').value,
                 jarakRumah: jarakVal,
                 koordinatSiswa: {
-                    lat: parseFloat(document.getElementById('latUser').value) || null,
-                    lng: parseFloat(document.getElementById('lngUser').value) || null
+                    lat: safeFloat(document.getElementById('latUser').value),
+                    lng: safeFloat(document.getElementById('lngUser').value)
                 },
                 koordinatSekolah: {
                     lat: 0.4263211352187949,
@@ -2707,6 +2950,8 @@
         // INIT
         // ============================================================
         updateStats();
+        // Initialize score preview on page load to detect default date value
+        updateScorePreview();
     </script>
 </body>
 </html>
