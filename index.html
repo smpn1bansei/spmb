@@ -9,558 +9,621 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'display': ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: { DEFAULT: '#1e3a8a', light: '#3b82f6', dark: '#172554', glow: 'rgba(30,58,138,0.2)' },
+                        accent: { DEFAULT: '#f59e0b', light: '#fbbf24', dark: '#d97706' },
+                    },
+                    animation: {
+                        'float': 'float 20s infinite ease-in-out',
+                        'float-delayed': 'float 25s infinite ease-in-out 5s',
+                        'float-slow': 'float 30s infinite ease-in-out 10s',
+                        'pulse-dot': 'pulse-dot 2s infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'modal-in': 'modalIn 0.4s ease-out',
+                        'breathe': 'breathe 3s infinite ease-in-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                        },
+                        'pulse-dot': {
+                            '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                            '50%': { opacity: '0.5', transform: 'scale(1.5)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        modalIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.9) translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+                        },
+                        breathe: {
+                            '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(30,58,138,0.1)' },
+                            '50%': { transform: 'scale(1.05)', boxShadow: '0 0 0 10px rgba(30,58,138,0)' },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles that Tailwind can't easily handle */
+        .page-section { display: none; opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
+        .page-section.active { display: block; }
+        .page-section.visible { opacity: 1; transform: translateY(0); }
+
+        /* Animated background orbs */
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.15; pointer-events: none; }
+        .orb:nth-child(1) { width: 400px; height: 400px; background: #3b82f6; top: -100px; left: -100px; animation: float 20s infinite ease-in-out; }
+        .orb:nth-child(2) { width: 300px; height: 300px; background: #f59e0b; bottom: -50px; right: -50px; animation: float 25s infinite ease-in-out 5s; }
+        .orb:nth-child(3) { width: 250px; height: 250px; background: #10b981; top: 50%; left: 50%; animation: float 30s infinite ease-in-out 10s; }
+
+        /* Toast animations */
+        .toast-enter { animation: toastIn 0.4s ease-out; }
+        .toast-exit { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+        /* Score bar animation */
+        .score-bar-fill { transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Spinner */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { width: 44px; height: 44px; border: 4px solid #e2e8f0; border-top-color: #1e3a8a; border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+        /* Form error state */
+        .form-control.error { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        .error-text { display: none; color: #ef4444; font-size: 0.75rem; margin-top: 4px; }
+        .error-text.show { display: block; }
+
+        /* GPS widget states */
+        .gps-widget.success { border-color: #10b981 !important; background-color: #f0fdf4 !important; }
+        .gps-widget.error { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+
+        /* Custom select arrow */
+        select.form-control { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8.825a.5.5 0 01-.354-.146l-4-4a.5.5 0 01.708-.708L6 7.617l3.646-3.646a.5.5 0 01.708.708l-4 4A.5.5 0 016 8.825z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px; appearance: none; -webkit-appearance: none; padding-right: 36px; }
+
+        /* Radio button custom */
+        input[type="radio"].radio-custom { display: none; }
+        input[type="radio"].radio-custom + label { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; }
+        input[type="radio"].radio-custom + label::before { content: ''; width: 20px; height: 20px; border: 2px solid #cbd5e1; border-radius: 50%; transition: all 0.3s ease; flex-shrink: 0; }
+        input[type="radio"].radio-custom:checked + label { border-color: #1e3a8a; background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e3a8a; }
+        input[type="radio"].radio-custom:checked + label::before { border-color: #1e3a8a; background: #1e3a8a; box-shadow: inset 0 0 0 3px white; }
+
+        /* Navbar scrolled */
+        .navbar-main.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+
+        /* Scroll top visibility */
+        .scroll-top-btn { visibility: hidden; opacity: 0; transition: all 0.3s ease; }
+        .scroll-top-btn.visible { visibility: visible; opacity: 1; }
+
+        /* Navbar mobile menu */
+        @media (max-width: 768px) {
+            .nav-menu { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); padding: 16px; border-top: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+            .nav-menu.open { display: flex; }
+        }
+    </style>
 </head>
-<body>
+<body class="font-sans bg-slate-50 text-slate-900 min-h-screen antialiased">
 
     <!-- Animated Background -->
-    <div class="bg-animation">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div class="orb"></div>
         <div class="orb"></div>
         <div class="orb"></div>
     </div>
 
     <!-- Navbar -->
-    <nav class="navbar" id="navbar">
-        <a class="navbar-brand" onclick="navigateTo('home')">
-            <div class="navbar-logo">S1</div>
-            <div class="navbar-title">
-                <span>SPMB SMPN 1</span>
-                <span>Bandar Seikijang</span>
+    <nav class="navbar-main fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-100 transition-all duration-300" id="navbar">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-[68px] flex items-center justify-between">
+            <a class="flex items-center gap-3 cursor-pointer select-none" onclick="navigateTo('home')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-800 to-blue-500 flex items-center justify-center text-white font-display font-extrabold text-sm shadow-lg shadow-blue-500/30">S1</div>
+                <div class="flex flex-col leading-tight">
+                    <span class="font-display font-bold text-slate-800 text-sm">SPMB SMPN 1</span>
+                    <span class="text-xs text-slate-500 font-medium">Bandar Seikijang</span>
+                </div>
+            </a>
+            <button class="md:hidden text-2xl text-slate-600 hover:text-blue-800 transition" id="mobileToggle" aria-label="Toggle menu">☰</button>
+            <div class="nav-menu hidden md:flex items-center gap-1" id="navbarMenu">
+                <a class="nav-link px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-200 text-blue-800 bg-blue-50" id="nav-home" onclick="navigateTo('home')">Beranda</a>
+                <a class="nav-link px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-200 text-slate-600 hover:text-blue-800 hover:bg-blue-50" id="nav-daftar" onclick="navigateTo('daftar')">Pra Pendaftaran</a>
+                <a class="nav-link px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-200 text-slate-600 hover:text-blue-800 hover:bg-blue-50" id="nav-hasil" onclick="navigateTo('hasil')">Hasil Seleksi</a>
             </div>
-        </a>
-        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">â˜°</button>
-        <div class="navbar-menu" id="navbarMenu">
-            <a class="nav-link active" id="nav-home" onclick="navigateTo('home')">Beranda</a>
-            <a class="nav-link" id="nav-daftar" onclick="navigateTo('daftar')">Pra Pendaftaran</a>
-            <a class="nav-link" id="nav-hasil" onclick="navigateTo('hasil')">Hasil Seleksi</a>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="relative z-10 pt-[76px] pb-8 px-4 sm:px-6 max-w-6xl mx-auto">
 
         <!-- ==================== HOME PAGE ==================== -->
         <section class="page-section active visible" id="page-home">
+
             <!-- Hero -->
-            <div class="hero">
-                <div class="hero-content">
-                    <div class="hero-badge">
-                        <span class="pulse-dot"></span>
+            <div class="relative py-12 md:py-20 text-center">
+                <div class="animate-fade-in-up">
+                    <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse-dot"></span>
                         Pendaftaran: 15, 17 &amp; 18 Juni 2026
                     </div>
-                    <h1>
+                    <h1 class="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl text-slate-900 leading-tight mb-6">
                         Seleksi Penerimaan<br>
-                        <span class="gradient-text">Murid Baru</span>
+                        <span class="bg-gradient-to-r from-blue-800 via-blue-500 to-amber-500 bg-clip-text text-transparent">Murid Baru</span>
                     </h1>
-                    <p class="hero-subtitle">
-                        SMPN 1 Bandar Seikijang membuka pendaftaran calon peserta didik baru 
-                        Tahun Ajaran 2026/2027. Kuota terbatas <strong style="color: var(--accent)">192 siswa</strong>.
+                    <p class="text-slate-600 text-lg max-w-2xl mx-auto mb-8 leading-relaxed" style="animation-delay: 0.2s">
+                        SMPN 1 Bandar Seikijang membuka pendaftaran calon peserta didik baru
+                        Tahun Ajaran 2026/2027. Kuota terbatas <strong class="text-amber-600">192 siswa</strong>.
                     </p>
-                    <div class="hero-actions">
-                        <button class="btn btn-primary" onclick="navigateTo('daftar')">
-                            <span class="btn-icon">📝</span>
-                            Pra Pendaftaran
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center" style="animation-delay: 0.4s">
+                        <button class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-800 to-blue-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all duration-300 text-sm" onclick="navigateTo('daftar')">
+                            <span>📝</span> Pra Pendaftaran
                         </button>
-                        <button class="btn btn-outline" onclick="navigateTo('hasil')">
-                            <span class="btn-icon">📊</span>
-                            Cek Hasil Seleksi
+                        <button class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:border-blue-300 hover:text-blue-800 hover:bg-blue-50 hover:-translate-y-0.5 transition-all duration-300 text-sm" onclick="navigateTo('hasil')">
+                            <span>📊</span> Cek Hasil Seleksi
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Info Bar -->
-            <div class="features-section">
-                <div class="info-bar">
-                    <span class="info-bar-icon">📢</span>
-                    <div class="info-bar-text">
-                        <strong>Informasi Penting:</strong> Pendaftaran dilaksanakan tanggal <strong>15, 17, dan 18 Juni 2026</strong>. 
-                        Pastikan data yang diisi sesuai dengan dokumen resmi dan isi formulir dari lokasi rumah untuk akurasi jarak.
+            <div class="bg-gradient-to-r from-amber-50 to-amber-100/50 border border-amber-200 rounded-2xl p-4 sm:p-5 flex items-start gap-4 mb-10">
+                <span class="text-2xl mt-0.5">📢</span>
+                <div class="text-sm text-amber-900 leading-relaxed">
+                    <strong>Informasi Penting:</strong> Pendaftaran dilaksanakan tanggal <strong>15, 17, dan 18 Juni 2026</strong>.
+                    Pastikan data yang diisi sesuai dengan dokumen resmi dan isi formulir dari lokasi rumah untuk akurasi jarak.
+                </div>
+            </div>
+
+            <!-- Schedule Timeline -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 mb-8">
+                <h2 class="font-display font-bold text-xl text-slate-800 mb-6 flex items-center gap-2">🗓 Jadwal Pendaftaran</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex items-center gap-4 p-4 rounded-xl bg-blue-50 border border-blue-100">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-800 to-blue-500 flex items-center justify-center text-white font-display font-bold text-lg shadow-lg shadow-blue-500/20 flex-shrink-0">15</div>
+                        <div><div class="font-semibold text-slate-800">15 Juni 2026</div><div class="text-sm text-slate-500">Senin — Hari Pertama</div></div>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 rounded-xl bg-blue-50 border border-blue-100">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-800 to-blue-500 flex items-center justify-center text-white font-display font-bold text-lg shadow-lg shadow-blue-500/20 flex-shrink-0">17</div>
+                        <div><div class="font-semibold text-slate-800">17 Juni 2026</div><div class="text-sm text-slate-500">Rabu — Hari Kedua</div></div>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 rounded-xl bg-blue-50 border border-blue-100">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-800 to-blue-500 flex items-center justify-center text-white font-display font-bold text-lg shadow-lg shadow-blue-500/20 flex-shrink-0">18</div>
+                        <div><div class="font-semibold text-slate-800">18 Juni 2026</div><div class="text-sm text-slate-500">Kamis — Hari Ketiga</div></div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Jadwal Pendaftaran -->
-                <div class="schedule-section">
-                    <h3 class="schedule-title">🗓 Jadwal Pendaftaran</h3>
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-dot">15</div>
-                            <div class="timeline-date">15 Juni 2026</div>
-                            <div class="timeline-day">Senin — Hari Pertama</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot">17</div>
-                            <div class="timeline-date">17 Juni 2026</div>
-                            <div class="timeline-day">Rabu — Hari Kedua</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot">18</div>
-                            <div class="timeline-date">18 Juni 2026</div>
-                            <div class="timeline-day">Kamis — Hari Ketiga</div>
-                        </div>
+            <!-- Kuota Section -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 mb-8">
+                <h2 class="font-display font-bold text-xl text-slate-800 mb-6 flex items-center gap-2">🎓 Kuota Penerimaan</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gradient-to-b from-white to-slate-50 rounded-xl border border-slate-100 p-5 text-center hover:-translate-y-1 transition-transform duration-300 border-b-4 border-b-blue-500">
+                        <div class="font-display font-extrabold text-3xl text-blue-800 mb-1">96</div>
+                        <div class="font-semibold text-sm text-slate-700">Jalur Domisili</div>
+                        <div class="text-xs text-slate-400 mt-1">Berdasarkan jarak rumah</div>
+                    </div>
+                    <div class="bg-gradient-to-b from-white to-slate-50 rounded-xl border border-slate-100 p-5 text-center hover:-translate-y-1 transition-transform duration-300 border-b-4 border-b-emerald-500">
+                        <div class="font-display font-extrabold text-3xl text-emerald-600 mb-1">48</div>
+                        <div class="font-semibold text-sm text-slate-700">Jalur Prestasi</div>
+                        <div class="text-xs text-slate-400 mt-1">Akademik & Non-Akademik</div>
+                    </div>
+                    <div class="bg-gradient-to-b from-white to-slate-50 rounded-xl border border-slate-100 p-5 text-center hover:-translate-y-1 transition-transform duration-300 border-b-4 border-b-amber-500">
+                        <div class="font-display font-extrabold text-3xl text-amber-600 mb-1">38</div>
+                        <div class="font-semibold text-sm text-slate-700">Jalur Afirmasi</div>
+                        <div class="text-xs text-slate-400 mt-1">Keluarga tidak mampu</div>
+                    </div>
+                    <div class="bg-gradient-to-b from-white to-slate-50 rounded-xl border border-slate-100 p-5 text-center hover:-translate-y-1 transition-transform duration-300 border-b-4 border-b-purple-400">
+                        <div class="font-display font-extrabold text-3xl text-purple-600 mb-1">10</div>
+                        <div class="font-semibold text-sm text-slate-700">Jalur Mutasi</div>
+                        <div class="text-xs text-slate-400 mt-1">Perpindahan tugas ortu</div>
                     </div>
                 </div>
-
-                <!-- Kuota Penerimaan -->
-                <div class="kuota-section">
-                    <h3 class="kuota-title">🎓 Kuota Penerimaan</h3>
-                    <div class="kuota-grid">
-                        <div class="kuota-card domisili">
-                            <div class="kuota-number">96</div>
-                            <div class="kuota-label">Jalur Domisili</div>
-                            <div class="kuota-sub">Berdasarkan jarak rumah</div>
-                        </div>
-                        <div class="kuota-card prestasi">
-                            <div class="kuota-number">48</div>
-                            <div class="kuota-label">Jalur Prestasi</div>
-                            <div class="kuota-sub">Akademik & Non-Akademik</div>
-                        </div>
-                        <div class="kuota-card afirmasi">
-                            <div class="kuota-number">38</div>
-                            <div class="kuota-label">Jalur Afirmasi</div>
-                            <div class="kuota-sub">Keluarga tidak mampu</div>
-                        </div>
-                        <div class="kuota-card mutasi">
-                            <div class="kuota-number">10</div>
-                            <div class="kuota-label">Jalur Mutasi</div>
-                            <div class="kuota-sub">Perpindahan tugas ortu</div>
-                        </div>
-                    </div>
-                    <div class="kuota-total-bar">
-                        Total Kuota: <strong>192 Siswa</strong> — Tahun Ajaran 2026/2027
-                    </div>
+                <div class="bg-gradient-to-r from-blue-800 to-blue-500 rounded-xl p-4 text-center text-white">
+                    <span class="text-sm font-medium">Total Kuota: <strong class="text-lg">192 Siswa</strong> — Tahun Ajaran 2026/2027</span>
                 </div>
+            </div>
 
-                <!-- Stats -->
-                <div class="stats-section" style="padding: 0; margin-bottom: 2rem;">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number" id="statPendaftar">0</div>
-                            <div class="stat-label">Total Pendaftar</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">192</div>
-                            <div class="stat-label">Kuota Siswa</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">2026/2027</div>
-                            <div class="stat-label">Tahun Ajaran</div>
-                        </div>
-                    </div>
+            <!-- Stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-center animate-breathe">
+                    <div class="font-display font-extrabold text-3xl text-blue-800 mb-1" id="statPendaftar">0</div>
+                    <div class="text-sm text-slate-500 font-medium">Total Pendaftar</div>
                 </div>
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-center">
+                    <div class="font-display font-extrabold text-3xl text-amber-600 mb-1">192</div>
+                    <div class="text-sm text-slate-500 font-medium">Kuota Siswa</div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-center">
+                    <div class="font-display font-extrabold text-3xl text-emerald-600 mb-1">2026/2027</div>
+                    <div class="text-sm text-slate-500 font-medium">Tahun Ajaran</div>
+                </div>
+            </div>
 
-                <!-- Features -->
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon blue">📋</div>
-                        <h3>Pra Pendaftaran Online</h3>
-                        <p>Isi formulir pendaftaran secara online dari rumah. Sistem akan otomatis menghitung jarak ke sekolah via GPS.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon amber">📍</div>
-                        <h3>Deteksi Jarak Otomatis</h3>
-                        <p>Jarak rumah ke sekolah dihitung otomatis dari lokasi perangkat Anda. Pastikan isi formulir dari lokasi rumah.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon green">✅</div>
-                        <h3>Hasil Seleksi</h3>
-                        <p>Pantau hasil seleksi secara online menggunakan nomor registrasi atau NISN yang telah didaftarkan.</p>
-                    </div>
+            <!-- Features -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-xl mb-4">📋</div>
+                    <h3 class="font-display font-bold text-slate-800 mb-2">Pra Pendaftaran Online</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Isi formulir dari rumah. GPS otomatis menghitung jarak ke sekolah.</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-xl mb-4">📍</div>
+                    <h3 class="font-display font-bold text-slate-800 mb-2">Deteksi Jarak Otomatis</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Isi formulir dari lokasi rumah Anda agar jarak terdeteksi dengan akurat.</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-xl mb-4">✅</div>
+                    <h3 class="font-display font-bold text-slate-800 mb-2">Hasil Seleksi</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">Cek hasil seleksi dengan NISN. Pantau status penerimaan Anda.</p>
                 </div>
             </div>
         </section>
 
         <!-- ==================== PRA PENDAFTARAN PAGE ==================== -->
         <section class="page-section" id="page-daftar">
-            <div class="form-page">
-                <div class="form-header">
-                    <h2>📝 Formulir Pra Pendaftaran</h2>
-                    <p>Lengkapi formulir berikut dengan data yang sesuai dokumen resmi</p>
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <!-- Form Header -->
+                <div class="bg-gradient-to-r from-blue-800 to-blue-500 p-6 sm:p-8 text-white">
+                    <h2 class="font-display font-bold text-xl sm:text-2xl flex items-center gap-3">📝 Formulir Pra Pendaftaran</h2>
+                    <p class="text-blue-100 text-sm mt-2">Lengkapi formulir berikut dengan data yang sesuai dokumen resmi</p>
                 </div>
 
-                <div class="form-card">
-                    <form id="formPendaftaran" novalidate>
+                <form id="formPendaftaran" class="p-6 sm:p-8 space-y-8" novalidate>
 
-                        <!-- Data Pribadi -->
-                        <div class="form-section-title">
-                            <div class="section-icon">👤</div>
-                            Data Pribadi Siswa
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="jalurPendaftaran">Jalur Pendaftaran <span class="required">*</span></label>
-                            <select class="form-control" id="jalurPendaftaran" name="jalurPendaftaran" required>
-                                <option value="">Pilih Jalur Pendaftaran</option>
-                                <option value="Domisili">Domisili</option>
-                                <option value="Prestasi">Prestasi</option>
-                                <option value="Afirmasi">Afirmasi (Keluarga tidak mampu)</option>
-                                <option value="Mutasi">Mutasi</option>
-                            </select>
-                            <div class="form-error-msg" id="error-jalurPendaftaran">Jalur pendaftaran wajib dipilih</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="nisn">NISN <span class="required">*</span></label>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <input type="text" class="form-control" id="nisn" name="nisn" placeholder="Masukkan 10 digit NISN" maxlength="10" inputmode="numeric" required>
-                                <button type="button" class="btn btn-primary" id="btnCekNisn" onclick="cekNisn()" style="width: auto; padding: 0 1.5rem; white-space: nowrap;">Cek NISN</button>
+                    <!-- Section 1: Data Pribadi -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-lg">👤</div>
+                            <div>
+                                <h3 class="font-display font-bold text-slate-800">Data Pribadi Siswa</h3>
+                                <p class="text-xs text-slate-400">Isi jalur dan NISN terlebih dahulu</p>
                             </div>
-                            <div class="form-hint">Nomor Induk Siswa Nasional (10 digit)</div>
-                            <div class="form-error-msg" id="error-nisn">NISN harus terdiri dari 10 digit angka</div>
                         </div>
-
-                        <fieldset id="formUtama" disabled style="border: none; padding: 0; margin: 0;">
-
-                        <div class="form-group">
-                            <label class="form-label" for="namaLengkap">Nama Lengkap <span class="required">*</span></label>
-                            <input type="text" class="form-control" id="namaLengkap" name="namaLengkap" placeholder="Masukkan nama lengkap sesuai akta" required>
-                            <div class="form-error-msg" id="error-namaLengkap">Nama lengkap wajib diisi</div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="jenisKelamin">Jenis Kelamin <span class="required">*</span></label>
-                                <select class="form-control" id="jenisKelamin" name="jenisKelamin" required>
-                                    <option value="">Pilih jenis kelamin</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Jalur Pendaftaran <span class="text-red-500">*</span></label>
+                                <select id="jalurPendaftaran" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    <option value="">— Pilih Jalur —</option>
+                                    <option value="Domisili">Domisili</option>
+                                    <option value="Prestasi">Prestasi</option>
+                                    <option value="Afirmasi">Afirmasi (Keluarga tidak mampu)</option>
+                                    <option value="Mutasi">Mutasi</option>
                                 </select>
-                                <div class="form-error-msg" id="error-jenisKelamin">Jenis kelamin wajib dipilih</div>
+                                <div class="error-text" id="error-jalurPendaftaran">Pilih jalur pendaftaran</div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="agama">Agama <span class="required">*</span></label>
-                                <select class="form-control" id="agama" name="agama" required>
-                                    <option value="">Pilih agama</option>
-                                    <option value="Islam">Islam</option>
-                                    <option value="Kristen">Kristen</option>
-                                    <option value="Katolik">Katolik</option>
-                                    <option value="Hindu">Hindu</option>
-                                    <option value="Buddha">Buddha</option>
-                                    <option value="Konghucu">Konghucu</option>
-                                </select>
-                                <div class="form-error-msg" id="error-agama">Agama wajib dipilih</div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1.5">NISN <span class="text-red-500">*</span></label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="nisn" maxlength="10" inputmode="numeric" placeholder="Masukkan 10 digit NISN" class="form-control flex-1 px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    <button type="button" id="btnCekNisn" onclick="cekNisn()" class="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm whitespace-nowrap">Cek</button>
+                                </div>
+                                <div class="error-text" id="error-nisn">NISN harus 10 digit angka</div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="tempatLahir">Tempat Lahir <span class="required">*</span></label>
-                                <input type="text" class="form-control" id="tempatLahir" name="tempatLahir" placeholder="Contoh: Pekanbaru" required>
-                                <div class="form-error-msg" id="error-tempatLahir">Tempat lahir wajib diisi</div>
+                    <!-- Gated Fieldset (disabled until NISN verified) -->
+                    <fieldset id="formUtama" disabled>
+                        <div class="space-y-8">
+
+                            <!-- More Data Pribadi -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+                                    <input type="text" id="namaLengkap" placeholder="Nama sesuai ijazah" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    <div class="error-text" id="error-namaLengkap">Nama lengkap wajib diisi</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Jenis Kelamin <span class="text-red-500">*</span></label>
+                                    <select id="jenisKelamin" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <option value="">— Pilih —</option>
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>
+                                    <div class="error-text" id="error-jenisKelamin">Pilih jenis kelamin</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Agama <span class="text-red-500">*</span></label>
+                                    <select id="agama" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <option value="">— Pilih —</option>
+                                        <option value="Islam">Islam</option>
+                                        <option value="Kristen">Kristen</option>
+                                        <option value="Katolik">Katolik</option>
+                                        <option value="Hindu">Hindu</option>
+                                        <option value="Buddha">Buddha</option>
+                                        <option value="Konghucu">Konghucu</option>
+                                    </select>
+                                    <div class="error-text" id="error-agama">Pilih agama</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Tempat Lahir <span class="text-red-500">*</span></label>
+                                    <input type="text" id="tempatLahir" placeholder="Contoh: Pekanbaru" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    <div class="error-text" id="error-tempatLahir">Tempat lahir wajib diisi</div>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Tanggal Lahir <span class="text-red-500">*</span></label>
+                                    <input type="date" id="tanggalLahir" min="2011-07-01" value="2014-01-01" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    <div class="error-text" id="error-tanggalLahir">Tanggal lahir wajib diisi</div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label" for="tanggalLahir">Tanggal Lahir <span class="required">*</span></label>
-                                <input type="date" class="form-control" id="tanggalLahir" name="tanggalLahir" min="2011-07-01" value="2014-01-01" required>
-                                <div class="form-error-msg" id="error-tanggalLahir">Tanggal lahir wajib diisi dan maksimal kelahiran 1 Juli 2011</div>
-                            </div>
-                        </div>
 
-                        <hr class="form-divider">
-
-                        <!-- Kontak -->
-                        <div class="form-section-title">
-                            <div class="section-icon">👨‍👩‍👧‍👦</div>
-                            Data Orang Tua & Kontak
-                        </div>
-
-                        <!-- Data Ayah -->
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="namaAyah">Nama Ayah Kandung <span class="required">*</span></label>
-                                <input type="text" class="form-control" id="namaAyah" name="namaAyah" placeholder="Nama Lengkap Ayah" required>
-                                <div class="form-error-msg" id="error-namaAyah">Nama ayah wajib diisi</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="statusAyah">Status Ayah Kandung <span class="required">*</span></label>
-                                <select class="form-control" id="statusAyah" name="statusAyah" required>
-                                    <option value="">Pilih status</option>
-                                    <option value="Masih Hidup">Masih Hidup</option>
-                                    <option value="Sudah Meninggal">Sudah Meninggal</option>
-                                </select>
-                                <div class="form-error-msg" id="error-statusAyah">Status ayah wajib dipilih</div>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="pekerjaanAyah">Pekerjaan Ayah</label>
-                                <input type="text" class="form-control" id="pekerjaanAyah" name="pekerjaanAyah" placeholder="Pekerjaan saat ini">
-                                <div class="form-error-msg" id="error-pekerjaanAyah">Pekerjaan tidak valid</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="penghasilanAyah">Penghasilan Ayah (Rp)</label>
-                                <input type="text" class="form-control" id="penghasilanAyah" name="penghasilanAyah" placeholder="Contoh: 3000000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                                <div class="form-error-msg" id="error-penghasilanAyah">Penghasilan tidak valid</div>
-                            </div>
-                        </div>
-
-                        <!-- Data Ibu -->
-                        <div class="form-row" style="margin-top: 1rem;">
-                            <div class="form-group">
-                                <label class="form-label" for="namaIbu">Nama Ibu Kandung <span class="required">*</span></label>
-                                <input type="text" class="form-control" id="namaIbu" name="namaIbu" placeholder="Nama Lengkap Ibu" required>
-                                <div class="form-error-msg" id="error-namaIbu">Nama ibu wajib diisi</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="statusIbu">Status Ibu Kandung <span class="required">*</span></label>
-                                <select class="form-control" id="statusIbu" name="statusIbu" required>
-                                    <option value="">Pilih status</option>
-                                    <option value="Masih Hidup">Masih Hidup</option>
-                                    <option value="Sudah Meninggal">Sudah Meninggal</option>
-                                </select>
-                                <div class="form-error-msg" id="error-statusIbu">Status ibu wajib dipilih</div>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="pekerjaanIbu">Pekerjaan Ibu</label>
-                                <input type="text" class="form-control" id="pekerjaanIbu" name="pekerjaanIbu" placeholder="Pekerjaan saat ini">
-                                <div class="form-error-msg" id="error-pekerjaanIbu">Pekerjaan tidak valid</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="penghasilanIbu">Penghasilan Ibu (Rp)</label>
-                                <input type="text" class="form-control" id="penghasilanIbu" name="penghasilanIbu" placeholder="Contoh: 2000000" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                                <div class="form-error-msg" id="error-penghasilanIbu">Penghasilan tidak valid</div>
-                            </div>
-                        </div>
-
-                        <!-- Nomor Kontak -->
-                        <div class="form-group" style="margin-top: 1rem;">
-                            <label class="form-label" for="hpSiswa">No. HP Siswa <span class="optional">(opsional)</span></label>
-                            <input type="tel" class="form-control" id="hpSiswa" name="hpSiswa" placeholder="Contoh: 08123456789" inputmode="tel">
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="hpAyah">No. HP Ayah <span class="optional">(opsional)</span></label>
-                                <input type="tel" class="form-control" id="hpAyah" name="hpAyah" placeholder="Contoh: 08123456789" inputmode="tel">
-                                <div class="form-error-msg" id="error-hpAyah">No. HP tidak valid</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="hpIbu">No. HP Ibu <span class="optional">(opsional)</span></label>
-                                <input type="tel" class="form-control" id="hpIbu" name="hpIbu" placeholder="Contoh: 08123456789" inputmode="tel">
-                                <div class="form-error-msg" id="error-hpIbu">No. HP tidak valid</div>
-                            </div>
-                        </div>
-
-                        <hr class="form-divider">
-
-                        <!-- Data Sekolah Asal & Nilai -->
-                        <div class="form-section-title">
-                            <div class="section-icon">🏫</div>
-                            Data Sekolah Asal & Nilai
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="asalSekolah">Asal Sekolah <span class="required">*</span></label>
-                            <select class="form-control" id="asalSekolah" name="asalSekolah" required onchange="toggleAsalSekolahLainnya()">
-                                <option value="">Pilih Asal Sekolah</option>
-                                <option value="SDN 008 Seikijang">SDN 008 Seikijang</option>
-                                <option value="SDN 001 Seikijang">SDN 001 Seikijang</option>
-                                <option value="SDN 006 Muda Setia">SDN 006 Muda Setia</option>
-                                <option value="SDN 003 Lubuk Ogong">SDN 003 Lubuk Ogong</option>
-                                <option value="SDN 004 Lubuk Ogong">SDN 004 Lubuk Ogong</option>
-                                <option value="SDN 11 Kerinci Kiri">SDN 11 Kerinci Kiri</option>
-                                <option value="SD Permata Rantau Baru">SD Permata Rantau Baru</option>
-                                <option value="Lainnya">SD Lainnya (Ketik Manual)</option>
-                            </select>
-                            <div class="form-error-msg" id="error-asalSekolah">Asal sekolah wajib dipilih</div>
-                        </div>
-
-                        <div class="form-group" id="containerAsalSekolahLainnya" style="display: none;">
-                            <label class="form-label" for="asalSekolahLainnya">Nama SD Lainnya <span class="required">*</span></label>
-                            <input type="text" class="form-control" id="asalSekolahLainnya" name="asalSekolahLainnya" placeholder="Ketik nama sekolah asal">
-                            <div class="form-error-msg" id="error-asalSekolahLainnya">Nama sekolah wajib diisi</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="rataIjazah">Rata - Rata Nilai Ijazah / SKL <span class="required">*</span></label>
-                            <input type="text" class="form-control" id="rataIjazah" name="rataIjazah" placeholder="Contoh: 85.50" inputmode="decimal" required oninput="this.value=this.value.replace(/,/g,'.'); if(parseFloat(this.value)>100) this.value='100';">
-                            <div class="form-hint">Gunakan titik (.) atau koma (,) sebagai pemisah desimal. Maksimal 100.</div>
-                            <div class="form-error-msg" id="error-rataIjazah">Nilai wajib diisi dan harus valid</div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="tkaMatematika">Nilai TKA Matematika</label>
-                                <input type="text" class="form-control" id="tkaMatematika" name="tkaMatematika" placeholder="0" inputmode="decimal" oninput="this.value=this.value.replace(/,/g,'.'); hitungTka()">
-                                <div class="form-error-msg" id="error-tkaMatematika">Nilai tidak valid</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="tkaBahasa">Nilai TKA Bahasa Indonesia</label>
-                                <input type="text" class="form-control" id="tkaBahasa" name="tkaBahasa" placeholder="0" inputmode="decimal" oninput="this.value=this.value.replace(/,/g,'.'); hitungTka()">
-                                <div class="form-error-msg" id="error-tkaBahasa">Nilai tidak valid</div>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="tkaTotal">Total Nilai TKA</label>
-                                <input type="text" class="form-control" id="tkaTotal" name="tkaTotal" placeholder="0" readonly style="background-color: var(--bg-surface); font-weight: bold;">
-                            </div>
-                        </div>
-
-                        <hr class="form-divider">
-
-                        <!-- Alamat -->
-                        <div class="form-section-title">
-                            <div class="section-icon">🏠</div>
-                            Informasi Alamat
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="alamat">Alamat Rumah <span class="required">*</span></label>
-                            <textarea class="form-control" id="alamat" name="alamat" placeholder="Masukkan alamat lengkap (RT/RW, Desa/Kelurahan, Kecamatan)" required></textarea>
-                            <div class="form-error-msg" id="error-alamat">Alamat rumah wajib diisi</div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Tinggal Bersama <span class="required">*</span></label>
-                                <div class="radio-group">
-                                    <div class="radio-option">
-                                        <input type="radio" name="tinggalBersama" id="tinggalOrtu" value="Orang Tua" required>
-                                        <label for="tinggalOrtu">Orang Tua</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" name="tinggalBersama" id="tinggalWali" value="Wali">
-                                        <label for="tinggalWali">Wali</label>
+                            <!-- Section 2: Data Orang Tua -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+                                    <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-lg">👨‍👩‍👧‍👦</div>
+                                    <div>
+                                        <h3 class="font-display font-bold text-slate-800">Data Orang Tua & Kontak</h3>
+                                        <p class="text-xs text-slate-400">Informasi orang tua dan nomor HP</p>
                                     </div>
                                 </div>
-                                <div class="form-error-msg" id="error-tinggalBersama">Pilih salah satu opsi</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Jarak Rumah ke Sekolah <span class="required">*</span></label>
-                                <div class="gps-widget" id="gpsWidget">
-                                    <button type="button" class="btn-gps" id="btnGetLocation" onclick="getGPSLocation()">
-                                        <span class="gps-spinner"></span>
-                                        📍 Deteksi Lokasi Saya
-                                    </button>
-                                    <div class="gps-result" id="gpsResult" style="display: none;">
-                                        <div class="gps-result-icon">📍</div>
-                                        <div class="gps-result-info">
-                                            <div class="gps-distance-value" id="gpsDistanceValue">— KM</div>
-                                            <div class="gps-distance-label">Jarak ke SMPN 1 Bandar Seikijang</div>
-                                        </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nama Ayah Kandung <span class="text-red-500">*</span></label>
+                                        <input type="text" id="namaAyah" placeholder="Nama ayah" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <div class="error-text" id="error-namaAyah">Nama ayah wajib diisi</div>
                                     </div>
-                                    <div class="gps-coords" id="gpsCoords"></div>
-                                    <input type="hidden" id="jarakRumah" name="jarakRumah" value="">
-                                    <input type="hidden" id="latUser" name="latUser" value="">
-                                    <input type="hidden" id="lngUser" name="lngUser" value="">
-                                </div>
-                                <div class="form-hint">Pastikan mengisi formulir dari lokasi rumah untuk akurasi jarak</div>
-                                <div class="form-error-msg" id="error-jarakRumah">Silakan deteksi lokasi terlebih dahulu</div>
-                            </div>
-                        </div>
-
-                        <hr class="form-divider">
-
-                        <!-- Skor Preview -->
-                        <div class="form-section-title">
-                            <div class="section-icon">📊</div>
-                            Estimasi Skor Seleksi
-                        </div>
-
-                        <div class="score-preview" id="scorePreview">
-                            <div class="score-header">
-                                <div class="score-header-left">
-                                    <div class="score-header-title">Skor</div>
-                                </div>
-                                <div class="score-total-display">
-                                    <div class="score-total-number empty" id="scoreTotalNumber">—</div>
-                                    <div class="score-total-label">dari 100 poin</div>
-                                </div>
-                            </div>
-
-                            <div id="scoreContent">
-                                <div class="score-empty-msg" id="scoreEmptyMsg">
-                                    Isi tanggal lahir dan deteksi lokasi GPS untuk melihat estimasi skor
-                                </div>
-
-                                <div class="score-bars" id="scoreBars" style="display: none;">
-                                    <div class="score-bar-item">
-                                        <div class="score-bar-header">
-                                            <span class="score-bar-label">📍 Skor Jarak (maks. 85)</span>
-                                            <span class="score-bar-value blue" id="scoreDistValue">0</span>
-                                        </div>
-                                        <div class="score-bar-track">
-                                            <div class="score-bar-fill blue" id="scoreDistBar" style="width: 0%"></div>
-                                        </div>
-                                        <div class="score-bar-detail" id="scoreDistDetail">Belum terdeteksi</div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Status Ayah Kandung <span class="text-red-500">*</span></label>
+                                        <select id="statusAyah" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                            <option value="">— Pilih —</option>
+                                            <option value="Masih Hidup">Masih Hidup</option>
+                                            <option value="Sudah Meninggal">Sudah Meninggal</option>
+                                        </select>
+                                        <div class="error-text" id="error-statusAyah">Pilih status ayah</div>
                                     </div>
-                                    <div class="score-bar-item">
-                                        <div class="score-bar-header">
-                                            <span class="score-bar-label">🎂 Skor Usia (maks. 15)</span>
-                                            <span class="score-bar-value amber" id="scoreAgeValue">0</span>
-                                        </div>
-                                        <div class="score-bar-track">
-                                            <div class="score-bar-fill amber" id="scoreAgeBar" style="width: 0%"></div>
-                                        </div>
-                                        <div class="score-bar-detail" id="scoreAgeDetail">Belum diisi</div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Pekerjaan Ayah</label>
+                                        <input type="text" id="pekerjaanAyah" placeholder="Contoh: Petani" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Penghasilan Ayah</label>
+                                        <input type="text" id="penghasilanAyah" inputmode="numeric" placeholder="Contoh: 2000000" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nama Ibu Kandung <span class="text-red-500">*</span></label>
+                                        <input type="text" id="namaIbu" placeholder="Nama ibu" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <div class="error-text" id="error-namaIbu">Nama ibu wajib diisi</div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Status Ibu Kandung <span class="text-red-500">*</span></label>
+                                        <select id="statusIbu" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                            <option value="">— Pilih —</option>
+                                            <option value="Masih Hidup">Masih Hidup</option>
+                                            <option value="Sudah Meninggal">Sudah Meninggal</option>
+                                        </select>
+                                        <div class="error-text" id="error-statusIbu">Pilih status ibu</div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Pekerjaan Ibu</label>
+                                        <input type="text" id="pekerjaanIbu" placeholder="Contoh: Ibu Rumah Tangga" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Penghasilan Ibu</label>
+                                        <input type="text" id="penghasilanIbu" inputmode="numeric" placeholder="Contoh: 1000000" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">No. HP Siswa <span class="text-slate-400 text-xs font-normal">(opsional)</span></label>
+                                        <input type="tel" id="hpSiswa" placeholder="08xxxxxxxxxx" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">No. HP Ayah <span class="text-slate-400 text-xs font-normal">(opsional)</span></label>
+                                        <input type="tel" id="hpAyah" placeholder="08xxxxxxxxxx" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <div class="error-text" id="error-hpAyah">No HP minimal 10 digit</div>
+                                    </div>
+                                    <div class="md:col-span-2 md:w-1/2">
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">No. HP Ibu <span class="text-slate-400 text-xs font-normal">(opsional)</span></label>
+                                        <input type="tel" id="hpIbu" placeholder="08xxxxxxxxxx" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <div class="error-text" id="error-hpIbu">No HP minimal 10 digit</div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <hr class="form-divider">
+                            <!-- Section 3: Data Sekolah -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-lg">🏫</div>
+                                    <div>
+                                        <h3 class="font-display font-bold text-slate-800">Data Sekolah Asal & Nilai</h3>
+                                        <p class="text-xs text-slate-400">Informasi sekolah dan nilai akademik</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Asal Sekolah (SD/MI) <span class="text-red-500">*</span></label>
+                                        <select id="asalSekolah" onchange="toggleAsalSekolahLainnya()" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                            <option value="">— Pilih Sekolah —</option>
+                                            <option value="SDN 008 Seikijang">SDN 008 Seikijang</option>
+                                            <option value="SDN 001 Seikijang">SDN 001 Seikijang</option>
+                                            <option value="SDN 006 Muda Setia">SDN 006 Muda Setia</option>
+                                            <option value="SDN 003 Lubuk Ogong">SDN 003 Lubuk Ogong</option>
+                                            <option value="SDN 004 Lubuk Ogong">SDN 004 Lubuk Ogong</option>
+                                            <option value="SDN 11 Kerinci Kiri">SDN 11 Kerinci Kiri</option>
+                                            <option value="SD Permata Rantau Baru">SD Permata Rantau Baru</option>
+                                            <option value="Lainnya">Lainnya</option>
+                                        </select>
+                                        <div class="error-text" id="error-asalSekolah">Pilih sekolah asal</div>
+                                    </div>
+                                    <div class="md:col-span-2 hidden" id="containerAsalSekolahLainnya">
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nama SD Lainnya <span class="text-red-500">*</span></label>
+                                        <input type="text" id="asalSekolahLainnya" placeholder="Ketik nama sekolah" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <div class="error-text" id="error-asalSekolahLainnya">Nama sekolah lainnya wajib diisi</div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Rata-Rata Nilai Ijazah/SKL <span class="text-red-500">*</span></label>
+                                        <input type="text" id="rataIjazah" inputmode="decimal" placeholder="Contoh: 85.5 (maks 100)" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, '')" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <div class="error-text" id="error-rataIjazah">Nilai rata-rata wajib diisi (0-100)</div>
+                                    </div>
+                                    <div class="hidden"></div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nilai TKA Matematika <span class="text-slate-400 text-xs font-normal">(maks 100)</span></label>
+                                        <input type="text" id="tkaMatematika" inputmode="decimal" placeholder="Diisi saat tes" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, ''); hitungTka()" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <div class="error-text" id="error-tkaMatematika">Nilai TKA Matematika maks 100</div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nilai TKA Bahasa Indonesia <span class="text-slate-400 text-xs font-normal">(maks 100)</span></label>
+                                        <input type="text" id="tkaBahasa" inputmode="decimal" placeholder="Diisi saat tes" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, ''); hitungTka()" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <div class="error-text" id="error-tkaBahasa">Nilai TKA B. Indonesia maks 100</div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Total Nilai TKA</label>
+                                        <input type="text" id="tkaTotal" readonly placeholder="Otomatis" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-100 text-sm outline-none cursor-not-allowed text-slate-500">
+                                    </div>
+                                </div>
+                            </div>
 
-                        <!-- Actions -->
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-outline" onclick="resetForm()">
-                                🔄 Reset
-                            </button>
-                            <button type="submit" class="btn btn-success btn-submit" id="btnSubmit">
-                                📤 Kirim Pendaftaran
-                            </button>
+                            <!-- Section 4: Alamat -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+                                    <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-lg">🏠</div>
+                                    <div>
+                                        <h3 class="font-display font-bold text-slate-800">Informasi Alamat</h3>
+                                        <p class="text-xs text-slate-400">Alamat rumah dan deteksi GPS</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-5">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Alamat Rumah <span class="text-red-500">*</span></label>
+                                        <textarea id="alamat" rows="3" placeholder="Jalan, RT/RW, Desa/Kelurahan, Kecamatan" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-y"></textarea>
+                                        <div class="error-text" id="error-alamat">Alamat wajib diisi</div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-3">Tinggal Bersama <span class="text-red-500">*</span></label>
+                                        <div class="flex flex-col sm:flex-row gap-3">
+                                            <input type="radio" name="tinggalBersama" value="Orang Tua" id="tinggalOrtu" class="radio-custom">
+                                            <label for="tinggalOrtu" class="flex-1">Orang Tua</label>
+                                            <input type="radio" name="tinggalBersama" value="Wali" id="tinggalWali" class="radio-custom">
+                                            <label for="tinggalWali" class="flex-1">Wali</label>
+                                        </div>
+                                        <div class="error-text" id="error-tinggalBersama">Pilih tinggal bersama</div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Lokasi GPS <span class="text-red-500">*</span></label>
+                                        <div class="gps-widget border-2 border-dashed border-slate-200 rounded-xl p-6 text-center transition-all duration-300" id="gpsWidget">
+                                            <button type="button" id="btnGetLocation" onclick="getGPSLocation()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-800 to-blue-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300">
+                                                📍 Deteksi Lokasi Otomatis
+                                            </button>
+                                            <p class="text-xs text-slate-400 mt-3">Pastikan Anda mengisi dari lokasi rumah</p>
+                                            <div id="gpsResult" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-left">
+                                                <div class="flex items-center gap-2 text-emerald-700 font-semibold text-sm mb-2">✅ Lokasi Terdeteksi</div>
+                                                <div class="text-sm text-slate-700">Jarak ke sekolah: <strong class="text-blue-800 text-lg" id="gpsDistanceValue">—</strong> KM</div>
+                                                <div class="text-xs text-slate-400 mt-1" id="gpsCoords"></div>
+                                                <button type="button" onclick="getGPSLocation()" class="mt-3 text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline">🔄 Deteksi Ulang</button>
+                                            </div>
+                                        </div>
+                                        <div class="error-text" id="error-jarakRumah">Deteksi lokasi GPS wajib dilakukan</div>
+                                        <input type="hidden" id="jarakRumah">
+                                        <input type="hidden" id="latUser">
+                                        <input type="hidden" id="lngUser">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 5: Score Preview -->
+                            <div>
+                                <div class="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-lg">📊</div>
+                                    <div>
+                                        <h3 class="font-display font-bold text-slate-800">Estimasi Skor Seleksi</h3>
+                                        <p class="text-xs text-slate-400">Skor dihitung otomatis berdasarkan jarak dan usia</p>
+                                    </div>
+                                </div>
+                                <div id="scorePreview" class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl border border-slate-200 p-6">
+                                    <div class="flex items-center justify-between mb-5">
+                                        <span class="text-sm font-semibold text-slate-600">Total Skor</span>
+                                        <div class="text-right">
+                                            <span class="font-display font-extrabold text-3xl text-slate-300" id="scoreTotalNumber">—</span>
+                                            <span class="text-xs text-slate-400 ml-1">dari 100 poin</span>
+                                        </div>
+                                    </div>
+                                    <div id="scoreEmptyMsg" class="text-center text-sm text-slate-400 py-4">
+                                        Isi tanggal lahir dan deteksi GPS untuk melihat estimasi skor
+                                    </div>
+                                    <div id="scoreBars" class="space-y-4 hidden">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="text-sm text-slate-600 font-medium">📍 Skor Jarak (maks. 85)</span>
+                                                <span class="text-sm font-bold text-blue-800" id="scoreDistValue">0</span>
+                                            </div>
+                                            <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                                                <div class="score-bar-fill h-full bg-gradient-to-r from-blue-800 to-blue-400 rounded-full" id="scoreDistBar" style="width: 0%"></div>
+                                            </div>
+                                            <div class="text-xs text-slate-400 mt-1" id="scoreDistDetail"></div>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="text-sm text-slate-600 font-medium">🎂 Skor Usia (maks. 15)</span>
+                                                <span class="text-sm font-bold text-amber-600" id="scoreAgeValue">0</span>
+                                            </div>
+                                            <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                                                <div class="score-bar-fill h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full" id="scoreAgeBar" style="width: 0%"></div>
+                                            </div>
+                                            <div class="text-xs text-slate-400 mt-1" id="scoreAgeDetail"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
+                                <button type="button" onclick="resetForm()" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border-2 border-slate-200 text-slate-600 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 text-sm">
+                                    🔄 Reset
+                                </button>
+                                <button type="submit" id="btnSubmit" class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all duration-300 text-sm">
+                                    📤 Kirim Pendaftaran
+                                </button>
+                            </div>
                         </div>
-                        </fieldset>
-                    </form>
-                </div>
+                    </fieldset>
+                </form>
             </div>
         </section>
 
         <!-- ==================== HASIL SELEKSI PAGE ==================== -->
         <section class="page-section" id="page-hasil">
-            <div class="hasil-page" style="text-align: left; max-width: 1200px; margin: 0 auto; width: 100%;">
-                <div class="form-section-title" style="margin-bottom: 2rem;">
-                    <div class="section-icon">🏆</div>
-                    Data Hasil Seleksi
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="font-display font-bold text-xl text-slate-800 flex items-center gap-2">🏆 Data Hasil Seleksi</h2>
+                        <p class="text-sm text-slate-500 mt-1">Pilih jalur pendaftaran untuk melihat data</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <select id="filterJalur" onchange="loadHasilSeleksi()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option value="Domisili">Jalur Domisili</option>
+                            <option value="Prestasi">Jalur Prestasi</option>
+                            <option value="Afirmasi">Jalur Afirmasi</option>
+                            <option value="Mutasi">Jalur Mutasi</option>
+                        </select>
+                        <button onclick="loadHasilSeleksi()" id="btnRefreshHasil" class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-800 text-white text-sm font-semibold rounded-xl hover:bg-blue-900 transition shadow-sm">
+                            🔄 Muat Ulang <span id="hasilLoadingText" class="hidden text-xs">(memuat...)</span>
+                        </button>
+                    </div>
                 </div>
-                
-                <div style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                    <select class="form-control" id="filterJalur" onchange="loadHasilSeleksi()" style="width: auto; min-width: 200px;">
-                        <option value="Domisili">Jalur Domisili</option>
-                        <option value="Prestasi">Jalur Prestasi</option>
-                        <option value="Afirmasi">Jalur Afirmasi</option>
-                        <option value="Mutasi">Jalur Mutasi</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="loadHasilSeleksi()" id="btnRefreshHasil" style="width: auto;">
-                        🔄 Muat Ulang Data
-                    </button>
-                    <span id="hasilLoadingText" style="display: none; color: var(--text-secondary);">Mengambil data dari server...</span>
-                </div>
-
-                <div class="table-responsive" style="overflow-x: auto; background: var(--bg-surface); border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
-                    <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
-                        <thead>
-                            <tr style="background-color: var(--primary); color: white; text-align: left;">
-                                <th style="padding: 1rem; font-weight: 600;">NISN</th>
-                                <th style="padding: 1rem; font-weight: 600;">Nama Lengkap</th>
-                                <th style="padding: 1rem; font-weight: 600;">Asal Sekolah</th>
-                                <th style="padding: 1rem; font-weight: 600;">Total TKA</th>
-                                <th style="padding: 1rem; font-weight: 600;">Nilai SKL</th>
-                                <th style="padding: 1rem; font-weight: 600;">Skor Domisili</th>
-                                <th style="padding: 1rem; font-weight: 600;">Status</th>
+                <div class="overflow-x-auto rounded-xl border border-slate-100">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gradient-to-r from-slate-50 to-slate-100 text-slate-600 text-xs uppercase tracking-wider">
+                            <tr>
+                                <th class="px-4 py-3.5 text-left font-semibold">NISN</th>
+                                <th class="px-4 py-3.5 text-left font-semibold">Nama Lengkap</th>
+                                <th class="px-4 py-3.5 text-left font-semibold">Asal Sekolah</th>
+                                <th class="px-4 py-3.5 text-center font-semibold">Total TKA</th>
+                                <th class="px-4 py-3.5 text-center font-semibold">Nilai SKL</th>
+                                <th class="px-4 py-3.5 text-center font-semibold">Skor Domisili</th>
+                                <th class="px-4 py-3.5 text-center font-semibold">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBodyHasil">
-                            <tr>
-                                <td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-secondary);">
-                                    Klik "Muat Ulang Data" untuk memuat hasil seleksi.
-                                </td>
-                            </tr>
+                        <tbody id="tableBodyHasil" class="divide-y divide-slate-100">
+                            <tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Klik "Muat Ulang" untuk mengambil data</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -570,48 +633,56 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <p>Â© 2026 SMPN 1 Bandar Seikijang — Seleksi Penerimaan Murid Baru Tahun Ajaran 2026/2027</p>
+    <footer class="relative z-10 text-center py-6 px-4 text-sm text-slate-400">
+        &copy; 2026 SMPN 1 Bandar Seikijang — Seleksi Penerimaan Murid Baru Tahun Ajaran 2026/2027
     </footer>
 
     <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- Alert Modal -->
+    <div id="alertModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden" onclick="if(event.target===this)closeAlert()">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-modal-in" id="alertModalContent">
+            <div class="text-4xl mb-3" id="alertIcon">ℹ️</div>
+            <h4 class="font-display font-bold text-lg text-slate-800 mb-2" id="alertTitle">Informasi</h4>
+            <p class="text-sm text-slate-600 leading-relaxed mb-5" id="alertMessage"></p>
+            <button onclick="closeAlert()" class="w-full py-2.5 rounded-xl font-semibold text-sm transition-all duration-300" id="alertBtn">OK</button>
+        </div>
+    </div>
 
     <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
+    <div class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[200] flex items-center justify-center hidden" id="loadingOverlay">
         <div class="spinner"></div>
     </div>
 
     <!-- Success Modal -->
-    <div class="modal-overlay" id="successModal">
-        <div class="modal">
-            <div class="modal-icon">✅</div>
-            <h3>Pendaftaran Berhasil!</h3>
-            <p>Data pra pendaftaran Anda telah berhasil disimpan. Gunakan NISN Anda untuk mengecek hasil seleksi nanti.</p>
-            <div class="modal-score" id="modalScore">
-                <div class="modal-score-total">
-                    <div class="modal-score-number" id="modalScoreTotal">—</div>
-                    <div class="modal-score-label">Total Skor</div>
+    <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[300] flex items-center justify-center p-4 hidden" id="successModal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center animate-modal-in">
+            <div class="text-5xl mb-4">✅</div>
+            <h3 class="font-display font-bold text-xl text-slate-800 mb-2">Pendaftaran Berhasil!</h3>
+            <p class="text-sm text-slate-500 mb-6">Data pra pendaftaran Anda telah berhasil disimpan. Gunakan NISN Anda untuk mengecek hasil seleksi nanti.</p>
+            <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-5 mb-6 border border-slate-200">
+                <div class="text-center mb-4">
+                    <div class="font-display font-extrabold text-4xl text-blue-800" id="modalScoreTotal">—</div>
+                    <div class="text-xs text-slate-500 mt-1">Total Skor</div>
                 </div>
-                <div class="modal-score-rows">
-                    <div class="modal-score-row">
-                        <span class="modal-score-row-label">📍 Skor Jarak</span>
-                        <span class="modal-score-row-value blue" id="modalScoreDist">—</span>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-600">📍 Skor Jarak</span>
+                        <span class="font-bold text-blue-600" id="modalScoreDist">—</span>
                     </div>
-                    <div class="modal-score-row">
-                        <span class="modal-score-row-label">🎂 Skor Usia</span>
-                        <span class="modal-score-row-value amber" id="modalScoreAge">—</span>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-600">🎂 Skor Usia</span>
+                        <span class="font-bold text-amber-600" id="modalScoreAge">—</span>
                     </div>
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="closeModal()" style="width: 100%; justify-content: center;">
+            <button class="w-full py-3 bg-gradient-to-r from-blue-800 to-blue-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 text-sm" onclick="closeModal()">
                 Tutup & Kembali ke Beranda
             </button>
         </div>
     </div>
 
     <!-- Scroll to Top -->
-    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+    <button class="scroll-top-btn fixed bottom-6 right-6 z-50 w-11 h-11 bg-gradient-to-r from-blue-800 to-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center text-lg hover:-translate-y-1 transition-all duration-300" id="scrollTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
 
     <!-- Firebase SDK (Compat v9) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -619,7 +690,7 @@
 
     <script>
         // ============================================================
-        // FIREBASE CONFIGURATION
+        // FIREBASE INIT
         // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyBdkf6-EzUHc7AIrwOUz9KdAYlUBmz0QVA",
@@ -629,93 +700,60 @@
             messagingSenderId: "657771871334",
             appId: "1:657771871334:web:108066841d19d820ae41a7"
         };
-
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-
-
 
         // ============================================================
         // SPA NAVIGATION
         // ============================================================
         const pages = ['home', 'daftar', 'hasil'];
-        let currentPage = 'home';
-        let isNavigating = false;
 
         function navigateTo(page) {
-            if (!pages.includes(page)) page = 'home';
-
-            // Skip if already on this page or mid-navigation
-            if (page === currentPage || isNavigating) return;
-
-            isNavigating = true;
-
             // Close mobile menu
             document.getElementById('navbarMenu').classList.remove('open');
 
             // Update nav links
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            const navLink = document.getElementById(`nav-${page}`);
-            if (navLink) navLink.classList.add('active');
-
-            // Hide current page
-            const currentEl = document.getElementById(`page-${currentPage}`);
-            if (currentEl) {
-                currentEl.classList.remove('visible');
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-blue-800', 'bg-blue-50');
+                link.classList.add('text-slate-600');
+            });
+            const activeLink = document.getElementById(`nav-${page}`);
+            if (activeLink) {
+                activeLink.classList.add('text-blue-800', 'bg-blue-50');
+                activeLink.classList.remove('text-slate-600');
             }
 
-            // After fade-out, swap pages
-            setTimeout(() => {
-                // Hide old page completely
-                if (currentEl) {
-                    currentEl.classList.remove('active');
+            // Hide all pages except target
+            document.querySelectorAll('.page-section').forEach(section => {
+                if (section.id !== `page-${page}`) {
+                    section.classList.remove('visible');
+                    setTimeout(() => section.classList.remove('active'), 400);
                 }
+            });
 
-                // Show new page
-                currentPage = page;
-                const newEl = document.getElementById(`page-${page}`);
-                if (newEl) {
-                    newEl.classList.add('active');
-                    // Force reflow before adding visible class for animation
-                    void newEl.offsetHeight;
-                    newEl.classList.add('visible');
-                    
-                    if (page === 'hasil') {
-                        loadHasilSeleksi();
-                    }
-                }
+            // Show target page
+            const target = document.getElementById(`page-${page}`);
+            if (target) {
+                target.classList.add('active');
+                setTimeout(() => target.classList.add('visible'), 50);
+            }
 
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Update hash
+            window.location.hash = page;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                // Update hash without triggering hashchange handler
-                const newHash = page === 'home' ? '' : page;
-                history.replaceState(null, '', newHash ? `#${newHash}` : window.location.pathname);
-
-                isNavigating = false;
-            }, 350);
+            // Auto-load Hasil Seleksi
+            if (page === 'hasil') {
+                setTimeout(() => loadHasilSeleksi(), 500);
+            }
         }
 
-        // Handle hash navigation on load and back/forward
         function handleHash() {
             const hash = window.location.hash.replace('#', '');
-            const target = (hash && pages.includes(hash)) ? hash : 'home';
-            if (target !== currentPage) {
-                // Direct swap without animation for initial load
-                document.querySelectorAll('.page-section').forEach(el => {
-                    el.classList.remove('active', 'visible');
-                });
-                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                const navLink = document.getElementById(`nav-${target}`);
-                if (navLink) navLink.classList.add('active');
-                currentPage = target;
-                const newEl = document.getElementById(`page-${target}`);
-                if (newEl) {
-                    newEl.classList.add('active', 'visible');
-                }
+            if (pages.includes(hash)) {
+                navigateTo(hash);
             }
         }
-
         window.addEventListener('hashchange', handleHash);
         window.addEventListener('load', handleHash);
 
@@ -723,23 +761,20 @@
         // MOBILE MENU
         // ============================================================
         document.getElementById('mobileToggle').addEventListener('click', () => {
-            const menu = document.getElementById('navbarMenu');
-            menu.classList.toggle('open');
+            document.getElementById('navbarMenu').classList.toggle('open');
         });
 
         // ============================================================
-        // NAVBAR SCROLL EFFECT
+        // NAVBAR SCROLL
         // ============================================================
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
             const scrollTop = document.getElementById('scrollTop');
-            
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
             }
-
             if (window.scrollY > 400) {
                 scrollTop.classList.add('visible');
             } else {
@@ -748,41 +783,56 @@
         });
 
         // ============================================================
-        // TOAST NOTIFICATIONS
+        // MODAL ALERT NOTIFICATIONS
         // ============================================================
+        let alertAutoCloseTimer = null;
+
         function showToast(message, type = 'info', duration = 4000) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
+            const modal = document.getElementById('alertModal');
+            const icon = document.getElementById('alertIcon');
+            const title = document.getElementById('alertTitle');
+            const msg = document.getElementById('alertMessage');
+            const btn = document.getElementById('alertBtn');
 
-            const icons = { success: '✅', error: 'âŒ', info: 'â„¹ï¸' };
-            toast.innerHTML = `<span>${icons[type] || ''}</span> ${message}`;
+            const config = {
+                success: { icon: '✅', title: 'Berhasil', btnClass: 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30' },
+                error:   { icon: '❌', title: 'Perhatian', btnClass: 'bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30' },
+                info:    { icon: 'ℹ️', title: 'Informasi', btnClass: 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30' }
+            };
+            const c = config[type] || config.info;
 
-            container.appendChild(toast);
+            icon.textContent = c.icon;
+            title.textContent = c.title;
+            msg.textContent = message;
+            btn.className = `w-full py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 ${c.btnClass}`;
 
-            setTimeout(() => {
-                toast.classList.add('removing');
-                setTimeout(() => toast.remove(), 300);
-            }, duration);
+            modal.classList.remove('hidden');
+
+            // Auto close
+            if (alertAutoCloseTimer) clearTimeout(alertAutoCloseTimer);
+            alertAutoCloseTimer = setTimeout(() => closeAlert(), duration);
+        }
+
+        function closeAlert() {
+            document.getElementById('alertModal').classList.add('hidden');
+            if (alertAutoCloseTimer) { clearTimeout(alertAutoCloseTimer); alertAutoCloseTimer = null; }
         }
 
         // ============================================================
         // LOADING
         // ============================================================
         function showLoading() {
-            document.getElementById('loadingOverlay').classList.add('show');
+            document.getElementById('loadingOverlay').classList.remove('hidden');
         }
-
         function hideLoading() {
-            document.getElementById('loadingOverlay').classList.remove('show');
+            document.getElementById('loadingOverlay').classList.add('hidden');
         }
 
         // ============================================================
         // MODAL
         // ============================================================
-
         function closeModal() {
-            document.getElementById('successModal').classList.remove('show');
+            document.getElementById('successModal').classList.add('hidden');
             navigateTo('home');
         }
 
@@ -790,206 +840,132 @@
         // FORM VALIDATION
         // ============================================================
         function validateField(id, condition) {
-            const field = document.getElementById(id);
-            const errorMsg = document.getElementById(`error-${id}`);
-
-            if (!condition) {
-                field.classList.add('error');
-                if (errorMsg) errorMsg.classList.add('show');
-                return false;
-            } else {
-                field.classList.remove('error');
-                if (errorMsg) errorMsg.classList.remove('show');
+            const el = document.getElementById(id);
+            const errEl = document.getElementById(`error-${id}`);
+            if (condition) {
+                el?.classList.remove('error');
+                errEl?.classList.remove('show');
                 return true;
+            } else {
+                el?.classList.add('error');
+                errEl?.classList.add('show');
+                return false;
             }
         }
 
         function clearErrors() {
             document.querySelectorAll('.form-control.error').forEach(el => el.classList.remove('error'));
-            document.querySelectorAll('.form-error-msg.show').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.error-text.show').forEach(el => el.classList.remove('show'));
         }
 
         function validateForm() {
             clearErrors();
-            let isValid = true;
+            let valid = true;
 
-            const jalur = document.getElementById('jalurPendaftaran').value;
-            if (!validateField('jalurPendaftaran', jalur !== '')) isValid = false;
+            const val = id => (document.getElementById(id)?.value || '').trim();
 
-            const nisn = document.getElementById('nisn').value.trim();
-            if (!validateField('nisn', /^\d{10}$/.test(nisn))) isValid = false;
+            // NISN
+            if (!validateField('nisn', /^\d{10}$/.test(val('nisn')))) valid = false;
+            // Jalur
+            if (!validateField('jalurPendaftaran', val('jalurPendaftaran') !== '')) valid = false;
+            // Pribadi
+            if (!validateField('namaLengkap', val('namaLengkap') !== '')) valid = false;
+            if (!validateField('jenisKelamin', val('jenisKelamin') !== '')) valid = false;
+            if (!validateField('agama', val('agama') !== '')) valid = false;
+            if (!validateField('tempatLahir', val('tempatLahir') !== '')) valid = false;
 
-            const nama = document.getElementById('namaLengkap').value.trim();
-            if (!validateField('namaLengkap', nama.length > 0)) isValid = false;
+            const tglLahir = val('tanggalLahir');
+            if (!validateField('tanggalLahir', tglLahir !== '' && tglLahir >= '2011-07-01')) valid = false;
 
-            const jk = document.getElementById('jenisKelamin').value;
-            if (!validateField('jenisKelamin', jk !== '')) isValid = false;
+            // Orang Tua
+            if (!validateField('namaAyah', val('namaAyah') !== '')) valid = false;
+            if (!validateField('statusAyah', val('statusAyah') !== '')) valid = false;
+            if (!validateField('namaIbu', val('namaIbu') !== '')) valid = false;
+            if (!validateField('statusIbu', val('statusIbu') !== '')) valid = false;
 
-            const agama = document.getElementById('agama').value;
-            if (!validateField('agama', agama !== '')) isValid = false;
+            // Optional HP validation
+            const hpAyah = val('hpAyah').replace(/[\s\-\+]/g, '');
+            if (hpAyah && !validateField('hpAyah', hpAyah.length >= 10)) valid = false;
+            const hpIbu = val('hpIbu').replace(/[\s\-\+]/g, '');
+            if (hpIbu && !validateField('hpIbu', hpIbu.length >= 10)) valid = false;
 
-            const tempat = document.getElementById('tempatLahir').value.trim();
-            if (!validateField('tempatLahir', tempat.length > 0)) isValid = false;
+            // Sekolah
+            if (!validateField('asalSekolah', val('asalSekolah') !== '')) valid = false;
+            if (val('asalSekolah') === 'Lainnya') {
+                if (!validateField('asalSekolahLainnya', val('asalSekolahLainnya') !== '')) valid = false;
+            }
+            const rataIjazah = parseFloat(val('rataIjazah'));
+            if (!validateField('rataIjazah', !isNaN(rataIjazah) && rataIjazah >= 0 && rataIjazah <= 100)) valid = false;
 
-            const tglLahir = document.getElementById('tanggalLahir').value;
-            // Also validate if the date is after the min date 2011-07-01
-            const birthDate = new Date(tglLahir);
-            const minDate = new Date('2011-07-01');
-            const isValidDate = tglLahir !== '' && (!isNaN(birthDate) && birthDate >= minDate);
-            if (!validateField('tanggalLahir', isValidDate)) isValid = false;
-
-            const namaAyah = document.getElementById('namaAyah').value.trim();
-            if (!validateField('namaAyah', namaAyah.length > 0)) isValid = false;
-
-            const statusAyah = document.getElementById('statusAyah').value;
-            if (!validateField('statusAyah', statusAyah !== '')) isValid = false;
-
-            const pekerjaanAyah = document.getElementById('pekerjaanAyah').value.trim();
-            if (pekerjaanAyah !== '') {
-                if (!validateField('pekerjaanAyah', pekerjaanAyah.length > 0)) isValid = false;
-            } else validateField('pekerjaanAyah', true);
-
-            const penghasilanAyah = document.getElementById('penghasilanAyah').value;
-            if (penghasilanAyah !== '') {
-                if (!validateField('penghasilanAyah', parseFloat(penghasilanAyah) >= 0)) isValid = false;
-            } else validateField('penghasilanAyah', true);
-
-            const namaIbu = document.getElementById('namaIbu').value.trim();
-            if (!validateField('namaIbu', namaIbu.length > 0)) isValid = false;
-
-            const statusIbu = document.getElementById('statusIbu').value;
-            if (!validateField('statusIbu', statusIbu !== '')) isValid = false;
-
-            const pekerjaanIbu = document.getElementById('pekerjaanIbu').value.trim();
-            if (pekerjaanIbu !== '') {
-                if (!validateField('pekerjaanIbu', pekerjaanIbu.length > 0)) isValid = false;
-            } else validateField('pekerjaanIbu', true);
-
-            const penghasilanIbu = document.getElementById('penghasilanIbu').value;
-            if (penghasilanIbu !== '') {
-                if (!validateField('penghasilanIbu', parseFloat(penghasilanIbu) >= 0)) isValid = false;
-            } else validateField('penghasilanIbu', true);
-
-            const hpAyah = document.getElementById('hpAyah').value.trim();
-            // Optional, but if provided, should be valid length
-            if (hpAyah !== '' && hpAyah.length < 10) {
-                document.getElementById('error-hpAyah').textContent = 'No. HP tidak valid (minimal 10 digit)';
-                document.getElementById('error-hpAyah').classList.add('show');
-                document.getElementById('hpAyah').classList.add('error');
-                isValid = false;
-            } else {
-                document.getElementById('error-hpAyah').classList.remove('show');
-                document.getElementById('hpAyah').classList.remove('error');
+            // TKA optional validation
+            const tkaM = val('tkaMatematika');
+            if (tkaM !== '') {
+                const tkaMVal = parseFloat(tkaM);
+                if (!validateField('tkaMatematika', !isNaN(tkaMVal) && tkaMVal >= 0 && tkaMVal <= 100)) valid = false;
+            }
+            const tkaB = val('tkaBahasa');
+            if (tkaB !== '') {
+                const tkaBVal = parseFloat(tkaB);
+                if (!validateField('tkaBahasa', !isNaN(tkaBVal) && tkaBVal >= 0 && tkaBVal <= 100)) valid = false;
             }
 
-            const hpIbu = document.getElementById('hpIbu').value.trim();
-            // Optional, but if provided, should be valid length
-            if (hpIbu !== '' && hpIbu.length < 10) {
-                document.getElementById('error-hpIbu').textContent = 'No. HP tidak valid (minimal 10 digit)';
-                document.getElementById('error-hpIbu').classList.add('show');
-                document.getElementById('hpIbu').classList.add('error');
-                isValid = false;
-            } else {
-                document.getElementById('error-hpIbu').classList.remove('show');
-                document.getElementById('hpIbu').classList.remove('error');
-            }
-
-            const asalSekolah = document.getElementById('asalSekolah').value;
-            if (!validateField('asalSekolah', asalSekolah !== '')) isValid = false;
-
-            if (asalSekolah === 'Lainnya') {
-                const asalLainnya = document.getElementById('asalSekolahLainnya').value.trim();
-                if (!validateField('asalSekolahLainnya', asalLainnya.length > 0)) isValid = false;
-            } else {
-                document.getElementById('error-asalSekolahLainnya').classList.remove('show');
-                document.getElementById('asalSekolahLainnya').classList.remove('error');
-            }
-
-            const rata = document.getElementById('rataIjazah').value;
-            if (!validateField('rataIjazah', rata !== '' && parseFloat(rata) >= 0 && parseFloat(rata) <= 100)) isValid = false;
-
-            const tkaMat = document.getElementById('tkaMatematika').value;
-            if (tkaMat !== '') {
-                if (!validateField('tkaMatematika', parseFloat(tkaMat) >= 0 && parseFloat(tkaMat) <= 100)) isValid = false;
-            } else validateField('tkaMatematika', true);
-
-            const tkaBahasa = document.getElementById('tkaBahasa').value;
-            if (tkaBahasa !== '') {
-                if (!validateField('tkaBahasa', parseFloat(tkaBahasa) >= 0 && parseFloat(tkaBahasa) <= 100)) isValid = false;
-            } else validateField('tkaBahasa', true);
-
-            const alamat = document.getElementById('alamat').value.trim();
-            if (!validateField('alamat', alamat.length > 0)) isValid = false;
-
+            // Alamat
+            if (!validateField('alamat', val('alamat') !== '')) valid = false;
             const tinggalBersama = document.querySelector('input[name="tinggalBersama"]:checked');
-            if (!tinggalBersama) {
-                document.getElementById('error-tinggalBersama').classList.add('show');
-                isValid = false;
-            }
+            if (!validateField('tinggalBersama', tinggalBersama !== null)) valid = false;
+            if (!validateField('jarakRumah', val('jarakRumah') !== '')) valid = false;
 
-            const jarak = document.getElementById('jarakRumah').value;
-            if (jarak === '' || parseFloat(jarak) < 0) {
-                document.getElementById('error-jarakRumah').classList.add('show');
-                document.getElementById('gpsWidget').classList.add('error');
-                isValid = false;
-            } else {
-                document.getElementById('error-jarakRumah').classList.remove('show');
-                document.getElementById('gpsWidget').classList.remove('error');
-            }
-
-            return isValid;
+            return valid;
         }
 
         // ============================================================
         // FORM RESET
         // ============================================================
         function resetForm() {
-            if (!confirm("Apakah Anda yakin ingin menghapus semua data yang telah diisi? Data yang sudah dihapus tidak dapat dikembalikan.")) {
-                return;
-            }
+            if (!confirm('Apakah Anda yakin ingin menghapus semua data yang telah diisi? Tindakan ini tidak dapat dibatalkan.')) return;
             document.getElementById('formPendaftaran').reset();
+            document.getElementById('formUtama').disabled = true;
             clearErrors();
-            // Reset GPS widget
+            // Reset GPS
+            document.getElementById('gpsWidget').className = 'gps-widget border-2 border-dashed border-slate-200 rounded-xl p-6 text-center transition-all duration-300';
+            document.getElementById('gpsResult').classList.add('hidden');
             document.getElementById('jarakRumah').value = '';
             document.getElementById('latUser').value = '';
             document.getElementById('lngUser').value = '';
-            document.getElementById('gpsResult').style.display = 'none';
-            document.getElementById('gpsCoords').textContent = '';
-            document.getElementById('gpsWidget').className = 'gps-widget';
-            document.getElementById('btnGetLocation').disabled = false;
-            document.getElementById('btnGetLocation').classList.remove('loading');
-            
-            // Reset dynamic fields
-            document.getElementById('containerAsalSekolahLainnya').style.display = 'none';
-            
-            // Reset score preview
+            // Reset score
             resetScorePreview();
-            showToast('Formulir telah direset', 'info');
+            // Reset school
+            document.getElementById('containerAsalSekolahLainnya').classList.add('hidden');
+            showToast('Form berhasil direset', 'info');
         }
 
         // ============================================================
-        // DYNAMIC FORM HANDLERS
+        // TOGGLE SCHOOL
         // ============================================================
         function toggleAsalSekolahLainnya() {
-            const select = document.getElementById('asalSekolah');
+            const sel = document.getElementById('asalSekolah').value;
             const container = document.getElementById('containerAsalSekolahLainnya');
-            if (select.value === 'Lainnya') {
-                container.style.display = 'block';
+            if (sel === 'Lainnya') {
+                container.classList.remove('hidden');
             } else {
-                container.style.display = 'none';
+                container.classList.add('hidden');
+                document.getElementById('asalSekolahLainnya').value = '';
             }
         }
 
+        // ============================================================
+        // TKA CALCULATION
+        // ============================================================
         function hitungTka() {
-            let matInput = document.getElementById('tkaMatematika');
-            let bindoInput = document.getElementById('tkaBahasa');
-            
+            const matInput = document.getElementById('tkaMatematika');
+            const bindoInput = document.getElementById('tkaBahasa');
+
             let mat = parseFloat(matInput.value) || 0;
             if (mat > 100) { mat = 100; matInput.value = '100'; }
-            
+
             let bindo = parseFloat(bindoInput.value) || 0;
             if (bindo > 100) { bindo = 100; bindoInput.value = '100'; }
-            
+
             const total = mat + bindo;
             document.getElementById('tkaTotal').value = total.toFixed(2);
         }
@@ -1002,7 +978,6 @@
 
             if (!validateForm()) {
                 showToast('Mohon lengkapi semua field yang wajib diisi', 'error');
-                // Scroll to first error
                 const firstError = document.querySelector('.form-control.error');
                 if (firstError) {
                     firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1017,103 +992,96 @@
             const skorUsia = calculateAgeScore(tglLahirVal);
             const skorTotal = Math.round((skorJarak + skorUsia) * 100) / 100;
 
-            // Helper: safely parse float, return null if NaN
-            function safeFloat(val) {
-                const n = parseFloat(val);
-                return isNaN(n) ? null : n;
+            // Helper
+            function safeFloat(id) {
+                const v = parseFloat(document.getElementById(id)?.value);
+                return isNaN(v) ? null : v;
             }
 
+            const asalSekolah = document.getElementById('asalSekolah').value === 'Lainnya'
+                ? document.getElementById('asalSekolahLainnya').value.trim()
+                : document.getElementById('asalSekolah').value;
+
+            const nisn = document.getElementById('nisn').value.trim();
+
             const data = {
+                nisn: nisn,
                 jalurPendaftaran: document.getElementById('jalurPendaftaran').value,
-                nisn: document.getElementById('nisn').value.trim(),
                 namaLengkap: document.getElementById('namaLengkap').value.trim(),
                 jenisKelamin: document.getElementById('jenisKelamin').value,
                 agama: document.getElementById('agama').value,
                 tempatLahir: document.getElementById('tempatLahir').value.trim(),
-                tanggalLahir: tglLahirVal,
+                tanggalLahir: document.getElementById('tanggalLahir').value,
                 namaAyah: document.getElementById('namaAyah').value.trim(),
                 statusAyah: document.getElementById('statusAyah').value,
                 pekerjaanAyah: document.getElementById('pekerjaanAyah').value.trim() || null,
-                penghasilanAyah: safeFloat(document.getElementById('penghasilanAyah').value),
+                penghasilanAyah: safeFloat('penghasilanAyah'),
                 namaIbu: document.getElementById('namaIbu').value.trim(),
                 statusIbu: document.getElementById('statusIbu').value,
                 pekerjaanIbu: document.getElementById('pekerjaanIbu').value.trim() || null,
-                penghasilanIbu: safeFloat(document.getElementById('penghasilanIbu').value),
+                penghasilanIbu: safeFloat('penghasilanIbu'),
                 hpSiswa: document.getElementById('hpSiswa').value.trim() || null,
                 hpAyah: document.getElementById('hpAyah').value.trim() || null,
                 hpIbu: document.getElementById('hpIbu').value.trim() || null,
-                asalSekolah: document.getElementById('asalSekolah').value === 'Lainnya' ? document.getElementById('asalSekolahLainnya').value.trim() : document.getElementById('asalSekolah').value,
-                rataIjazah: safeFloat(document.getElementById('rataIjazah').value),
-                tkaMatematika: safeFloat(document.getElementById('tkaMatematika').value),
-                tkaBahasaIndonesia: safeFloat(document.getElementById('tkaBahasa').value),
-                tkaTotal: safeFloat(document.getElementById('tkaTotal').value) || 0,
+                asalSekolah: asalSekolah,
+                rataIjazah: safeFloat('rataIjazah'),
+                tkaMatematika: safeFloat('tkaMatematika'),
+                tkaBahasaIndonesia: safeFloat('tkaBahasa'),
+                tkaTotal: safeFloat('tkaTotal'),
                 alamat: document.getElementById('alamat').value.trim(),
-                tinggalBersama: document.querySelector('input[name="tinggalBersama"]:checked').value,
+                tinggalBersama: document.querySelector('input[name="tinggalBersama"]:checked')?.value || null,
                 jarakRumah: jarakVal,
-                koordinatSiswa: {
-                    lat: safeFloat(document.getElementById('latUser').value),
-                    lng: safeFloat(document.getElementById('lngUser').value)
+                koordinatUser: {
+                    lat: parseFloat(document.getElementById('latUser').value) || null,
+                    lng: parseFloat(document.getElementById('lngUser').value) || null,
                 },
-                koordinatSekolah: {
-                    lat: 0.4263211352187949,
-                    lng: 101.64661693254462
-                },
-                skor: {
-                    jarak: skorJarak,
-                    usia: skorUsia,
-                    total: skorTotal
-                },
+                koordinatSekolah: { lat: 0.4263211352187949, lng: 101.64661693254462 },
+                skor: { jarak: skorJarak, usia: skorUsia, total: skorTotal },
                 tanggalDaftar: new Date().toISOString(),
                 verifikasi: 'Belum',
                 status: 'terdaftar'
             };
 
-            // Remove any NaN, undefined, or Infinity from data before sending to Firestore
+            // Sanitize: remove NaN, undefined, Infinity
             function sanitizeData(obj) {
                 const clean = {};
-                for (const key in obj) {
-                    const val = obj[key];
-                    if (val === undefined || (typeof val === 'number' && !isFinite(val))) {
-                        clean[key] = null;
-                    } else if (val !== null && typeof val === 'object' && !Array.isArray(val)) {
-                        clean[key] = sanitizeData(val);
+                for (const [key, value] of Object.entries(obj)) {
+                    if (value === undefined || value === Infinity || value === -Infinity) continue;
+                    if (typeof value === 'number' && isNaN(value)) continue;
+                    if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+                        clean[key] = sanitizeData(value);
                     } else {
-                        clean[key] = val;
+                        clean[key] = value;
                     }
                 }
                 return clean;
             }
-
             const cleanData = sanitizeData(data);
 
             showLoading();
-
             try {
-                // Save to Firestore directly using NISN as the document ID
-                await db.collection('pendaftar').doc(cleanData.nisn).set(cleanData);
-
+                await db.collection('pendaftar').doc(nisn).set(cleanData);
                 hideLoading();
                 document.getElementById('formPendaftaran').reset();
+                document.getElementById('formUtama').disabled = true;
                 clearErrors();
+                document.getElementById('gpsWidget').className = 'gps-widget border-2 border-dashed border-slate-200 rounded-xl p-6 text-center transition-all duration-300';
+                document.getElementById('gpsResult').classList.add('hidden');
+                document.getElementById('jarakRumah').value = '';
+                document.getElementById('containerAsalSekolahLainnya').classList.add('hidden');
+                resetScorePreview();
                 showModal(skorJarak, skorUsia, skorTotal);
                 updateStats();
-                resetScorePreview();
-
             } catch (error) {
                 hideLoading();
-                console.error('Firebase Error:', error);
-                console.error('Firebase Error Code:', error.code);
-                console.error('Firebase Error Message:', error.message);
-                
-                let errorMsg = 'Terjadi kesalahan. ';
+                console.error('Submit error:', error);
                 if (error.code === 'permission-denied') {
-                    errorMsg += 'Akses ditolak. Periksa Firestore Security Rules di Firebase Console.';
+                    showToast('Gagal: Tidak memiliki izin menulis ke database', 'error');
                 } else if (error.code === 'unavailable') {
-                    errorMsg += 'Tidak dapat terhubung ke server. Periksa koneksi internet.';
+                    showToast('Gagal: Server tidak tersedia. Periksa koneksi internet.', 'error');
                 } else {
-                    errorMsg += (error.message || 'Silakan coba lagi.');
+                    showToast('Gagal menyimpan data: ' + error.message, 'error');
                 }
-                showToast(errorMsg, 'error', 8000);
             }
         });
 
@@ -1123,19 +1091,18 @@
         async function updateStats() {
             try {
                 const snapshot = await db.collection('pendaftar').get();
-                const count = snapshot.size;
-                animateCounter('statPendaftar', count);
-            } catch (error) {
-                console.log('Stats unavailable:', error.message);
+                animateCounter('statPendaftar', snapshot.size);
+            } catch (e) {
+                console.error('Stats error:', e);
             }
         }
 
         function animateCounter(elementId, target) {
             const el = document.getElementById(elementId);
             let current = 0;
-            const increment = Math.max(1, Math.floor(target / 30));
+            const step = Math.max(1, Math.floor(target / 30));
             const timer = setInterval(() => {
-                current += increment;
+                current += step;
                 if (current >= target) {
                     current = target;
                     clearInterval(timer);
@@ -1152,187 +1119,152 @@
             const loading = document.getElementById('hasilLoadingText');
             const tbody = document.getElementById('tableBodyHasil');
             const filterJalur = document.getElementById('filterJalur').value;
-            
+
             btn.disabled = true;
-            loading.style.display = 'inline-block';
-            tbody.innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center;">Sedang mengambil data dari database...</td></tr>';
-            
+            loading.classList.remove('hidden');
+            tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Sedang mengambil data dari database...</td></tr>';
+
             try {
-                // Diperlukan Firestore Rules: allow read: if true;
                 const snapshot = await db.collection('pendaftar').where('jalurPendaftaran', '==', filterJalur).get();
-                
+
                 if (snapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-secondary);">Belum ada data pendaftar untuk jalur ini.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Belum ada data pendaftar untuk jalur ini.</td></tr>';
                     btn.disabled = false;
-                    loading.style.display = 'none';
+                    loading.classList.add('hidden');
                     return;
                 }
-                
+
                 let results = [];
                 snapshot.forEach(doc => {
                     results.push(doc.data());
                 });
 
-                // Urutkan data berdasarkan jalur
+                // Sort
                 if (filterJalur === 'Domisili') {
                     results.sort((a, b) => {
                         const skorA = (a.skor?.jarak || 0) + (a.skor?.usia || 0);
                         const skorB = (b.skor?.jarak || 0) + (b.skor?.usia || 0);
-                        return skorB - skorA; // tertinggi ke terendah
+                        return skorB - skorA;
                     });
                 } else if (filterJalur === 'Prestasi') {
                     results.sort((a, b) => {
                         const tkaA = a.tkaTotal || 0;
                         const tkaB = b.tkaTotal || 0;
-                        if (tkaB !== tkaA) {
-                            return tkaB - tkaA; // TKA tertinggi
-                        }
-                        const sklA = a.rataIjazah || 0;
-                        const sklB = b.rataIjazah || 0;
-                        return sklB - sklA; // SKL tertinggi jika TKA sama
+                        if (tkaB !== tkaA) return tkaB - tkaA;
+                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
                     });
                 }
-                
+
                 let html = '';
                 results.forEach(data => {
                     const statusVal = data.status || 'terdaftar';
                     let statusHtml = '';
                     if (statusVal === 'Lulus') {
-                        statusHtml = '<span style="background: var(--success); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">✅ Lulus</span>';
+                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">✅ Lulus</span>';
                     } else if (statusVal === 'Tidak Lulus') {
-                        statusHtml = '<span style="background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">❌ Tidak Lulus</span>';
+                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-200">❌ Tidak Lulus</span>';
                     } else {
-                        statusHtml = '<span style="background: #e2e8f0; color: #475569; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">⏳ Menunggu</span>';
+                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">⏳ Menunggu</span>';
                     }
 
-                    // Badge verifikasi di depan NISN
                     const isVerified = data.verifikasi === 'Sudah';
-                    const nisnDisplay = isVerified 
-                        ? '<span style="color: #16a34a; margin-right: 4px;" title="Terverifikasi">✅</span>' + (data.nisn || '-')
+                    const nisnDisplay = isVerified
+                        ? '<span class="text-emerald-500 mr-1" title="Terverifikasi">✅</span>' + (data.nisn || '-')
                         : (data.nisn || '-');
 
-                    // Skor domisili = Jarak + Usia
                     const skorDomisili = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
-                    
+
                     html += `
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 1rem;">${nisnDisplay}</td>
-                            <td style="padding: 1rem; font-weight: 500;">${data.namaLengkap || '-'}</td>
-                            <td style="padding: 1rem;">${data.asalSekolah || '-'}</td>
-                            <td style="padding: 1rem; text-align: center;">${data.tkaTotal || 0}</td>
-                            <td style="padding: 1rem; text-align: center;">${data.rataIjazah || 0}</td>
-                            <td style="padding: 1rem; text-align: center;">
-                                <div style="font-weight: bold; color: var(--primary); font-size: 1.1rem;">${skorDomisili}</div>
-                                <div style="font-size: 0.8rem; color: var(--text-secondary);">Jarak: ${data.skor?.jarak?.toFixed(2) || 0} | Usia: ${data.skor?.usia || 0}</div>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-4 py-3.5">${nisnDisplay}</td>
+                            <td class="px-4 py-3.5 font-medium text-slate-800">${data.namaLengkap || '-'}</td>
+                            <td class="px-4 py-3.5 text-slate-600">${data.asalSekolah || '-'}</td>
+                            <td class="px-4 py-3.5 text-center">${data.tkaTotal || 0}</td>
+                            <td class="px-4 py-3.5 text-center">${data.rataIjazah || 0}</td>
+                            <td class="px-4 py-3.5 text-center">
+                                <div class="font-bold text-blue-800 text-base">${skorDomisili}</div>
+                                <div class="text-xs text-slate-400">Jarak: ${data.skor?.jarak?.toFixed(2) || 0} | Usia: ${data.skor?.usia || 0}</div>
                             </td>
-                            <td style="padding: 1rem; text-align: center;">${statusHtml}</td>
+                            <td class="px-4 py-3.5 text-center">${statusHtml}</td>
                         </tr>
                     `;
                 });
-                
+
                 tbody.innerHTML = html;
             } catch (error) {
                 console.error("Error loadHasilSeleksi:", error);
                 if (error.code === 'permission-denied') {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="7" style="padding: 2rem; text-align: center; color: var(--error);">
-                                <strong>Akses Ditolak Firebase!</strong><br>
-                                Agar data tabel dapat muncul, ubah Firestore Rules Anda di Firebase Console menjadi:<br>
-                                <code>allow read: if true;</code>
-                            </td>
-                        </tr>`;
+                    tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-red-500">Akses ditolak. Pastikan Firestore Rules mengizinkan read.</td></tr>';
                 } else if (error.code === 'failed-precondition') {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="7" style="padding: 2rem; text-align: center; color: var(--error);">
-                                <strong>Error Indeks Firestore</strong><br>
-                                Pengurutan data membutuhkan Indeks di Firebase. Mohon periksa konsol browser Anda dan klik link pembuatan indeks yang diberikan oleh Firebase.
-                            </td>
-                        </tr>`;
+                    tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-amber-600">Index Firestore diperlukan. Periksa console.</td></tr>';
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--error);">Gagal memuat data: ${error.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-red-500">Gagal memuat data: ${error.message}</td></tr>`;
                 }
+            } finally {
+                btn.disabled = false;
+                loading.classList.add('hidden');
             }
-            
-            btn.disabled = false;
-            loading.style.display = 'none';
         }
-
 
         // ============================================================
         // CEK NISN
         // ============================================================
         async function cekNisn() {
-            const nisnInput = document.getElementById('nisn').value.trim();
-            const errorNisn = document.getElementById('error-nisn');
-            const btn = document.getElementById('btnCekNisn');
-            
-            if (!/^\d{10}$/.test(nisnInput)) {
-                errorNisn.textContent = 'NISN harus terdiri dari 10 digit angka';
-                errorNisn.classList.add('show');
-                document.getElementById('nisn').classList.add('error');
+            const nisnInput = document.getElementById('nisn');
+            const nisn = nisnInput.value.trim();
+
+            if (!/^\d{10}$/.test(nisn)) {
+                showToast('NISN harus 10 digit angka', 'error');
                 return;
             }
-            
-            errorNisn.classList.remove('show');
-            document.getElementById('nisn').classList.remove('error');
-            
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Memeriksa...';
+
+            const btn = document.getElementById('btnCekNisn');
             btn.disabled = true;
-            
+            btn.textContent = '...';
+
             try {
-                const snapshot = await db.collection('pendaftar').where('nisn', '==', nisnInput).get();
-                if (!snapshot.empty) {
-                    showToast('NISN sudah terdaftar sebelumnya!', 'error');
+                const doc = await db.collection('pendaftar').doc(nisn).get();
+                if (doc.exists) {
+                    showToast(`NISN ${nisn} sudah terdaftar di database! Silakan hubungi panitia jika ingin mengubah data.`, 'error', 6000);
                     document.getElementById('formUtama').disabled = true;
                 } else {
-                    showToast('NISN tersedia. Silakan lengkapi form.', 'success');
+                    showToast(`NISN ${nisn} tersedia. Silakan lengkapi formulir.`, 'success');
                     document.getElementById('formUtama').disabled = false;
                 }
             } catch (error) {
-                console.error("Error cekNisn:", error);
-                if (error.code === 'permission-denied') {
-                    showToast('Gagal memeriksa NISN: Akses Ditolak Firebase', 'error');
-                } else {
-                    showToast('Gagal memeriksa NISN. Periksa koneksi internet.', 'error');
-                }
+                console.error('Cek NISN error:', error);
+                showToast('Gagal mengecek NISN: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Cek';
             }
-            
-            btn.innerHTML = originalText;
-            btn.disabled = false;
         }
 
         // ============================================================
-        // NISN INPUT - NUMBERS ONLY
+        // INPUT FILTERS
         // ============================================================
-        document.getElementById('nisn').addEventListener('input', function(e) {
-            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        document.getElementById('nisn').addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
         });
-
-        // ============================================================
-        // PHONE INPUT - NUMBERS ONLY
-        // ============================================================
         ['hpSiswa', 'hpAyah', 'hpIbu'].forEach(id => {
-            document.getElementById(id).addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^\d+\-\s]/g, '');
+            document.getElementById(id)?.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9\+\-\s]/g, '');
             });
         });
 
         // ============================================================
-        // GPS DISTANCE CALCULATION
+        // GPS DISTANCE
         // ============================================================
         const SCHOOL_LAT = 0.4263211352187949;
         const SCHOOL_LNG = 101.64661693254462;
 
         function haversineDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Earth radius in KM
+            const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             return R * c;
         }
@@ -1340,73 +1272,54 @@
         function getGPSLocation() {
             const btn = document.getElementById('btnGetLocation');
             const widget = document.getElementById('gpsWidget');
-            const resultDiv = document.getElementById('gpsResult');
-            const coordsDiv = document.getElementById('gpsCoords');
+
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Mendeteksi lokasi...';
 
             if (!navigator.geolocation) {
-                showToast('Browser Anda tidak mendukung GPS/Geolocation', 'error');
+                showToast('Browser tidak mendukung GPS', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '📍 Deteksi Lokasi Otomatis';
                 return;
             }
 
-            btn.disabled = true;
-            btn.classList.add('loading');
-            widget.className = 'gps-widget';
-            resultDiv.style.display = 'none';
-
             navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
-                    const distance = haversineDistance(userLat, userLng, SCHOOL_LAT, SCHOOL_LNG);
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const distance = haversineDistance(lat, lng, SCHOOL_LAT, SCHOOL_LNG);
                     const distRounded = Math.round(distance * 100) / 100;
 
                     document.getElementById('jarakRumah').value = distRounded;
-                    document.getElementById('latUser').value = userLat;
-                    document.getElementById('lngUser').value = userLng;
+                    document.getElementById('latUser').value = lat;
+                    document.getElementById('lngUser').value = lng;
+                    document.getElementById('gpsDistanceValue').textContent = distRounded;
+                    document.getElementById('gpsCoords').textContent = `Koordinat: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    document.getElementById('gpsResult').classList.remove('hidden');
 
-                    document.getElementById('gpsDistanceValue').textContent = `${distRounded} KM`;
-                    coordsDiv.textContent = `Koordinat Anda: ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
-                    resultDiv.style.display = 'flex';
-                    widget.className = 'gps-widget success';
+                    widget.classList.remove('error');
+                    widget.classList.add('success');
 
                     btn.disabled = false;
-                    btn.classList.remove('loading');
-                    btn.innerHTML = '<span class="gps-spinner"></span> 🔄 Deteksi Ulang';
+                    btn.innerHTML = '📍 Deteksi Lokasi Otomatis';
 
-                    // Clear any previous error
-                    document.getElementById('error-jarakRumah').classList.remove('show');
-
-                    // Update score preview
+                    showToast(`Jarak terdeteksi: ${distRounded} KM`, 'success');
                     updateScorePreview();
-
-                    showToast(`Lokasi terdeteksi! Jarak: ${distRounded} KM`, 'success');
                 },
-                function(error) {
-                    btn.disabled = false;
-                    btn.classList.remove('loading');
-                    widget.className = 'gps-widget error';
+                (error) => {
+                    let msg = 'Gagal mendeteksi lokasi';
+                    if (error.code === error.PERMISSION_DENIED) msg = 'Izin lokasi ditolak. Aktifkan GPS dan izinkan akses lokasi.';
+                    else if (error.code === error.POSITION_UNAVAILABLE) msg = 'Lokasi tidak tersedia. Pastikan GPS aktif.';
+                    else if (error.code === error.TIMEOUT) msg = 'Waktu habis. Coba lagi.';
 
-                    let msg = 'Gagal mendeteksi lokasi. ';
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            msg += 'Izin lokasi ditolak. Aktifkan izin GPS di pengaturan browser.';
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            msg += 'Informasi lokasi tidak tersedia.';
-                            break;
-                        case error.TIMEOUT:
-                            msg += 'Permintaan lokasi timeout. Coba lagi.';
-                            break;
-                        default:
-                            msg += 'Terjadi kesalahan.';
-                    }
                     showToast(msg, 'error', 6000);
+                    widget.classList.remove('success');
+                    widget.classList.add('error');
+
+                    btn.disabled = false;
+                    btn.innerHTML = '📍 Deteksi Lokasi Otomatis';
                 },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 15000,
-                    maximumAge: 0
-                }
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
             );
         }
 
@@ -1416,13 +1329,11 @@
         const MAX_DISTANCE_KM = 42.5;
         const MAX_DISTANCE_SCORE = 85;
         const MAX_AGE_SCORE = 15;
-        // Reference date for age calculation: July 1, 2026 (start of school year)
-        const AGE_REFERENCE_DATE = new Date(2026, 6, 1); // Month is 0-indexed, so 6 = July
+        const AGE_REFERENCE_DATE = new Date(2026, 6, 1);
 
         function calculateDistanceScore(distanceKm) {
             if (distanceKm === null || distanceKm === undefined || isNaN(distanceKm) || distanceKm < 0) return 0;
             if (distanceKm >= MAX_DISTANCE_KM) return 0;
-            // Closer = higher score. Linear: 0 km = 85 pts, 42.5 km = 0 pts
             const score = MAX_DISTANCE_SCORE * (1 - (distanceKm / MAX_DISTANCE_KM));
             return Math.round(score * 100) / 100;
         }
@@ -1431,15 +1342,11 @@
             if (!tanggalLahirStr) return 0;
             const birthDate = new Date(tanggalLahirStr);
             if (isNaN(birthDate.getTime())) return 0;
-
-            // Calculate age in full years at reference date
             let age = AGE_REFERENCE_DATE.getFullYear() - birthDate.getFullYear();
             const monthDiff = AGE_REFERENCE_DATE.getMonth() - birthDate.getMonth();
             if (monthDiff < 0 || (monthDiff === 0 && AGE_REFERENCE_DATE.getDate() < birthDate.getDate())) {
                 age--;
             }
-
-            // Score = age, capped at 15 max, min 0
             return Math.max(0, Math.min(MAX_AGE_SCORE, age));
         }
 
@@ -1451,91 +1358,67 @@
             const hasTgl = tglLahirVal !== '';
 
             if (!hasJarak && !hasTgl) {
-                // Show empty state
                 document.getElementById('scoreEmptyMsg').style.display = 'block';
-                document.getElementById('scoreBars').style.display = 'none';
+                document.getElementById('scoreBars').classList.add('hidden');
                 document.getElementById('scoreTotalNumber').textContent = '—';
-                document.getElementById('scoreTotalNumber').className = 'score-total-number empty';
-                document.getElementById('scorePreview').classList.remove('has-score');
+                document.getElementById('scoreTotalNumber').className = 'font-display font-extrabold text-3xl text-slate-300';
                 return;
             }
 
-            // Show score bars
             document.getElementById('scoreEmptyMsg').style.display = 'none';
-            document.getElementById('scoreBars').style.display = 'flex';
-            document.getElementById('scorePreview').classList.add('has-score');
+            document.getElementById('scoreBars').classList.remove('hidden');
 
-            // Distance score
-            const distScore = hasJarak ? calculateDistanceScore(jarakVal) : 0;
-            document.getElementById('scoreDistValue').textContent = hasJarak ? distScore.toFixed(2) : '—';
-            document.getElementById('scoreDistBar').style.width = hasJarak ? `${(distScore / MAX_DISTANCE_SCORE) * 100}%` : '0%';
-            document.getElementById('scoreDistDetail').textContent = hasJarak
-                ? `Jarak: ${jarakVal} KM â†’ ${distScore.toFixed(2)} / ${MAX_DISTANCE_SCORE} poin`
-                : 'Deteksi lokasi untuk menghitung skor jarak';
+            const skorJarak = hasJarak ? calculateDistanceScore(jarakVal) : 0;
+            const skorUsia = hasTgl ? calculateAgeScore(tglLahirVal) : 0;
+            const total = Math.round((skorJarak + skorUsia) * 100) / 100;
 
-            // Age score
-            const ageScore = hasTgl ? calculateAgeScore(tglLahirVal) : 0;
-            let ageDetail = 'Isi tanggal lahir untuk menghitung skor usia';
-            if (hasTgl) {
-                const birthDate = new Date(tglLahirVal);
-                let age = AGE_REFERENCE_DATE.getFullYear() - birthDate.getFullYear();
-                const monthDiff = AGE_REFERENCE_DATE.getMonth() - birthDate.getMonth();
-                if (monthDiff < 0 || (monthDiff === 0 && AGE_REFERENCE_DATE.getDate() < birthDate.getDate())) {
-                    age--;
-                }
-                ageDetail = `Usia: ${age} tahun (per 1 Juli 2026) â†’ ${ageScore} / ${MAX_AGE_SCORE} poin`;
-            }
-            document.getElementById('scoreAgeValue').textContent = hasTgl ? ageScore : '—';
-            document.getElementById('scoreAgeBar').style.width = hasTgl ? `${(ageScore / MAX_AGE_SCORE) * 100}%` : '0%';
-            document.getElementById('scoreAgeDetail').textContent = ageDetail;
+            // Total color
+            let totalClass = 'text-red-500';
+            if (total >= 70) totalClass = 'text-emerald-600';
+            else if (total >= 40) totalClass = 'text-amber-500';
 
-            // Total
-            if (hasJarak && hasTgl) {
-                const total = Math.round((distScore + ageScore) * 100) / 100;
-                document.getElementById('scoreTotalNumber').textContent = total.toFixed(2);
-                const cls = total >= 70 ? 'high' : total >= 40 ? 'medium' : 'low';
-                document.getElementById('scoreTotalNumber').className = `score-total-number ${cls}`;
-            } else {
-                const partial = hasJarak ? distScore : ageScore;
-                document.getElementById('scoreTotalNumber').textContent = partial.toFixed(2) + '*';
-                document.getElementById('scoreTotalNumber').className = 'score-total-number empty';
-            }
+            document.getElementById('scoreTotalNumber').textContent = total;
+            document.getElementById('scoreTotalNumber').className = `font-display font-extrabold text-3xl ${totalClass}`;
+
+            // Distance bar
+            document.getElementById('scoreDistValue').textContent = skorJarak;
+            document.getElementById('scoreDistBar').style.width = `${(skorJarak / MAX_DISTANCE_SCORE) * 100}%`;
+            document.getElementById('scoreDistDetail').textContent = hasJarak ? `Jarak: ${jarakVal} KM dari sekolah` : '';
+
+            // Age bar
+            document.getElementById('scoreAgeValue').textContent = skorUsia;
+            document.getElementById('scoreAgeBar').style.width = `${(skorUsia / MAX_AGE_SCORE) * 100}%`;
+            document.getElementById('scoreAgeDetail').textContent = hasTgl ? `Usia dihitung per 1 Juli 2026` : '';
         }
 
         function resetScorePreview() {
             document.getElementById('scoreEmptyMsg').style.display = 'block';
-            document.getElementById('scoreBars').style.display = 'none';
+            document.getElementById('scoreBars').classList.add('hidden');
             document.getElementById('scoreTotalNumber').textContent = '—';
-            document.getElementById('scoreTotalNumber').className = 'score-total-number empty';
-            document.getElementById('scorePreview').classList.remove('has-score');
+            document.getElementById('scoreTotalNumber').className = 'font-display font-extrabold text-3xl text-slate-300';
+            document.getElementById('scoreDistBar').style.width = '0%';
+            document.getElementById('scoreAgeBar').style.width = '0%';
+            document.getElementById('scoreDistValue').textContent = '0';
+            document.getElementById('scoreAgeValue').textContent = '0';
+            document.getElementById('scoreDistDetail').textContent = '';
+            document.getElementById('scoreAgeDetail').textContent = '';
         }
 
-        // Listen for tanggalLahir changes to update score
-        document.getElementById('tanggalLahir').addEventListener('change', function() {
-            updateScorePreview();
-        });
-
         // ============================================================
-        // MODAL WITH SCORE
+        // SHOW MODAL WITH SCORE
         // ============================================================
         function showModal(skorJarak, skorUsia, skorTotal) {
-            // Score breakdown in modal
-            document.getElementById('modalScoreDist').textContent = skorJarak.toFixed(2) + ' / 85';
-            document.getElementById('modalScoreAge').textContent = skorUsia + ' / 15';
-            document.getElementById('modalScoreTotal').textContent = skorTotal.toFixed(2);
-            const cls = skorTotal >= 70 ? 'high' : skorTotal >= 40 ? 'medium' : 'low';
-            document.getElementById('modalScoreTotal').className = `modal-score-number ${cls}`;
-
-            document.getElementById('successModal').classList.add('show');
+            document.getElementById('modalScoreTotal').textContent = skorTotal;
+            document.getElementById('modalScoreDist').textContent = skorJarak;
+            document.getElementById('modalScoreAge').textContent = skorUsia;
+            document.getElementById('successModal').classList.remove('hidden');
         }
 
         // ============================================================
         // INIT
         // ============================================================
         updateStats();
-        // Initialize score preview on page load to detect default date value
         updateScorePreview();
     </script>
 </body>
 </html>
-
