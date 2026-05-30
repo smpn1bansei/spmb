@@ -43,6 +43,10 @@
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         .pulse-online { animation: pulse-dot 2s infinite; }
         .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px -12px rgba(0,0,0,0.15); }
+        .toast-enter { animation: toastIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .toast-exit { animation: toastOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
         .stat-card { transition: all 0.3s ease; }
         .table-row:hover { background-color: #f8fafc; }
         .modal-overlay { transition: opacity 0.3s ease; }
@@ -68,7 +72,7 @@
             <!-- Logo -->
             <div class="text-center mb-8">
                 <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
-                    <span class="text-white font-extrabold text-xl">S1</span>
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v7"></path></svg>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-800">Admin Panel</h1>
                 <p class="text-gray-500 text-sm mt-1">SPMB SMPN 1 Bandar Seikijang</p>
@@ -122,7 +126,7 @@
             <div class="p-5 border-b border-white/10">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
-                        <span class="text-white font-extrabold text-sm">S1</span>
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v7"></path></svg>
                     </div>
                     <div>
                         <div class="font-bold text-sm">Admin SPMB</div>
@@ -150,6 +154,16 @@
                     class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     Kelola Seleksi
+                </button>
+                <button onclick="showSection('manajemen')" id="sideNav-manajemen"
+                    class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                    Manajemen Data
+                </button>
+                <button onclick="window.open('print.html', '_blank')"
+                    class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                    Cetak Data
                 </button>
             </nav>
 
@@ -278,6 +292,53 @@
                         </div>
                     </div>
                 </section>
+                </section>
+
+                <!-- ==================== SECTION MANAJEMEN ==================== -->
+                <section id="section-manajemen" class="hidden fade-in">
+                    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Manajemen Data</h2>
+                            <p class="text-sm text-gray-500 mt-1">Hapus atau ubah status kelulusan secara cepat</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                </span>
+                                <input type="text" id="manajemenSearchInput" placeholder="Cari nama atau NISN..." 
+                                    class="w-full sm:w-64 pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                    onkeyup="filterManajemenTable()">
+                            </div>
+                            <select id="filterJalurManajemen" onchange="loadManajemenData()" class="px-4 py-2 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                                <option value="">Pilih Jalur Pendaftaran...</option>
+                                <option value="Domisili">Domisili</option>
+                                <option value="Prestasi">Prestasi</option>
+                                <option value="Afirmasi">Afirmasi</option>
+                                <option value="Mutasi">Mutasi</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50/50 border-b border-gray-100 text-gray-500 uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-4 font-semibold rounded-tl-2xl">Nama Lengkap</th>
+                                        <th class="px-6 py-4 font-semibold">NISN</th>
+                                        <th class="px-6 py-4 font-semibold text-center">Skor Seleksi</th>
+                                        <th class="px-6 py-4 font-semibold text-center">Status</th>
+                                        <th class="px-6 py-4 text-center font-semibold rounded-tr-2xl">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="manajemenTableBody" class="divide-y divide-gray-100">
+                                    <tr><td colspan="5" class="px-6 py-10 text-center text-gray-400">Pilih jalur lalu klik "Muat Data"</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- ==================== SECTION: DATA PENDAFTAR ==================== -->
                 <section id="section-pendaftar" class="hidden fade-in">
@@ -342,10 +403,10 @@
 
                         <div class="flex flex-col sm:flex-row gap-3 mb-6">
                             <select id="seleksiJalur" onchange="loadSeleksiData()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="Domisili">Jalur Domisili</option>
-                                <option value="Prestasi">Jalur Prestasi</option>
-                                <option value="Afirmasi">Jalur Afirmasi</option>
-                                <option value="Mutasi">Jalur Mutasi</option>
+                                <option value="Domisili">Domisili</option>
+                                <option value="Prestasi">Prestasi</option>
+                                <option value="Afirmasi">Afirmasi</option>
+                                <option value="Mutasi">Mutasi</option>
                             </select>
                             <button onclick="loadSeleksiData()" class="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition shadow-sm">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -576,7 +637,22 @@
         </div>
     </div>
 
-    <!-- ==================== TOAST ==================== -->
+    <!-- Confirm Delete Modal -->
+    <div id="confirmDeleteModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[120] flex items-center justify-center p-4 hidden" onclick="if(event.target===this)closeConfirmDelete()">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-modal-in">
+            <div class="text-4xl mb-3 text-red-500">
+                <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h4 class="font-display font-bold text-lg text-slate-800 mb-2">Konfirmasi Hapus</h4>
+            <p id="confirmDeleteMsg" class="text-sm text-slate-600 leading-relaxed mb-5">Apakah Anda yakin ingin menghapus data ini secara permanen?</p>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmDelete()" class="flex-1 py-2.5 rounded-xl font-semibold text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all duration-300">Batal</button>
+                <button onclick="executeDeleteData()" class="flex-1 py-2.5 rounded-xl font-semibold text-sm bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 transition-all duration-300">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
     <div id="toastContainer" class="fixed bottom-6 right-6 z-[110] space-y-2"></div>
 
 
@@ -586,9 +662,212 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
     <script>
+        
+        // ============================================================
+        // MANAJEMEN DATA
+        // ============================================================
+        let allManajemenData = [];
+
+        async function loadManajemenData() {
+            const jalur = document.getElementById('filterJalurManajemen').value;
+            const tbody = document.getElementById('manajemenTableBody');
+
+            if (!jalur) {
+                showToast('Silakan pilih jalur pendaftaran terlebih dahulu', 'error');
+                return;
+            }
+
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>';
+
+            try {
+                const snapshot = await db.collection('pendaftar').where('jalurPendaftaran', '==', jalur).get();
+                allManajemenData = [];
+                snapshot.forEach(doc => {
+                    allManajemenData.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Sort array automatically like Hasil Seleksi
+                if (jalur === 'Prestasi') {
+                    allManajemenData.sort((a, b) => {
+                        const tkaA = a.tkaTotal || 0;
+                        const tkaB = b.tkaTotal || 0;
+                        if (tkaB !== tkaA) return tkaB - tkaA;
+                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
+                    });
+                } else {
+                    allManajemenData.sort((a, b) => {
+                        const skorA = (a.skor?.jarak || 0) + (a.skor?.usia || 0);
+                        const skorB = (b.skor?.jarak || 0) + (b.skor?.usia || 0);
+                        return skorB - skorA;
+                    });
+                }
+                
+                renderManajemenTable(allManajemenData);
+            } catch (error) {
+                console.error("Error loading manajemen data: ", error);
+                showToast('Gagal memuat data', 'error');
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-10 text-center text-red-500">Gagal memuat data.</td></tr>';
+            }
+        }
+
+        function renderManajemenTable(data) {
+            const tbody = document.getElementById('manajemenTableBody');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-10 text-center text-gray-400">Belum ada data pendaftar di jalur ini.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            data.forEach((item) => {
+                let statusBadge = '';
+                if (item.status === 'Lulus') statusBadge = '<span class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold">Lulus</span>';
+                else if (item.status === 'Tidak Lulus') statusBadge = '<span class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold">Tidak Lulus</span>';
+                else statusBadge = '<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs font-bold">Terdaftar</span>';
+
+                let skorHtml = '';
+                if (item.jalurPendaftaran === 'Prestasi') {
+                    skorHtml = `
+                        <div class="font-bold text-blue-800">${item.tkaTotal || 0}</div>
+                        <div class="text-[10px] text-gray-400 mt-0.5">SKL: ${item.rataIjazah || 0}</div>
+                    `;
+                } else {
+                    const skorTotal = ((item.skor?.jarak || 0) + (item.skor?.usia || 0)).toFixed(2);
+                    skorHtml = `
+                        <div class="font-bold text-blue-800">${skorTotal}</div>
+                        <div class="text-[10px] text-gray-400 mt-0.5">Jarak: ${item.skor?.jarak?.toFixed(2) || 0} | Usia: ${item.skor?.usia || 0}</div>
+                        <div class="text-[10px] text-emerald-600 font-semibold mt-0.5 border-t border-gray-100 pt-0.5 inline-block">TKA: ${item.tkaTotal || 0}</div>
+                    `;
+                }
+
+                html += `
+                <tr class="hover:bg-gray-50/50 transition">
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-gray-800">${item.namaLengkap}</div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 font-mono text-sm">${item.nisn}</td>
+                    <td class="px-6 py-4 text-center leading-tight">${skorHtml}</td>
+                    <td class="px-6 py-4 text-center" id="status-badge-${item.nisn}">${statusBadge}</td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <select onchange="quickChangeStatus('${item.id}', this.value)" class="text-xs border border-gray-200 rounded-lg px-2 py-1 focus:ring-1 focus:ring-blue-500 outline-none bg-white font-medium text-gray-600 cursor-pointer">
+                                <option value="Terdaftar" ${item.status === 'Terdaftar' ? 'selected' : ''}>Terdaftar</option>
+                                <option value="Lulus" ${item.status === 'Lulus' ? 'selected' : ''}>Lulus</option>
+                                <option value="Tidak Lulus" ${item.status === 'Tidak Lulus' ? 'selected' : ''}>Tidak Lulus</option>
+                            </select>
+                            <button onclick="deleteData('${item.id}', '${item.namaLengkap}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition" title="Hapus Data">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function filterManajemenTable() {
+            const query = document.getElementById('manajemenSearchInput').value.toLowerCase();
+            const filtered = allManajemenData.filter(item => 
+                (item.namaLengkap && item.namaLengkap.toLowerCase().includes(query)) || 
+                (item.nisn && item.nisn.includes(query))
+            );
+            renderManajemenTable(filtered);
+        }
+
+        async function quickChangeStatus(docId, newStatus) {
+            try {
+                await db.collection('pendaftar').doc(docId).update({
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('Status berhasil diubah', 'success');
+                
+                // Update local data array so filter works properly
+                const item = allManajemenData.find(i => i.id === docId);
+                if(item) {
+                    item.status = newStatus;
+                    // Update badge visually without re-rendering entire table
+                    let badgeHtml = '';
+                    if (newStatus === 'Lulus') badgeHtml = '<span class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold">Lulus</span>';
+                    else if (newStatus === 'Tidak Lulus') badgeHtml = '<span class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold">Tidak Lulus</span>';
+                    else badgeHtml = '<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs font-bold">Terdaftar</span>';
+                    
+                    const badgeCell = document.getElementById('status-badge-'+item.nisn);
+                    if(badgeCell) badgeCell.innerHTML = badgeHtml;
+                }
+            } catch (error) {
+                console.error("Error updating status: ", error);
+                showToast('Gagal mengubah status', 'error');
+            }
+        }
+
+        let deleteTargetId = null;
+        let deleteTargetName = null;
+
+        function deleteData(docId, nama) {
+            deleteTargetId = docId;
+            deleteTargetName = nama;
+            document.getElementById('confirmDeleteMsg').textContent = `Apakah Anda yakin ingin menghapus data '${nama}' secara permanen? Tindakan ini tidak dapat dibatalkan.`;
+            document.getElementById('confirmDeleteModal').classList.remove('hidden');
+        }
+
+        function closeConfirmDelete() {
+            document.getElementById('confirmDeleteModal').classList.add('hidden');
+            deleteTargetId = null;
+            deleteTargetName = null;
+        }
+
+        async function executeDeleteData() {
+            if (!deleteTargetId) return;
+            const docId = deleteTargetId;
+            const nama = deleteTargetName;
+            
+            closeConfirmDelete();
+            
+            try {
+                await db.collection('pendaftar').doc(docId).delete();
+                showToast(`Data ${nama} berhasil dihapus`, 'success');
+                // Remove from local array and re-render
+                allManajemenData = allManajemenData.filter(i => i.id !== docId);
+                renderManajemenTable(allManajemenData);
+                
+                // Refresh dashboard stats if it's visible or just to keep it updated
+                loadDashboardStats();
+            } catch (error) {
+                console.error("Error deleting document: ", error);
+                
+                // Cek jika error karena aturan (rules) Firestore
+                if(error.message && error.message.toLowerCase().includes('permission')) {
+                    showToast('Gagal: Aturan Firebase (Rules) saat ini tidak mengizinkan penghapusan data. Ubah rules menjadi "allow read, write: if request.auth != null;" di Firebase Console.', 'error', 8000);
+                } else {
+                    showToast('Gagal menghapus data', 'error');
+                }
+            }
+        }
+
         // ============================================================
         // FIREBASE CONFIG
         // ============================================================
+        function showToast(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+
+            const bgColors = { success: 'bg-emerald-500', error: 'bg-red-500', info: 'bg-blue-600' };
+            const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+            toast.className = `${bgColors[type] || 'bg-blue-600'} text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 toast-enter`;
+            toast.innerHTML = `<span>${icons[type] || ''}</span> ${message}`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyBdkf6-EzUHc7AIrwOUz9KdAYlUBmz0QVA",
             authDomain: "spmb26-a40eb.firebaseapp.com",
@@ -689,7 +968,7 @@
                 activeBtn.classList.remove('text-white/70');
             }
 
-            const titles = { dashboard: 'Dashboard', pendaftar: 'Data Pendaftar', seleksi: 'Kelola Seleksi' };
+            const titles = { dashboard: 'Dashboard', pendaftar: 'Data Pendaftar', seleksi: 'Kelola Seleksi', manajemen: 'Manajemen Data' };
             document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
 
             // Close mobile sidebar
