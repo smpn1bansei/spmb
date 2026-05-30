@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Data - SPMB SMPN 1 Bandar Seikijang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'display': ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        /* PRINT SPECIFIC STYLES */
+        @media print {
+            @page {
+                size: A4;
+                margin: 0.5cm; /* Minimum margin */
+            }
+            body { 
+                background-color: white !important; 
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .page-break { page-break-before: always; }
+            
+            /* Typography optimizations for print */
+            .text-sm { font-size: 11px !important; line-height: 1.4 !important; }
+            .text-base { font-size: 12px !important; line-height: 1.4 !important; }
+            .text-xs { font-size: 10px !important; }
+            
+            /* Tighten form layout for print */
+            .print-tight { padding: 0.25rem 0.5rem !important; }
+            .print-grid { gap: 0.5rem !important; }
+            .print-mb { margin-bottom: 0.5rem !important; }
+        }
+        
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- ==================== TOP NAVIGATION (NO PRINT) ==================== -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 no-print shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-800 to-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v7"></path></svg>
+                    </div>
+                    <div>
+                        <div class="font-display font-bold text-slate-800 leading-tight">Pusat Cetak Data SPMB</div>
+                        <div class="text-xs text-slate-500 font-medium">SMPN 1 Bandar Seikijang</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button onclick="switchTab('rekap')" id="tab-rekap" class="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-50 text-blue-700 transition">Cetak Rekap</button>
+                    <button onclick="switchTab('individu')" id="tab-individu" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:bg-slate-50 transition">Cetak Individu</button>
+                    <div class="w-px h-6 bg-slate-200 mx-2"></div>
+                    <button onclick="showExportModal()" class="px-4 py-2 text-sm font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Export Excel
+                    </button>
+                    <button onclick="window.close()" class="px-4 py-2 text-sm font-semibold text-slate-500 hover:text-red-500 transition">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 min-h-screen flex flex-col gap-6">
+        
+        <!-- SECTION: CETAK REKAP -->
+        <section id="section-rekap">
+            <!-- Controls (No Print) -->
+            <div class="no-print bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-wrap gap-4 items-end">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Jalur Pendaftaran</label>
+                    <select id="filterJalurRekap" class="px-4 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px]">
+                        <option value="Domisili">Domisili</option>
+                        <option value="Prestasi">Prestasi</option>
+                        <option value="Afirmasi">Afirmasi</option>
+                        <option value="Mutasi">Mutasi</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Status Kelulusan</label>
+                    <select id="filterStatusRekap" class="px-4 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px]">
+                        <option value="">Semua Status</option>
+                        <option value="Lulus">Lulus Saja</option>
+                        <option value="Tidak Lulus">Tidak Lulus Saja</option>
+                        <option value="Terdaftar">Terdaftar (Menunggu)</option>
+                    </select>
+                </div>
+                <button onclick="loadDataRekap()" class="px-6 py-2 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition">Tampilkan Data</button>
+                
+                <div class="flex-1 text-right">
+                    <button onclick="window.print()" class="px-6 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 flex items-center gap-2 inline-flex">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        Cetak Dokumen
+                    </button>
+                </div>
+            </div>
+
+            <!-- Print Area for Rekap -->
+            <div id="printAreaRekap" class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm print:border-none print:shadow-none print:p-0">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-bold uppercase" id="rekapTitle">REKAPITULASI PENDAFTAR SPMB</h2>
+                    <p class="text-sm font-medium text-slate-600">SMP NEGERI 1 BANDAR SEIKIJANG - TAHUN AJARAN 2026/2027</p>
+                    <p class="text-xs text-slate-500 mt-1" id="rekapSubtitle">Jalur: Domisili | Status: Semua</p>
+                </div>
+                
+                <table class="w-full text-sm border-collapse border border-slate-300">
+                    <thead class="bg-slate-100 print:bg-slate-100/50">
+                        <tr>
+                            <th class="border border-slate-300 px-3 py-2 text-center w-12">No</th>
+                            <th class="border border-slate-300 px-3 py-2 text-left">NISN</th>
+                            <th class="border border-slate-300 px-3 py-2 text-left">Nama Lengkap</th>
+                            <th class="border border-slate-300 px-3 py-2 text-left">Asal Sekolah</th>
+                            <th class="border border-slate-300 px-3 py-2 text-center">J. Kelamin</th>
+                            <th class="border border-slate-300 px-3 py-2 text-center">Skor</th>
+                            <th class="border border-slate-300 px-3 py-2 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rekapTableBody">
+                        <tr><td colspan="7" class="border border-slate-300 px-3 py-6 text-center text-slate-400 no-print">Klik "Tampilkan Data" untuk memuat rekap</td></tr>
+                    </tbody>
+                </table>
+                
+                <div class="mt-12 flex justify-end print-only">
+                    <div class="text-center w-64">
+                        <p class="text-sm mb-16">Bandar Seikijang, <span id="currentDateStr"></span></p>
+                        <p class="text-sm font-bold underline">Panitia SPMB</p>
+                        <p class="text-xs">SMPN 1 Bandar Seikijang</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CETAK INDIVIDU -->
+        <section id="section-individu" class="hidden">
+            <!-- Controls (No Print) -->
+            <div class="no-print bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-wrap gap-4 items-end">
+                <div class="flex-1">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Cari Berdasarkan NISN</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="searchNisn" placeholder="Masukkan 10 digit NISN..." class="w-full px-4 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 max-w-sm">
+                        <button onclick="loadDataIndividu()" class="px-6 py-2 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition">Cari Siswa</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <button onclick="window.print()" id="btnCetakIndividu" disabled class="px-6 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 flex items-center gap-2 inline-flex disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        Cetak Formulir
+                    </button>
+                </div>
+            </div>
+            
+            <div id="individuError" class="no-print text-center text-red-500 font-medium py-4 hidden">Siswa dengan NISN tersebut tidak ditemukan.</div>
+
+            <!-- Print Area for Individu (Formulir Pendaftaran A4) -->
+            <div id="printAreaIndividu" class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm print:border-none print:shadow-none print:p-0 hidden">
+                
+                <!-- HEADER FORMULIR -->
+                <div class="flex items-center justify-between border-b-[3px] border-black pb-4 mb-4">
+                    <!-- Logo Kiri: Kabupaten Pelalawan -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/archive/3/34/20190704133307%21Pelalawan_logo.png" alt="Logo Kabupaten" class="w-16 h-16 object-contain">
+                    <div class="text-center flex-1 px-4">
+                        <h1 class="text-xl font-bold uppercase leading-tight">FORMULIR PENDAFTARAN MURID BARU</h1>
+                        <h2 class="text-lg font-bold uppercase leading-tight">SMP NEGERI 1 BANDAR SEIKIJANG</h2>
+                        <p class="text-xs mt-1">Tahun Ajaran 2026/2027</p>
+                    </div>
+                    <!-- Logo Kanan: Sekolah -->
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpXOFAf7eGfyyMZ_hwGP28TwDh8znggEHcMw&s" alt="Logo Sekolah" class="w-16 h-16 object-contain">
+                </div>
+
+                <div class="text-center mb-4 font-bold text-sm underline uppercase">Biodata Pendaftar</div>
+
+                <!-- CONTENT GRID -->
+                <div class="grid grid-cols-2 gap-x-8 gap-y-4 text-sm print-grid">
+                    
+                    <!-- KIRI -->
+                    <div class="space-y-2 print-space-y-1">
+                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight">1. Data Diri</div>
+                        <table class="w-full">
+                            <tr><td class="w-32 py-1 text-xs">NISN</td><td class="w-4">:</td><td class="font-semibold" id="ind_nisn">-</td></tr>
+                            <tr><td class="py-1 text-xs">Nama Lengkap</td><td>:</td><td class="font-bold" id="ind_nama">-</td></tr>
+                            <tr><td class="py-1 text-xs">Jenis Kelamin</td><td>:</td><td id="ind_jk">-</td></tr>
+                            <tr><td class="py-1 text-xs">Tempat Lahir</td><td>:</td><td id="ind_tempatLahir">-</td></tr>
+                            <tr><td class="py-1 text-xs">Tgl Lahir</td><td>:</td><td id="ind_tglLahir">-</td></tr>
+                            <tr><td class="py-1 text-xs">Agama</td><td>:</td><td id="ind_agama">-</td></tr>
+                            <tr><td class="py-1 text-xs">Tinggal Dengan</td><td>:</td><td id="ind_tinggal">-</td></tr>
+                        </table>
+
+                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight mt-4 print-mb">2. Data Sekolah Asal</div>
+                        <table class="w-full">
+                            <tr><td class="w-32 py-1 text-xs">Nama Sekolah</td><td class="w-4">:</td><td class="font-semibold" id="ind_sekolah">-</td></tr>
+                        </table>
+
+                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight mt-4 print-mb">3. Data Orang Tua/Wali</div>
+                        <table class="w-full">
+                            <tr><td class="w-32 py-1 text-xs">Nama Ayah</td><td class="w-4">:</td><td id="ind_ayah">-</td></tr>
+                            <tr><td class="py-1 text-xs">Nama Ibu</td><td>:</td><td id="ind_ibu">-</td></tr>
+                            <tr><td class="py-1 text-xs">Nama Wali</td><td>:</td><td id="ind_wali">-</td></tr>
+                            <tr><td class="py-1 text-xs align-top">Alamat Lengkap</td><td class="align-top">:</td><td class="text-xs" id="ind_alamat">-</td></tr>
+                            <tr><td class="py-1 text-xs">No. HP/WA</td><td>:</td><td id="ind_hp">-</td></tr>
+                            <tr><td class="py-1 text-xs">Titik GPS (Lat,Lng)</td><td>:</td><td class="text-xs font-mono" id="ind_gps">-</td></tr>
+                        </table>
+                    </div>
+
+                    <!-- KANAN -->
+                    <div class="space-y-2 print-space-y-1">
+                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight">4. Jalur & Status</div>
+                        <table class="w-full">
+                            <tr><td class="w-32 py-1 text-xs">Jalur Pendaftaran</td><td class="w-4">:</td><td class="font-bold uppercase" id="ind_jalur">-</td></tr>
+                            <tr><td class="py-1 text-xs">Status Kelulusan</td><td>:</td><td class="font-bold uppercase border border-black inline-block px-2 mt-1" id="ind_status">-</td></tr>
+                            <tr><td class="py-1 text-xs">Verifikasi Panitia</td><td>:</td><td class="font-bold" id="ind_verifikasi">-</td></tr>
+                            <tr><td class="py-1 text-xs">Admin/Verifikator</td><td>:</td><td class="text-xs italic" id="ind_verifikator">-</td></tr>
+                        </table>
+
+                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight mt-4 print-mb">5. Kelengkapan Berkas</div>
+                        <table class="w-full text-xs">
+                            <tr><td class="w-32 py-0.5">Ijazah / SKL</td><td class="w-4">:</td><td id="ind_berkas_ijz">-</td></tr>
+                            <tr><td class="py-0.5">Ijazah MDA</td><td>:</td><td id="ind_berkas_mda">-</td></tr>
+                            <tr><td class="py-0.5">Akte Kelahiran</td><td>:</td><td id="ind_berkas_akte">-</td></tr>
+                            <tr><td class="py-0.5">Kartu Keluarga</td><td>:</td><td id="ind_berkas_kk">-</td></tr>
+                            <tr><td class="py-0.5">Kartu KIP/PIP</td><td>:</td><td id="ind_berkas_kip">-</td></tr>
+                            <tr><td class="py-0.5">Surat Ket. Domisili</td><td>:</td><td id="ind_berkas_domisili">-</td></tr>
+                            <tr><td class="py-0.5">Surat Ket. Tidak Mampu</td><td>:</td><td id="ind_berkas_sktm">-</td></tr>
+                            <tr><td class="py-0.5">Sertifikat Prestasi</td><td>:</td><td id="ind_berkas_prestasi">-</td></tr>
+                            <tr><td class="py-0.5 font-bold pt-2">Ket. Membaca</td><td class="pt-2">:</td><td class="font-bold pt-2 uppercase" id="ind_berkas_membaca">-</td></tr>
+                        </table>
+
+                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight mt-4 print-mb">6. Penilaian Seleksi</div>
+                        <div class="border border-slate-300 p-2">
+                            <table class="w-full text-xs">
+                                <tr><td class="w-24 font-bold pb-1">Skor Total</td><td class="w-4 pb-1">:</td><td class="font-bold text-sm pb-1" id="ind_skor_total">-</td></tr>
+                                <tr><td colspan="3" class="border-b border-slate-300 mb-1"></td></tr>
+                                <tr><td class="pt-1">Jarak Rumah</td><td class="pt-1">:</td><td class="pt-1"><span id="ind_jarak_km">-</span> km (Skor: <span id="ind_skor_jarak">-</span>)</td></tr>
+                                <tr><td>Skor Usia</td><td>:</td><td id="ind_skor_usia">-</td></tr>
+                                <tr><td>Rata2 Ijazah</td><td>:</td><td id="ind_skor_ijazah">-</td></tr>
+                                <tr><td>Total TKA</td><td>:</td><td id="ind_skor_tka">-</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TTD AREA -->
+                <table class="w-full mt-8 print-only text-sm text-center table-fixed">
+                    <tr>
+                        <td class="w-1/2 align-top px-8">
+                            <p class="mb-16 mt-5">Mengetahui,<br>Orang Tua / Wali</p>
+                            <p class="font-bold border-b border-black inline-block min-w-[180px]" id="ttd_ortu"></p>
+                        </td>
+                        <td class="w-1/2 align-top px-8">
+                            <p class="mb-1">Bandar Seikijang, <span class="currentDateStr"></span></p>
+                            <p class="mb-16">Panitia Penerimaan</p>
+                            <p class="font-bold border-b border-black inline-block min-w-[180px]">(..........................................)</p>
+                        </td>
+                    </tr>
+                </table>
+                
+                <div class="mt-4 text-[10px] italic text-center print-only">
+                    Dokumen ini dicetak secara sistem dari Aplikasi SPMB SMPN 1 Bandar Seikijang. Berlaku sebagai bukti sah apabila telah ditandatangani.
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Confirm Export Modal -->
+    <div id="confirmExportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] flex items-center justify-center p-4 hidden no-print" onclick="if(event.target===this)closeExportModal()">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-modal-in transform transition-all duration-300 scale-95 opacity-0" id="exportModalContent">
+            <div class="text-4xl mb-3 text-emerald-500">
+                <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h4 class="font-display font-bold text-lg text-slate-800 mb-2">Export Data ke Excel</h4>
+            <p class="text-sm text-slate-600 leading-relaxed mb-5">Anda akan mengunduh seluruh data pendaftar (Database) ke dalam format Excel (.xlsx). Lanjutkan?</p>
+            <div class="flex gap-3">
+                <button onclick="closeExportModal()" class="flex-1 py-2.5 rounded-xl font-semibold text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all duration-300">Batal</button>
+                <button onclick="executeExportExcel()" class="flex-1 py-2.5 rounded-xl font-semibold text-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 transition-all duration-300">Ya, Unduh</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[200] flex items-center justify-center hidden no-print">
+        <div class="bg-white p-6 rounded-2xl shadow-xl flex items-center gap-4">
+            <div class="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+            <span class="font-semibold text-slate-700">Memproses data...</span>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // Set tanggal
+        const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        document.getElementById('currentDateStr').textContent = dateStr;
+        document.querySelectorAll('.currentDateStr').forEach(el => el.textContent = dateStr);
+
+        // Firebase Config (Copy dari admin.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdkf6-EzUHc7AIrwOUz9KdAYlUBmz0QVA",
+            authDomain: "spmb26-a40eb.firebaseapp.com",
+            projectId: "spmb26-a40eb",
+            storageBucket: "spmb26-a40eb.firebasestorage.app",
+            messagingSenderId: "542284988770",
+            appId: "1:542284988770:web:48cf0f47e307e5b56247c4"
+        };
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // UI Logic
+        function showLoading() { document.getElementById('loadingOverlay').classList.remove('hidden'); }
+        function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
+
+        function switchTab(tab) {
+            // Update buttons
+            document.getElementById('tab-rekap').className = tab === 'rekap' ? 'px-4 py-2 text-sm font-semibold rounded-lg bg-blue-50 text-blue-700 transition' : 'px-4 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:bg-slate-50 transition';
+            document.getElementById('tab-individu').className = tab === 'individu' ? 'px-4 py-2 text-sm font-semibold rounded-lg bg-blue-50 text-blue-700 transition' : 'px-4 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:bg-slate-50 transition';
+            
+            // Update sections
+            document.getElementById('section-rekap').classList.toggle('hidden', tab !== 'rekap');
+            document.getElementById('section-individu').classList.toggle('hidden', tab !== 'individu');
+        }
+
+        // ==================== CETAK REKAP ====================
+        async function loadDataRekap() {
+            const jalur = document.getElementById('filterJalurRekap').value;
+            const status = document.getElementById('filterStatusRekap').value;
+            const tbody = document.getElementById('rekapTableBody');
+            
+            showLoading();
+            
+            try {
+                let query = db.collection('pendaftar').where('jalurPendaftaran', '==', jalur);
+                if (status) {
+                    query = query.where('status', '==', status);
+                }
+                
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="border border-slate-300 px-3 py-6 text-center text-slate-400 no-print">Belum ada data pendaftar.</td></tr>`;
+                    hideLoading();
+                    return;
+                }
+
+                let results = [];
+                snapshot.forEach(doc => {
+                    results.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Auto-Sort berdasarkan Algoritma Seleksi
+                if (jalur === 'Prestasi') {
+                    results.sort((a, b) => {
+                        const tkaA = a.tkaTotal || 0;
+                        const tkaB = b.tkaTotal || 0;
+                        if (tkaB !== tkaA) return tkaB - tkaA;
+                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
+                    });
+                } else {
+                    results.sort((a, b) => {
+                        const skorA = (a.skor?.jarak || 0) + (a.skor?.usia || 0);
+                        const skorB = (b.skor?.jarak || 0) + (b.skor?.usia || 0);
+                        return skorB - skorA;
+                    });
+                }
+
+                // Render Table
+                let html = '';
+                results.forEach((item, index) => {
+                    // Hitung Skor untuk display
+                    let skorDisplay = '';
+                    if (jalur === 'Prestasi') {
+                        skorDisplay = `TKA: ${item.tkaTotal||0}`;
+                    } else {
+                        const skorTot = ((item.skor?.jarak || 0) + (item.skor?.usia || 0)).toFixed(2);
+                        skorDisplay = `${skorTot}`;
+                    }
+                    
+                    html += `
+                        <tr>
+                            <td class="border border-slate-300 px-3 py-1 text-center">${index + 1}</td>
+                            <td class="border border-slate-300 px-3 py-1 font-mono">${item.nisn}</td>
+                            <td class="border border-slate-300 px-3 py-1 font-semibold">${item.namaLengkap}</td>
+                            <td class="border border-slate-300 px-3 py-1">${item.asalSekolah}</td>
+                            <td class="border border-slate-300 px-3 py-1 text-center">${item.jenisKelamin === 'Laki-laki' ? 'L' : 'P'}</td>
+                            <td class="border border-slate-300 px-3 py-1 text-center font-bold">${skorDisplay}</td>
+                            <td class="border border-slate-300 px-3 py-1 text-center">${item.status || 'Terdaftar'}</td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+                
+                // Update Title
+                document.getElementById('rekapSubtitle').textContent = `Jalur: ${jalur.toUpperCase()} | Status: ${status ? status.toUpperCase() : 'SEMUA'}`;
+                
+            } catch (error) {
+                console.error("Error load rekap:", error);
+                tbody.innerHTML = `<tr><td colspan="7" class="border border-slate-300 px-3 py-6 text-center text-red-500 no-print">Gagal memuat data. Periksa Rules Firebase.</td></tr>`;
+            }
+            
+            hideLoading();
+        }
+
+        // ==================== CETAK INDIVIDU ====================
+        async function loadDataIndividu() {
+            const nisn = document.getElementById('searchNisn').value.trim();
+            const err = document.getElementById('individuError');
+            const printArea = document.getElementById('printAreaIndividu');
+            const btnPrint = document.getElementById('btnCetakIndividu');
+            
+            if (!nisn) return;
+            
+            showLoading();
+            err.classList.add('hidden');
+            printArea.classList.add('hidden');
+            btnPrint.disabled = true;
+
+            try {
+                const doc = await db.collection('pendaftar').doc(nisn).get();
+                if (!doc.exists) {
+                    err.classList.remove('hidden');
+                    hideLoading();
+                    return;
+                }
+
+                const data = doc.data();
+                
+                // --- BIODATA ---
+                document.getElementById('ind_nisn').textContent = data.nisn || '-';
+                document.getElementById('ind_nama').textContent = data.namaLengkap || '-';
+                document.getElementById('ind_jk').textContent = data.jenisKelamin || '-';
+                document.getElementById('ind_tempatLahir').textContent = data.tempatLahir || '-';
+                document.getElementById('ind_tglLahir').textContent = data.tanggalLahir || '-';
+                document.getElementById('ind_agama').textContent = data.agama || '-';
+                document.getElementById('ind_tinggal').textContent = data.tinggalbersama || '-';
+                
+                // --- SEKOLAH ---
+                document.getElementById('ind_sekolah').textContent = data.asalSekolah || '-';
+                
+                // --- ORTU/WALI ---
+                document.getElementById('ind_ayah').textContent = data.namaAyah || '-';
+                document.getElementById('ind_ibu').textContent = data.namaIbu || '-';
+                document.getElementById('ind_wali').textContent = data.namaWali || '-';
+                document.getElementById('ind_alamat').textContent = data.alamat || '-';
+                document.getElementById('ind_hp').textContent = data.nomorHpWa || '-';
+                document.getElementById('ind_gps').textContent = data.koordinatUser || '-';
+                
+                // --- JALUR & STATUS ---
+                document.getElementById('ind_jalur').textContent = data.jalurPendaftaran || '-';
+                document.getElementById('ind_status').textContent = data.status || 'Terdaftar';
+                document.getElementById('ind_verifikasi').textContent = (data.verifikasi === 'Sudah') ? 'SUDAH (Tervalidasi)' : 'BELUM VERIFIKASI';
+                document.getElementById('ind_verifikator').textContent = data.verifikator || '-';
+
+                // --- DOKUMEN ---
+                document.getElementById('ind_berkas_ijz').textContent = data.dokumen?.ijazah_tk || 'Tidak / Belum Verifikasi';
+                document.getElementById('ind_berkas_mda').textContent = data.dokumen?.ijazah_mda || 'Tidak / Belum Verifikasi';
+                document.getElementById('ind_berkas_akte').textContent = data.dokumen?.akte || 'Tidak / Belum Verifikasi';
+                document.getElementById('ind_berkas_kk').textContent = data.dokumen?.kk || 'Tidak / Belum Verifikasi';
+                document.getElementById('ind_berkas_kip').textContent = data.dokumen?.kip || 'Tidak / Belum Verifikasi';
+                document.getElementById('ind_berkas_domisili').textContent = data.dokumen?.domisili || 'Tidak / Belum Verifikasi';
+                document.getElementById('ind_berkas_sktm').textContent = data.dokumen?.sktm || 'Tidak / Belum Verifikasi';
+                document.getElementById('ind_berkas_prestasi').textContent = data.dokumen?.sertifikat || 'Tidak / Belum Verifikasi';
+                document.getElementById('ind_berkas_membaca').textContent = data.dokumen?.membaca || 'Belum Diuji';
+                
+                // --- SKOR ---
+                const skorTot = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
+                document.getElementById('ind_skor_total').textContent = (data.jalurPendaftaran === 'Prestasi') ? (data.tkaTotal || 0) : skorTot;
+                document.getElementById('ind_jarak_km').textContent = data.jarakRumahKm || '-';
+                document.getElementById('ind_skor_jarak').textContent = data.skor?.jarak?.toFixed(2) || 0;
+                document.getElementById('ind_skor_usia').textContent = data.skor?.usia || 0;
+                document.getElementById('ind_skor_ijazah').textContent = data.rataIjazah || 0;
+                document.getElementById('ind_skor_tka').textContent = data.tkaTotal || 0;
+
+                // TTD Nama Ortu
+                let namaWaliPrint = data.namaAyah;
+                if (!namaWaliPrint || namaWaliPrint === '-') namaWaliPrint = data.namaIbu;
+                if (!namaWaliPrint || namaWaliPrint === '-') namaWaliPrint = data.namaWali;
+                document.getElementById('ttd_ortu').textContent = namaWaliPrint || '(..........................................)';
+
+                // Tampilkan Print Area
+                printArea.classList.remove('hidden');
+                btnPrint.disabled = false;
+
+            } catch (error) {
+                console.error("Error load individu:", error);
+                err.textContent = "Gagal memuat data. Periksa koneksi atau rules Firebase.";
+                err.classList.remove('hidden');
+            }
+
+            hideLoading();
+        }
+
+        // ==================== EXPORT EXCEL ====================
+        function showExportModal() {
+            const modal = document.getElementById('confirmExportModal');
+            const content = document.getElementById('exportModalContent');
+            modal.classList.remove('hidden');
+            // simple animation
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeExportModal() {
+            const modal = document.getElementById('confirmExportModal');
+            const content = document.getElementById('exportModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        async function executeExportExcel() {
+            closeExportModal();
+            showLoading();
+            
+            try {
+                // Fetch all data
+                const snapshot = await db.collection('pendaftar').get();
+                if (snapshot.empty) {
+                    alert("Tidak ada data untuk diekspor");
+                    hideLoading();
+                    return;
+                }
+
+                let dataArray = [];
+                let counter = 1;
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const skorTot = ((d.skor?.jarak || 0) + (d.skor?.usia || 0)).toFixed(2);
+                    
+                    dataArray.push({
+                        "No": counter++,
+                        "NISN": d.nisn || '',
+                        "Nama Lengkap": d.namaLengkap || '',
+                        "Jenis Kelamin": d.jenisKelamin || '',
+                        "Tempat Lahir": d.tempatLahir || '',
+                        "Tanggal Lahir": d.tanggalLahir || '',
+                        "Agama": d.agama || '',
+                        "Tinggal Dengan": d.tinggalbersama || '',
+                        "Asal Sekolah": d.asalSekolah || '',
+                        "Nama Ayah": d.namaAyah || '',
+                        "Nama Ibu": d.namaIbu || '',
+                        "Nama Wali": d.namaWali || '',
+                        "Alamat Lengkap": d.alamat || '',
+                        "Nomor HP/WA": d.nomorHpWa || '',
+                        "GPS (Lat, Lng)": d.koordinatUser || '',
+                        "Jalur Pendaftaran": d.jalurPendaftaran || '',
+                        
+                        "Nilai Rata-Rata Ijazah": d.rataIjazah || 0,
+                        "TKA B.Indonesia": d.tkaBahasaIndonesia || 0,
+                        "TKA Matematika": d.tkaMatematika || 0,
+                        "Total TKA": d.tkaTotal || 0,
+                        
+                        "Jarak Rumah (KM)": d.jarakRumahKm || 0,
+                        "Skor Jarak": d.skor?.jarak?.toFixed(2) || 0,
+                        "Skor Usia": d.skor?.usia || 0,
+                        "Total Skor (Jarak+Usia)": skorTot,
+
+                        "Berkas Ijazah TK": d.dokumen?.ijazah_tk || 'Belum Verifikasi',
+                        "Berkas Ijazah MDA": d.dokumen?.ijazah_mda || 'Belum Verifikasi',
+                        "Berkas Akte": d.dokumen?.akte || 'Belum Verifikasi',
+                        "Berkas KK": d.dokumen?.kk || 'Belum Verifikasi',
+                        "Berkas KIP/PIP": d.dokumen?.kip || 'Belum Verifikasi',
+                        "Berkas Domisili": d.dokumen?.domisili || 'Belum Verifikasi',
+                        "Berkas SKTM": d.dokumen?.sktm || 'Belum Verifikasi',
+                        "Berkas Sertifikat": d.dokumen?.sertifikat || 'Belum Verifikasi',
+                        "Keterangan Membaca": d.dokumen?.membaca || 'Belum Diuji',
+                        
+                        "Status Verifikasi": d.verifikasi || 'Belum',
+                        "Verifikator": d.verifikator || '',
+                        "Status Kelulusan": d.status || 'Terdaftar'
+                    });
+                });
+
+                // Create Worksheet
+                const ws = XLSX.utils.json_to_sheet(dataArray);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Database Pendaftar");
+
+                // Download File
+                XLSX.writeFile(wb, "Data_Pendaftar_SPMB_2026.xlsx");
+                
+            } catch (error) {
+                console.error("Export error:", error);
+                alert("Terjadi kesalahan saat mengekspor data. Pastikan Rules Firebase mengizinkan baca data.");
+            }
+            
+            hideLoading();
+        }
+
+        // Trigger load rekap default
+        document.addEventListener('DOMContentLoaded', () => {
+            // Kita tidak panggil loadDataRekap() otomatis agar hemat read, tunggu user tekan tombol.
+        });
+    </script>
+</body>
+</html>
