@@ -233,7 +233,7 @@
                                 </div>
                             </div>
                             <div class="text-3xl font-extrabold text-gray-800" id="statLulus">0</div>
-                            <div class="text-sm text-gray-500 mt-1">Diterima / Lulus</div>
+                            <div class="text-sm text-gray-500 mt-1">Diterima</div>
                         </div>
                         <div class="stat-card bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                             <div class="flex items-center justify-between mb-3">
@@ -242,7 +242,7 @@
                                 </div>
                             </div>
                             <div class="text-3xl font-extrabold text-gray-800" id="statTidakLulus">0</div>
-                            <div class="text-sm text-gray-500 mt-1">Tidak Lulus</div>
+                            <div class="text-sm text-gray-500 mt-1">Ditolak</div>
                         </div>
                     </div>
 
@@ -320,20 +320,39 @@
                         </div>
                     </div>
 
+                    <div id="manajemenStatsCard" class="hidden mb-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center">
+                            <div class="text-gray-500 text-[10px] font-bold mb-1 uppercase tracking-wider">Kuota Jalur</div>
+                            <div class="text-3xl font-black text-gray-800" id="statManajemenKuota">0</div>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center">
+                            <div class="text-gray-500 text-[10px] font-bold mb-1 uppercase tracking-wider">Siswa Diterima</div>
+                            <div class="text-3xl font-black text-green-500" id="statManajemenLulus">0</div>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center">
+                            <div class="text-gray-500 text-[10px] font-bold mb-1 uppercase tracking-wider">Siswa Terdaftar</div>
+                            <div class="text-3xl font-black text-orange-400" id="statManajemenTerdaftar">0</div>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center">
+                            <div class="text-gray-500 text-[10px] font-bold mb-1 uppercase tracking-wider">Siswa Ditolak</div>
+                            <div class="text-3xl font-black text-red-500" id="statManajemenTidakLulus">0</div>
+                        </div>
+                    </div>
+
                     <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
                                 <thead class="bg-gray-50/50 border-b border-gray-100 text-gray-500 uppercase text-xs">
-                                    <tr>
-                                        <th class="px-6 py-4 font-semibold rounded-tl-2xl">Nama Lengkap</th>
-                                        <th class="px-6 py-4 font-semibold">NISN</th>
+                                        <th class="px-6 py-4 font-semibold rounded-tl-2xl w-16 text-center">No</th>
+                                        <th class="px-6 py-4 font-semibold">Nama Lengkap</th>
+                                        <th class="px-6 py-4 font-semibold text-left">Asal Sekolah</th>
                                         <th class="px-6 py-4 font-semibold text-center">Skor Seleksi</th>
-                                        <th class="px-6 py-4 font-semibold text-center">Status</th>
+                                        <th class="px-6 py-4 font-semibold text-center">Status & Verifikasi</th>
                                         <th class="px-6 py-4 text-center font-semibold rounded-tr-2xl">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="manajemenTableBody" class="divide-y divide-gray-100">
-                                    <tr><td colspan="5" class="px-6 py-10 text-center text-gray-400">Pilih jalur lalu klik "Muat Data"</td></tr>
+                                    <tr><td colspan="6" class="px-6 py-10 text-center text-gray-400">Pilih Jalur Pendaftaran untuk memuat data</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -359,8 +378,8 @@
                         <select id="filterStatusAdmin" onchange="filterTable()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">Semua Status</option>
                             <option value="terdaftar">Terdaftar</option>
-                            <option value="Lulus">Lulus</option>
-                            <option value="Tidak Lulus">Tidak Lulus</option>
+                            <option value="Diterima">Diterima</option>
+                            <option value="Ditolak">Ditolak</option>
                         </select>
                         <button onclick="refreshData()" class="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition shadow-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -375,16 +394,16 @@
                                 <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
                                     <tr>
                                         <th class="px-4 py-3 text-left font-semibold">No</th>
-                                        <th class="px-4 py-3 text-left font-semibold">NISN</th>
-                                        <th class="px-4 py-3 text-left font-semibold">Nama Lengkap</th>
-                                        <th class="px-4 py-3 text-left font-semibold">Jalur</th>
-                                        <th class="px-4 py-3 text-left font-semibold">Asal Sekolah</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Nilai SKL</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Total TKA</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Skor Domisili</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Verifikasi</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Status</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Aksi</th>
+                                        <th class="px-4 py-3 text-left font-semibold cursor-pointer hover:text-blue-600" onclick="sortTable('nisn')">NISN ↕</th>
+                                        <th class="px-4 py-3 text-left font-semibold cursor-pointer hover:text-blue-600" onclick="sortTable('namaLengkap')">Nama Lengkap ↕</th>
+                                        <th class="px-4 py-3 text-left font-semibold cursor-pointer hover:text-blue-600" onclick="sortTable('jalurPendaftaran')">Jalur ↕</th>
+                                        <th class="px-4 py-3 text-left font-semibold cursor-pointer hover:text-blue-600" onclick="sortTable('asalSekolah')">Asal Sekolah ↕</th>
+                                        <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:text-blue-600" onclick="sortTable('rataRapor')">NRP ↕</th>
+                                        <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:text-blue-600" onclick="sortTable('rataIjazah')">Nilai SKL ↕</th>
+                                        <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:text-blue-600" onclick="sortTable('skorDomisili')">Skor Domisili ↕</th>
+                                        <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:text-blue-600" onclick="sortTable('tkaTotal')">Skor TKA ↕</th>
+                                        <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:text-blue-600" onclick="sortTable('status')">Verifikasi & Status ↕</th>
+                                        <th class="px-4 py-3 text-center font-semibold">Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody id="pendaftarTableBody" class="divide-y divide-gray-100">
@@ -399,7 +418,7 @@
                 <section id="section-seleksi" class="hidden fade-in">
                     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
                         <h3 class="text-lg font-bold text-gray-800 mb-2">Kelola Status Seleksi</h3>
-                        <p class="text-sm text-gray-500 mb-6">Ubah status pendaftar menjadi <span class="font-semibold text-green-600">Lulus</span> atau <span class="font-semibold text-red-600">Tidak Lulus</span> per jalur pendaftaran.</p>
+                        <p class="text-sm text-gray-500 mb-6">Ubah status pendaftar menjadi <span class="font-semibold text-green-600">Diterima</span> atau <span class="font-semibold text-red-600">Ditolak</span> per jalur pendaftaran.</p>
 
                         <div class="flex flex-col sm:flex-row gap-3 mb-6">
                             <select id="seleksiJalur" onchange="loadSeleksiData()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-blue-500">
@@ -425,18 +444,16 @@
                             <table class="w-full text-sm">
                                 <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
                                     <tr>
-                                        <th class="px-4 py-3 text-left font-semibold">Peringkat</th>
+                                        <th class="px-4 py-3 text-center font-semibold">Nomor</th>
                                         <th class="px-4 py-3 text-left font-semibold">NISN</th>
-                                        <th class="px-4 py-3 text-left font-semibold">Nama</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Total TKA</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Nilai SKL</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Skor Domisili</th>
-                                        <th class="px-4 py-3 text-center font-semibold">Status & Verifikasi</th>
+                                        <th class="px-4 py-3 text-left font-semibold cursor-pointer hover:text-blue-600" onclick="sortSeleksi('namaLengkap')">Nama Lengkap ↕</th>
+                                        <th class="px-4 py-3 text-left font-semibold cursor-pointer hover:text-blue-600" onclick="sortSeleksi('asalSekolah')">Asal SD ↕</th>
+                                        <th class="px-4 py-3 text-center font-semibold cursor-pointer hover:text-blue-600" onclick="sortSeleksi('verifikasi')">Verifikasi ↕</th>
                                         <th class="px-4 py-3 text-center font-semibold">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="seleksiTableBody" class="divide-y divide-gray-100">
-                                    <tr><td colspan="8" class="px-6 py-10 text-center text-gray-400">Pilih jalur lalu klik "Muat Data"</td></tr>
+                                    <tr><td colspan="6" class="px-6 py-10 text-center text-gray-400">Pilih Jalur Pendaftaran untuk memuat data</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -523,17 +540,34 @@
                         <div><label class="block text-xs font-semibold text-gray-600 mb-1">Pekerjaan Ibu</label><input type="text" id="editKerjaIbu" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
                         <div><label class="block text-xs font-semibold text-gray-600 mb-1">Penghasilan Ayah</label><input type="number" id="editGajiAyah" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
                         <div><label class="block text-xs font-semibold text-gray-600 mb-1">Penghasilan Ibu</label><input type="number" id="editGajiIbu" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div class="md:col-span-2 border-t border-gray-100 pt-3 mt-1 text-xs font-bold text-gray-400">WALI <span class="font-normal lowercase">(jika tidak dirawat ortu)</span></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nama Wali</label><input type="text" id="editWali" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">No HP Wali</label><input type="text" id="editHpWali" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="md:col-span-3 bg-green-50 text-green-700 px-4 py-2 rounded-lg font-semibold text-sm">Data Nilai</div>
                         <div><label class="block text-xs font-semibold text-gray-600 mb-1">Asal Sekolah</label><input type="text" id="editSekolah" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nilai Rata-rata SKL</label><input type="number" step="0.01" id="editSkl" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">TKA Matematika</label><input type="number" step="0.01" id="editMat" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
-                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">TKA B. Indonesia</label><input type="number" step="0.01" id="editIndo" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nilai Rata-rata SKL</label><input type="text" inputmode="decimal" oninput="this.value = this.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')" id="editSkl" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">TKA Matematika</label><input type="text" inputmode="decimal" oninput="this.value = this.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')" id="editMat" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">TKA B. Indonesia</label><input type="text" inputmode="decimal" oninput="this.value = this.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')" id="editIndo" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div class="md:col-span-3 border-t border-gray-100 pt-3 mt-1 text-xs font-bold text-gray-400">NILAI RAPOR SEMESTER</div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Kelas 4 SMT 1</label><input type="text" inputmode="decimal" oninput="this.value = this.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')" id="editRapor41" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Kelas 4 SMT 2</label><input type="text" inputmode="decimal" oninput="this.value = this.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')" id="editRapor42" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Kelas 5 SMT 1</label><input type="text" inputmode="decimal" oninput="this.value = this.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')" id="editRapor51" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Kelas 5 SMT 2</label><input type="text" inputmode="decimal" oninput="this.value = this.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')" id="editRapor52" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Kelas 6 SMT 1</label><input type="text" inputmode="decimal" oninput="this.value = this.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')" id="editRapor61" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm"></div>
                     </div>
 
-                    
+                    <div class="grid grid-cols-1 gap-4 border-t border-gray-200 pt-6 mt-4">
+                        <div class="flex items-center justify-between bg-yellow-50 text-yellow-700 px-4 py-2 rounded-lg font-semibold text-sm">
+                            <span>Sertifikat Prestasi</span>
+                            <button type="button" onclick="tambahEditSertifikat()" class="px-2 py-1 bg-yellow-200 text-yellow-800 text-xs rounded hover:bg-yellow-300 transition">+ Tambah</button>
+                        </div>
+                        <div id="editSertifikatContainer" class="space-y-2">
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-gray-200 pt-6 mt-4">
                         <div class="md:col-span-3 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg font-semibold text-sm">Dokumen Verifikasi</div>
                         
@@ -592,20 +626,12 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-200 pt-6 mt-4">
-                        <div class="md:col-span-2 bg-purple-50 text-purple-700 px-4 py-2 rounded-lg font-semibold text-sm">Status & Verifikasi Admin</div>
+                        <div class="md:col-span-2 bg-purple-50 text-purple-700 px-4 py-2 rounded-lg font-semibold text-sm">Verifikasi Admin</div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Status Verifikasi</label>
                             <select id="editVerifikasi" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-purple-500 text-sm font-semibold text-purple-700">
                                 <option value="Belum">Belum Diverifikasi</option>
                                 <option value="Sudah">✅ Sudah Diverifikasi</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Keputusan Kelulusan</label>
-                            <select id="editStatus" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-purple-500 text-sm font-semibold">
-                                <option value="terdaftar">Terdaftar (Menunggu)</option>
-                                <option value="Lulus">✅ Lulus</option>
-                                <option value="Tidak Lulus">❌ Tidak Lulus</option>
                             </select>
                         </div>
                         <div>
@@ -668,6 +694,28 @@
         // ============================================================
         let allManajemenData = [];
 
+        function updateManajemenStats(data, jalur) {
+            const kuotaMap = { 'Domisili': 96, 'Prestasi': 48, 'Afirmasi': 38, 'Mutasi': 10 };
+            const kuota = kuotaMap[jalur] || 0;
+            
+            let lulus = 0;
+            let tidakLulus = 0;
+            let terdaftar = 0;
+
+            data.forEach(item => {
+                if (item.status === 'Diterima' || item.status === 'Lulus') lulus++;
+                else if (item.status === 'Ditolak' || item.status === 'Tidak Lulus') tidakLulus++;
+                else terdaftar++;
+            });
+
+            document.getElementById('statManajemenKuota').textContent = kuota;
+            document.getElementById('statManajemenLulus').textContent = lulus;
+            document.getElementById('statManajemenTidakLulus').textContent = tidakLulus;
+            document.getElementById('statManajemenTerdaftar').textContent = terdaftar;
+            
+            document.getElementById('manajemenStatsCard').classList.remove('hidden');
+        }
+
         async function loadManajemenData() {
             const jalur = document.getElementById('filterJalurManajemen').value;
             const tbody = document.getElementById('manajemenTableBody');
@@ -677,7 +725,8 @@
                 return;
             }
 
-            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>';
+            document.getElementById('manajemenStatsCard').classList.add('hidden');
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>';
 
             try {
                 const snapshot = await db.collection('pendaftar').where('jalurPendaftaran', '==', jalur).get();
@@ -703,6 +752,7 @@
                 }
                 
                 renderManajemenTable(allManajemenData);
+                updateManajemenStats(allManajemenData, jalur);
             } catch (error) {
                 console.error("Error loading manajemen data: ", error);
                 showToast('Gagal memuat data', 'error');
@@ -719,41 +769,47 @@
             }
 
             let html = '';
-            data.forEach((item) => {
-                let statusBadge = '';
-                if (item.status === 'Lulus') statusBadge = '<span class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold">Lulus</span>';
-                else if (item.status === 'Tidak Lulus') statusBadge = '<span class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold">Tidak Lulus</span>';
-                else statusBadge = '<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs font-bold">Terdaftar</span>';
+            data.forEach((item, index) => {
+                let statusBadge = `
+                    <div class="flex flex-col gap-1 items-center justify-center">
+                        ${renderVerifikasiBadge(item.verifikasi)}
+                        ${renderStatusBadge(item.status)}
+                    </div>
+                `;
 
                 let skorHtml = '';
                 if (item.jalurPendaftaran === 'Prestasi') {
+                    const skorPres = ((item.rataRapor || 0) + (item.poinSertifikat || 0)).toFixed(2);
                     skorHtml = `
-                        <div class="font-bold text-blue-800">${item.tkaTotal || 0}</div>
-                        <div class="text-[10px] text-gray-400 mt-0.5">SKL: ${item.rataIjazah || 0}</div>
+                        <div class="font-bold text-blue-800">${skorPres}</div>
+                        <div class="text-[10px] text-gray-400 mt-0.5">Rapor: ${item.rataRapor || 0} | Sertif: ${item.poinSertifikat || 0}</div>
+                        <div class="text-[10px] text-emerald-600 font-semibold mt-0.5 border-t border-gray-100 pt-0.5 inline-block">TKA: ${item.tkaTotal || 0}</div>
                     `;
                 } else {
                     const skorTotal = ((item.skor?.jarak || 0) + (item.skor?.usia || 0)).toFixed(2);
                     skorHtml = `
                         <div class="font-bold text-blue-800">${skorTotal}</div>
                         <div class="text-[10px] text-gray-400 mt-0.5">Jarak: ${item.skor?.jarak?.toFixed(2) || 0} | Usia: ${item.skor?.usia || 0}</div>
-                        <div class="text-[10px] text-emerald-600 font-semibold mt-0.5 border-t border-gray-100 pt-0.5 inline-block">TKA: ${item.tkaTotal || 0}</div>
+                        <div class="text-[10px] text-emerald-600 font-semibold mt-0.5 border-t border-gray-100 pt-0.5 inline-block">SKL: ${item.rataIjazah || 0}</div>
                     `;
                 }
 
                 html += `
                 <tr class="hover:bg-gray-50/50 transition">
+                    <td class="px-6 py-4 text-center font-bold text-gray-700">${index + 1}</td>
                     <td class="px-6 py-4">
-                        <div class="font-bold text-gray-800">${item.namaLengkap}</div>
+                        <div class="font-bold text-gray-800">${item.namaLengkap || '-'}</div>
+                        <div class="text-xs text-gray-500 font-mono mt-0.5">NISN: ${item.nisn}</div>
                     </td>
-                    <td class="px-6 py-4 text-gray-600 font-mono text-sm">${item.nisn}</td>
+                    <td class="px-6 py-4 text-gray-600">${item.asalSekolah || '-'}</td>
                     <td class="px-6 py-4 text-center leading-tight">${skorHtml}</td>
                     <td class="px-6 py-4 text-center" id="status-badge-${item.nisn}">${statusBadge}</td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex items-center justify-center gap-2">
                             <select onchange="quickChangeStatus('${item.id}', this.value)" class="text-xs border border-gray-200 rounded-lg px-2 py-1 focus:ring-1 focus:ring-blue-500 outline-none bg-white font-medium text-gray-600 cursor-pointer">
-                                <option value="Terdaftar" ${item.status === 'Terdaftar' ? 'selected' : ''}>Terdaftar</option>
-                                <option value="Lulus" ${item.status === 'Lulus' ? 'selected' : ''}>Lulus</option>
-                                <option value="Tidak Lulus" ${item.status === 'Tidak Lulus' ? 'selected' : ''}>Tidak Lulus</option>
+                                <option value="terdaftar" ${(!item.status || item.status === 'terdaftar') ? 'selected' : ''}>Terdaftar</option>
+                                <option value="Diterima" ${(item.status === 'Diterima' || item.status === 'Lulus') ? 'selected' : ''}>Diterima</option>
+                                <option value="Ditolak" ${(item.status === 'Ditolak' || item.status === 'Tidak Lulus') ? 'selected' : ''}>Ditolak</option>
                             </select>
                             <button onclick="deleteData('${item.id}', '${item.namaLengkap}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition" title="Hapus Data">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -788,13 +844,17 @@
                 if(item) {
                     item.status = newStatus;
                     // Update badge visually without re-rendering entire table
-                    let badgeHtml = '';
-                    if (newStatus === 'Lulus') badgeHtml = '<span class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold">Lulus</span>';
-                    else if (newStatus === 'Tidak Lulus') badgeHtml = '<span class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold">Tidak Lulus</span>';
-                    else badgeHtml = '<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs font-bold">Terdaftar</span>';
+                    let badgeHtml = `
+                        <div class="flex flex-col gap-1 items-center justify-center">
+                            ${renderVerifikasiBadge(item.verifikasi)}
+                            ${renderStatusBadge(newStatus)}
+                        </div>
+                    `;
                     
                     const badgeCell = document.getElementById('status-badge-'+item.nisn);
                     if(badgeCell) badgeCell.innerHTML = badgeHtml;
+                    
+                    updateManajemenStats(allManajemenData, document.getElementById('filterJalurManajemen').value);
                 }
             } catch (error) {
                 console.error("Error updating status: ", error);
@@ -830,10 +890,12 @@
                 showToast(`Data ${nama} berhasil dihapus`, 'success');
                 // Remove from local array and re-render
                 allManajemenData = allManajemenData.filter(i => i.id !== docId);
+                allPendaftar = allPendaftar.filter(i => i.id !== docId);
                 renderManajemenTable(allManajemenData);
+                updateManajemenStats(allManajemenData, document.getElementById('filterJalurManajemen').value);
                 
                 // Refresh dashboard stats if it's visible or just to keep it updated
-                loadDashboardStats();
+                updateDashboardStats();
             } catch (error) {
                 console.error("Error deleting document: ", error);
                 
@@ -883,7 +945,57 @@
         // ============================================================
         // GLOBAL DATA STORE
         // ============================================================
-        let allPendaftar = [];
+        let selectedNisn = null;
+
+        // SERTIFIKAT PRESTASI EDIT
+        let editSertifikatCount = 0;
+        function tambahEditSertifikat(data = null) {
+            editSertifikatCount++;
+            const id = editSertifikatCount;
+            const container = document.getElementById('editSertifikatContainer');
+            
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center bg-gray-50 p-2 rounded border border-gray-100';
+            div.id = `editSertifikatRow_${id}`;
+            
+            div.innerHTML = `
+                <input type="text" id="editSertifikatNama_${id}" placeholder="Nama Sertifikat" class="flex-1 px-3 py-1.5 rounded border border-gray-200 text-sm outline-none focus:ring-1 focus:ring-blue-500">
+                <select id="editSertifikatTingkat_${id}" class="w-1/3 px-3 py-1.5 rounded border border-gray-200 text-sm outline-none focus:ring-1 focus:ring-blue-500">
+                    <option value="">— Tingkat —</option>
+                    <option value="Kabupaten/Kota">Kabupaten/Kota</option>
+                    <option value="Provinsi">Provinsi</option>
+                    <option value="Nasional">Nasional</option>
+                    <option value="Internasional">Internasional</option>
+                </select>
+                <button type="button" onclick="hapusEditSertifikat(${id})" class="p-1.5 text-red-500 hover:bg-red-50 rounded" title="Hapus">🗑️</button>
+            `;
+            container.appendChild(div);
+            
+            if(data) {
+                document.getElementById(`editSertifikatNama_${id}`).value = data.nama || '';
+                document.getElementById(`editSertifikatTingkat_${id}`).value = data.tingkat || '';
+            }
+        }
+        
+        function hapusEditSertifikat(id) {
+            const row = document.getElementById(`editSertifikatRow_${id}`);
+            if (row) row.remove();
+        }
+        
+        function getEditSertifikatData() {
+            const container = document.getElementById('editSertifikatContainer');
+            const rows = container.children;
+            const data = [];
+            for (let i = 0; i < rows.length; i++) {
+                const rowId = rows[i].id.split('_')[1];
+                const nama = document.getElementById(`editSertifikatNama_${rowId}`).value.trim();
+                const tingkat = document.getElementById(`editSertifikatTingkat_${rowId}`).value;
+                if (nama && tingkat) {
+                    data.push({ nama, tingkat });
+                }
+            }
+            return data;
+        }
 
         // ============================================================
         // AUTH - LOGIN
@@ -1001,8 +1113,8 @@
         function updateDashboardStats() {
             document.getElementById('statTotal').textContent = allPendaftar.length;
             document.getElementById('statMenunggu').textContent = allPendaftar.filter(d => d.status === 'terdaftar' || !d.status).length;
-            document.getElementById('statLulus').textContent = allPendaftar.filter(d => d.status === 'Lulus').length;
-            document.getElementById('statTidakLulus').textContent = allPendaftar.filter(d => d.status === 'Tidak Lulus').length;
+            document.getElementById('statLulus').textContent = allPendaftar.filter(d => d.status === 'Diterima' || d.status === 'Lulus').length;
+            document.getElementById('statTidakLulus').textContent = allPendaftar.filter(d => d.status === 'Ditolak' || d.status === 'Tidak Lulus').length;
 
             document.getElementById('statDomisili').textContent = allPendaftar.filter(d => d.jalurPendaftaran === 'Domisili').length;
             document.getElementById('statPrestasi').textContent = allPendaftar.filter(d => d.jalurPendaftaran === 'Prestasi').length;
@@ -1038,6 +1150,18 @@
         // ============================================================
         // PENDAFTAR TABLE (Data Pendaftar)
         // ============================================================
+        let sortCol = 'tkaTotal';
+        let sortAsc = false;
+
+        function sortTable(col) {
+            if (sortCol === col) {
+                sortAsc = !sortAsc;
+            } else {
+                sortCol = col;
+                sortAsc = false; // Default ke descending untuk kolom baru
+            }
+            renderPendaftarTable();
+        }
         function renderPendaftarTable() {
             const tbody = document.getElementById('pendaftarTableBody');
             const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
@@ -1056,8 +1180,32 @@
                 return;
             }
 
+            // Urutkan berdasarkan sortCol dan sortAsc
+            filtered.sort((a, b) => {
+                let valA, valB;
+                if (sortCol === 'skorDomisili') {
+                    valA = (a.skor?.jarak || 0) + (a.skor?.usia || 0);
+                    valB = (b.skor?.jarak || 0) + (b.skor?.usia || 0);
+                } else {
+                    valA = a[sortCol];
+                    valB = b[sortCol];
+                }
+
+                if (typeof valA === 'string' && typeof valB === 'string') {
+                    return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                }
+                
+                // Fallback for numbers
+                valA = valA || 0;
+                valB = valB || 0;
+                return sortAsc ? valA - valB : valB - valA;
+            });
+
             tbody.innerHTML = filtered.map((d, i) => {
                 const skorDom = ((d.skor?.jarak || 0) + (d.skor?.usia || 0)).toFixed(2);
+                const domDetail = `<div class="text-[10px] text-gray-500 mt-0.5">Jarak: ${d.skor?.jarak?.toFixed(2)||0} | Usia: ${d.skor?.usia||0}</div>`;
+                const tkaDetail = `<div class="text-[10px] text-gray-500 mt-0.5">Mat: ${d.tkaMatematika||0} | B.Ind: ${d.tkaBahasaIndonesia||0}</div>`;
+
                 return `
                 <tr class="table-row hover:bg-gray-50 transition">
                     <td class="px-4 py-3 text-gray-500">${i + 1}</td>
@@ -1065,13 +1213,22 @@
                     <td class="px-4 py-3 font-medium">${d.namaLengkap || '-'}</td>
                     <td class="px-4 py-3">${renderJalurBadge(d.jalurPendaftaran)}</td>
                     <td class="px-4 py-3 text-gray-600">${d.asalSekolah || '-'}</td>
+                    <td class="px-4 py-3 text-center">${d.rataRapor || 0}</td>
                     <td class="px-4 py-3 text-center">${d.rataIjazah || 0}</td>
-                    <td class="px-4 py-3 text-center">${d.tkaTotal || 0}</td>
-                    <td class="px-4 py-3 text-center font-bold text-blue-600">${skorDom}</td>
-                    <td class="px-4 py-3 text-center">${renderVerifikasiBadge(d.verifikasi)}</td>
-                    <td class="px-4 py-3 text-center">${renderStatusBadge(d.status)}</td>
                     <td class="px-4 py-3 text-center">
-                        <button onclick='showDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})' class="text-blue-600 hover:text-blue-800 font-medium text-xs hover:underline">Detail</button>
+                        <div class="font-bold text-blue-600">${skorDom}</div>
+                        ${domDetail}
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="font-bold text-purple-600">${d.tkaTotal || 0}</div>
+                        ${tkaDetail}
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="mb-1">${renderVerifikasiBadge(d.verifikasi)}</div>
+                        <div>${renderStatusBadge(d.status)}</div>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick='showDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})' class="text-blue-600 hover:text-blue-800 font-medium text-xs hover:underline border border-blue-600 px-2 py-1 rounded">Detail</button>
                     </td>
                 </tr>`;
             }).join('');
@@ -1083,80 +1240,111 @@
         // SELEKSI PAGE
         // ============================================================
         
+        let currentSeleksiData = [];
+        let seleksiSortCol = 'default';
+        let seleksiSortAsc = true;
+
+        function sortSeleksi(col) {
+            if (seleksiSortCol === col) {
+                seleksiSortAsc = !seleksiSortAsc;
+            } else {
+                seleksiSortCol = col;
+                seleksiSortAsc = true;
+            }
+            renderSeleksiTableBody();
+        }
+
         function filterSeleksiTable() {
+            renderSeleksiTableBody();
+        }
+
+        function renderSeleksiTableBody() {
             const input = document.getElementById("searchSeleksi").value.toLowerCase();
             const tbody = document.getElementById("seleksiTableBody");
-            const tr = tbody.querySelectorAll("tr.table-row");
 
-            tr.forEach(row => {
-                const nisn = row.cells[1]?.textContent || "";
-                const nama = row.cells[2]?.textContent || "";
-                if (nisn.toLowerCase().includes(input) || nama.toLowerCase().includes(input)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
+            let filtered = currentSeleksiData.filter(d => {
+                const nisn = (d.nisn || "").toLowerCase();
+                const nama = (d.namaLengkap || "").toLowerCase();
+                return !input || nisn.includes(input) || nama.includes(input);
             });
+
+            if (seleksiSortCol !== 'default') {
+                filtered.sort((a, b) => {
+                    let valA = a[seleksiSortCol] || '';
+                    let valB = b[seleksiSortCol] || '';
+                    if (typeof valA === 'string' && typeof valB === 'string') {
+                        return seleksiSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                    }
+                    return seleksiSortAsc ? valA - valB : valB - valA;
+                });
+            } else {
+                filtered.sort((a, b) => seleksiSortAsc ? a._rank - b._rank : b._rank - a._rank);
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-gray-400">Tidak ada data yang cocok.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((d, i) => {
+                return `
+                <tr class="table-row hover:bg-gray-50 transition">
+                    <td class="px-4 py-3 text-center font-bold text-gray-700">${d._rank}</td>
+                    <td class="px-4 py-3 font-medium text-gray-800">${d.nisn}</td>
+                    <td class="px-4 py-3">${d.namaLengkap || '-'}</td>
+                    <td class="px-4 py-3">${d.asalSekolah || '-'}</td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="flex flex-col gap-1 items-center justify-center">
+                            ${renderVerifikasiBadge(d.verifikasi)}
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick='showEditModal(${JSON.stringify(d).replace(/'/g, "&#39;")})' class="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-semibold transition">Edit & Verifikasi</button>
+                    </td>
+                </tr>`;
+            }).join('');
         }
 
         async function loadSeleksiData() {
             const jalur = document.getElementById('seleksiJalur').value;
             const tbody = document.getElementById('seleksiTableBody');
-            tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-10 text-center text-gray-400">Memuat data...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-gray-400">Memuat data...</td></tr>';
 
             try {
                 const snapshot = await db.collection('pendaftar').where('jalurPendaftaran', '==', jalur).get();
                 let results = [];
                 snapshot.forEach(doc => results.push({ id: doc.id, ...doc.data() }));
 
-                // Sort based on jalur
-                if (jalur === 'Domisili') {
+                // Sort based on jalur default ranking
+                if (jalur === 'Domisili' || jalur === 'Afirmasi' || jalur === 'Mutasi') {
                     results.sort((a, b) => {
                         const sa = (a.skor?.jarak || 0) + (a.skor?.usia || 0);
                         const sb = (b.skor?.jarak || 0) + (b.skor?.usia || 0);
-                        return sb - sa;
+                        if (sa !== sb) return sb - sa;
+                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
                     });
                 } else if (jalur === 'Prestasi') {
                     results.sort((a, b) => {
+                        const presA = (a.rataRapor || 0) + (a.poinSertifikat || 0);
+                        const presB = (b.rataRapor || 0) + (b.poinSertifikat || 0);
+                        if (presA !== presB) return presB - presA;
                         const tkaA = a.tkaTotal || 0;
                         const tkaB = b.tkaTotal || 0;
-                        if (tkaB !== tkaA) return tkaB - tkaA;
-                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
+                        return tkaB - tkaA;
                     });
                 }
 
-                if (results.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-10 text-center text-gray-400">Belum ada pendaftar untuk jalur ini.</td></tr>';
-                    return;
-                }
+                results.forEach((r, idx) => r._rank = idx + 1);
 
-                tbody.innerHTML = results.map((d, i) => {
-                    const skorDom = ((d.skor?.jarak || 0) + (d.skor?.usia || 0)).toFixed(2);
-                    const currentStatus = d.status || 'terdaftar';
-                    const currentVerif = d.verifikasi || 'Belum';
-                    return `
-                    <tr class="table-row hover:bg-gray-50 transition">
-                        <td class="px-4 py-3 text-center font-bold text-gray-700">${i + 1}</td>
-                        <td class="px-4 py-3 font-medium text-gray-800">${d.nisn}</td>
-                        <td class="px-4 py-3">${d.namaLengkap || '-'}</td>
-                        <td class="px-4 py-3 text-center">${d.tkaTotal || 0}</td>
-                        <td class="px-4 py-3 text-center">${d.rataIjazah || 0}</td>
-                        <td class="px-4 py-3 text-center font-bold text-blue-600">${skorDom}</td>
-                        <td class="px-4 py-3 text-center">
-                            <div class="flex flex-col gap-1 items-center justify-center">
-                                ${renderVerifikasiBadge(d.verifikasi)}
-                                ${renderStatusBadge(d.status)}
-                            </div>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <button onclick='showEditModal(${JSON.stringify(d).replace(/'/g, "&#39;")})' class="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-semibold transition">Edit & Verifikasi</button>
-                        </td>
-                    </tr>`;
-                }).join('');
+                currentSeleksiData = results;
+                seleksiSortCol = 'default';
+                seleksiSortAsc = true;
+                
+                renderSeleksiTableBody();
 
             } catch (error) {
                 console.error('Error:', error);
-                tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-10 text-center text-red-500">Gagal memuat: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-red-500">Gagal memuat: ${error.message}</td></tr>`;
             }
         }
 
@@ -1253,11 +1441,24 @@
             document.getElementById('editKerjaIbu').value = data.pekerjaanIbu || '';
             document.getElementById('editGajiAyah').value = data.penghasilanAyah || '';
             document.getElementById('editGajiIbu').value = data.penghasilanIbu || '';
+            document.getElementById('editWali').value = data.namaWali || '';
+            document.getElementById('editHpWali').value = data.hpWali || '';
+
+            // Sertifikat
+            document.getElementById('editSertifikatContainer').innerHTML = '';
+            if (data.sertifikat && Array.isArray(data.sertifikat)) {
+                data.sertifikat.forEach(s => tambahEditSertifikat(s));
+            }
 
             document.getElementById('editSekolah').value = data.asalSekolah || '';
             document.getElementById('editSkl').value = data.rataIjazah || '';
             document.getElementById('editMat').value = data.tkaMatematika || '';
             document.getElementById('editIndo').value = data.tkaBahasaIndonesia || '';
+            document.getElementById('editRapor41').value = data.rapor41 || '';
+            document.getElementById('editRapor42').value = data.rapor42 || '';
+            document.getElementById('editRapor51').value = data.rapor51 || '';
+            document.getElementById('editRapor52').value = data.rapor52 || '';
+            document.getElementById('editRapor61').value = data.rapor61 || '';
 
             
             const docs = data.dokumen || {};
@@ -1275,8 +1476,6 @@
             document.getElementById('editVerifikasi').value = data.verifikasi || 'Belum';
             document.getElementById('editMembaca').value = data.membaca || '-';
             document.getElementById('editVerifikator').value = data.verifikator || '-';
-
-            document.getElementById('editStatus').value = data.status || 'terdaftar';
 
             document.getElementById('editModal').classList.remove('hidden');
             document.getElementById('editModal').classList.add('flex');
@@ -1297,12 +1496,32 @@
             const mat = parseFloat(document.getElementById('editMat').value) || 0;
             const indo = parseFloat(document.getElementById('editIndo').value) || 0;
             const tkaTotal = mat + indo;
+            
+            const r41 = parseFloat(document.getElementById('editRapor41').value) || 0;
+            const r42 = parseFloat(document.getElementById('editRapor42').value) || 0;
+            const r51 = parseFloat(document.getElementById('editRapor51').value) || 0;
+            const r52 = parseFloat(document.getElementById('editRapor52').value) || 0;
+            const r61 = parseFloat(document.getElementById('editRapor61').value) || 0;
+            let sumRapor = r41 + r42 + r51 + r52 + r61;
+            let countRapor = 0;
+            if(r41>0) countRapor++; if(r42>0) countRapor++; if(r51>0) countRapor++; if(r52>0) countRapor++; if(r61>0) countRapor++;
+            const rataRapor = countRapor > 0 ? parseFloat((sumRapor / countRapor).toFixed(2)) : 0;
 
             const jarak = parseFloat(document.getElementById('editJarak').value) || 0;
             const tglLahir = document.getElementById('editTglLahir').value;
             const skorJarak = calculateDistanceScore(jarak);
             const skorUsia = calculateAgeScore(tglLahir);
             const skorTotal = Math.round((skorJarak + skorUsia) * 100) / 100;
+            
+            const sertifikatList = getEditSertifikatData();
+            let poinSertifikat = 0;
+            sertifikatList.forEach(s => {
+                const t = (s.tingkat || '').toLowerCase();
+                if (t.includes('kabupaten')) poinSertifikat += 4;
+                else if (t.includes('provinsi')) poinSertifikat += 7;
+                else if (t.includes('nasional')) poinSertifikat += 10;
+                else if (t.includes('internasional')) poinSertifikat += 15;
+            });
 
             const updatedData = {
                 jalurPendaftaran: document.getElementById('editJalur').value,
@@ -1322,9 +1541,19 @@
                 pekerjaanIbu: document.getElementById('editKerjaIbu').value,
                 penghasilanAyah: parseFloat(document.getElementById('editGajiAyah').value) || null,
                 penghasilanIbu: parseFloat(document.getElementById('editGajiIbu').value) || null,
+                namaWali: document.getElementById('editWali').value || null,
+                hpWali: document.getElementById('editHpWali').value || null,
 
                 asalSekolah: document.getElementById('editSekolah').value,
+                sertifikat: sertifikatList,
+                poinSertifikat: poinSertifikat,
                 rataIjazah: parseFloat(document.getElementById('editSkl').value) || 0,
+                rapor41: r41,
+                rapor42: r42,
+                rapor51: r51,
+                rapor52: r52,
+                rapor61: r61,
+                rataRapor: rataRapor,
                 tkaMatematika: mat,
                 tkaBahasaIndonesia: indo,
                 tkaTotal: tkaTotal,
@@ -1346,9 +1575,7 @@
 
                 verifikasi: document.getElementById('editVerifikasi').value,
                 membaca: document.getElementById('editMembaca').value,
-                verifikator: firebase.auth().currentUser ? firebase.auth().currentUser.email : 'Sistem',
-
-                status: document.getElementById('editStatus').value
+                verifikator: firebase.auth().currentUser ? firebase.auth().currentUser.email : 'Sistem'
             };
 
             try {
@@ -1382,6 +1609,11 @@
         function showDetail(data) {
             const content = document.getElementById('detailContent');
             const skorDom = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
+            const skorPres = ((data.rataRapor || 0) + (data.poinSertifikat || 0)).toFixed(2);
+            let certDetailStr = '-';
+            if (Array.isArray(data.sertifikat) && data.sertifikat.length > 0) {
+                certDetailStr = data.sertifikat.map(s => `${s.nama} (${s.tingkat})`).join('<br>');
+            }
 
             content.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1414,6 +1646,8 @@
                     ${detailRow('Pekerjaan Ibu', data.pekerjaanIbu)}
                     ${detailRow('Penghasilan Ibu', data.penghasilanIbu ? 'Rp ' + Number(data.penghasilanIbu).toLocaleString('id-ID') : '-')}
                     ${detailRow('HP Ibu', data.hpIbu)}
+                    ${detailRow('Nama Wali', data.namaWali)}
+                    ${detailRow('HP Wali', data.hpWali)}
                 </div>
                 <hr class="my-2 border-gray-100">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1422,12 +1656,21 @@
                     </div>
                     ${detailRow('Asal Sekolah', data.asalSekolah)}
                     ${detailRow('Nilai SKL/Ijazah', data.rataIjazah)}
+                    ${detailRow('Rapor 4.1', data.rapor41)}
+                    ${detailRow('Rapor 4.2', data.rapor42)}
+                    ${detailRow('Rapor 5.1', data.rapor51)}
+                    ${detailRow('Rapor 5.2', data.rapor52)}
+                    ${detailRow('Rapor 6.1', data.rapor61)}
+                    ${detailRow('Rata-rata Rapor (NRP)', data.rataRapor)}
+                    ${detailRow('Sertifikat Prestasi', certDetailStr)}
+                    ${detailRow('Poin Sertifikat', data.poinSertifikat || 0)}
                     ${detailRow('TKA Matematika', data.tkaMatematika)}
                     ${detailRow('TKA B. Indonesia', data.tkaBahasaIndonesia)}
                     ${detailRow('Total TKA', data.tkaTotal)}
                     ${detailRow('Skor Jarak', data.skor?.jarak?.toFixed(2) || '0')}
                     ${detailRow('Skor Usia', data.skor?.usia || '0')}
                     ${detailRow('Skor Domisili', skorDom)}
+                    ${detailRow('Skor Prestasi', skorPres)}
                     ${detailRow('Verifikasi', data.verifikasi || 'Belum')}
                     
                     ${detailRow('Status', data.status || 'terdaftar')}
@@ -1473,9 +1716,12 @@
         // ============================================================
         function renderStatusBadge(status) {
             switch(status) {
-                case 'Lulus': return '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Lulus</span>';
-                case 'Tidak Lulus': return '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Tidak Lulus</span>';
-                default: return '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Terdaftar</span>';
+                case 'Diterima':
+                case 'Lulus': return '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Diterima</span>';
+                case 'Ditolak':
+                case 'Tidak Lulus': return '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-200">Ditolak</span>';
+                case 'terdaftar':
+                default: return '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">Terdaftar</span>';
             }
         }
 
