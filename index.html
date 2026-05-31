@@ -1374,10 +1374,10 @@
                 results.forEach((data, index) => {
                     const statusVal = data.status || 'terdaftar';
                     let statusHtml = '';
-                    if (statusVal === 'Lulus') {
-                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">✅ Lulus</span>';
-                    } else if (statusVal === 'Tidak Lulus') {
-                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-200">❌ Tidak Lulus</span>';
+                    if (statusVal === 'Diterima' || statusVal === 'Lulus') {
+                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">✅ Diterima</span>';
+                    } else if (statusVal === 'Ditolak' || statusVal === 'Tidak Lulus') {
+                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-200">❌ Ditolak</span>';
                     } else {
                         statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">⏳ Menunggu</span>';
                     }
