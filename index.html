@@ -11,6 +11,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        // DOMContentLoaded reset to fix browser preserving disabled states on reload
+        document.addEventListener('DOMContentLoaded', () => {
+            const nisnInput = document.getElementById('nisn');
+            if(nisnInput) {
+                nisnInput.readOnly = false;
+                nisnInput.disabled = false;
+            }
+            const jalurSelect = document.getElementById('jalurPendaftaran');
+            if(jalurSelect) {
+                jalurSelect.disabled = false;
+            }
+            const btnCek = document.getElementById('btnCekNisn');
+            if(btnCek) {
+                btnCek.disabled = false;
+            }
+            const formUtama = document.getElementById('formUtama');
+            if(formUtama) {
+                formUtama.disabled = true;
+            }
+        });
+
         tailwind.config = {
             theme: {
                 extend: {
@@ -114,6 +135,14 @@
             .nav-menu { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); padding: 16px; border-top: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
             .nav-menu.open { display: flex; }
         }
+
+        /* Disabled input styling */
+        input:disabled, select:disabled, textarea:disabled {
+            background-color: #f1f5f9 !important; /* Tailwind slate-100 */
+            color: #64748b !important; /* Tailwind slate-500 */
+            cursor: not-allowed;
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body class="font-sans bg-slate-50 text-slate-900 min-h-screen antialiased">
@@ -213,22 +242,22 @@
                     <div class="bg-gradient-to-b from-white to-slate-50 rounded-xl border border-slate-100 p-5 text-center hover:-translate-y-1 transition-transform duration-300 border-b-4 border-b-blue-500">
                         <div class="font-display font-extrabold text-3xl text-blue-800 mb-1">96</div>
                         <div class="font-semibold text-sm text-slate-700">Jalur Domisili</div>
-                        <div class="text-xs text-slate-400 mt-1">Berdasarkan jarak rumah</div>
+                        <div class="text-xs text-slate-400 mt-1">Skor Domisili (Jarak+Usia) & SKL</div>
                     </div>
                     <div class="bg-gradient-to-b from-white to-slate-50 rounded-xl border border-slate-100 p-5 text-center hover:-translate-y-1 transition-transform duration-300 border-b-4 border-b-emerald-500">
                         <div class="font-display font-extrabold text-3xl text-emerald-600 mb-1">48</div>
                         <div class="font-semibold text-sm text-slate-700">Jalur Prestasi</div>
-                        <div class="text-xs text-slate-400 mt-1">Akademik & Non-Akademik</div>
+                        <div class="text-xs text-slate-400 mt-1">Skor Prestasi (Rapor+Sertifikat) & TKA</div>
                     </div>
                     <div class="bg-gradient-to-b from-white to-slate-50 rounded-xl border border-slate-100 p-5 text-center hover:-translate-y-1 transition-transform duration-300 border-b-4 border-b-amber-500">
                         <div class="font-display font-extrabold text-3xl text-amber-600 mb-1">38</div>
                         <div class="font-semibold text-sm text-slate-700">Jalur Afirmasi</div>
-                        <div class="text-xs text-slate-400 mt-1">Keluarga tidak mampu</div>
+                        <div class="text-xs text-slate-400 mt-1">Keluarga kurang mampu (Urut Skor Domisili)</div>
                     </div>
                     <div class="bg-gradient-to-b from-white to-slate-50 rounded-xl border border-slate-100 p-5 text-center hover:-translate-y-1 transition-transform duration-300 border-b-4 border-b-purple-400">
                         <div class="font-display font-extrabold text-3xl text-purple-600 mb-1">10</div>
                         <div class="font-semibold text-sm text-slate-700">Jalur Mutasi</div>
-                        <div class="text-xs text-slate-400 mt-1">Perpindahan tugas ortu</div>
+                        <div class="text-xs text-slate-400 mt-1">Perpindahan orang tua (Urut Skor Domisili)</div>
                     </div>
                 </div>
                 <div class="bg-gradient-to-r from-blue-800 to-blue-500 rounded-xl p-4 text-center text-white">
@@ -428,6 +457,20 @@
                                         <input type="tel" id="hpIbu" placeholder="08xxxxxxxxxx" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                                         <div class="error-text" id="error-hpIbu">No HP minimal 10 digit</div>
                                     </div>
+                                    <div class="md:col-span-2 border-t border-slate-100 pt-5 mt-2">
+                                        <div class="text-sm font-bold text-slate-700 mb-1">Wali</div>
+                                        <div class="text-xs text-slate-500 mb-4">Diisi jika tidak dirawat oleh orang tua</div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div>
+                                                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nama Wali</label>
+                                                <input type="text" id="namaWali" placeholder="Nama wali" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold text-slate-700 mb-1.5">No. HP Wali</label>
+                                                <input type="tel" id="hpWali" placeholder="08xxxxxxxxxx" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -462,9 +505,35 @@
                                         <div class="error-text" id="error-asalSekolahLainnya">Nama sekolah lainnya wajib diisi</div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Rata-Rata Nilai Ijazah/SKL <span class="text-red-500">*</span></label>
-                                        <input type="text" id="rataIjazah" inputmode="decimal" placeholder="Contoh: 85.5 (maks 100)" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, '')" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                                        <div class="error-text" id="error-rataIjazah">Nilai rata-rata wajib diisi (0-100)</div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Rata-Rata Nilai SKL (Ijazah)</label>
+                                        <input type="text" id="rataIjazah" inputmode="decimal" placeholder="Contoh: 85.5 (opsional)" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, '')" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <div class="error-text" id="error-rataIjazah">Nilai rata-rata maks 100</div>
+                                    </div>
+
+                                    <!-- Nilai Rapor Semester -->
+                                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-5 border-t border-slate-100 pt-5 mt-2">
+                                        <div class="md:col-span-3 text-sm font-bold text-slate-700 mb-[-10px]">Nilai Rapor (Opsional)</div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Kelas 4 SMT 1</label>
+                                            <input type="text" id="rapor41" inputmode="decimal" placeholder="Nilai Rata-rata" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, ''); hitungRapor()" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Kelas 4 SMT 2</label>
+                                            <input type="text" id="rapor42" inputmode="decimal" placeholder="Nilai Rata-rata" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, ''); hitungRapor()" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Kelas 5 SMT 1</label>
+                                            <input type="text" id="rapor51" inputmode="decimal" placeholder="Nilai Rata-rata" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, ''); hitungRapor()" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Kelas 5 SMT 2</label>
+                                            <input type="text" id="rapor52" inputmode="decimal" placeholder="Nilai Rata-rata" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, ''); hitungRapor()" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Kelas 6 SMT 1</label>
+                                            <input type="text" id="rapor61" inputmode="decimal" placeholder="Nilai Rata-rata" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, ''); hitungRapor()" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                        </div>
+                                        <input type="hidden" id="rataRapor">
                                     </div>
                                     <div class="hidden"></div>
                                     <div>
@@ -477,10 +546,27 @@
                                         <input type="text" id="tkaBahasa" inputmode="decimal" placeholder="Diisi saat tes" oninput="this.value = this.value.replace(',', '.').replace(/[^0-9.]/g, ''); hitungTka()" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                                         <div class="error-text" id="error-tkaBahasa">Nilai TKA B. Indonesia maks 100</div>
                                     </div>
-                                    <div>
+                                    <div class="hidden">
                                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Total Nilai TKA</label>
                                         <input type="text" id="tkaTotal" readonly placeholder="Otomatis" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-100 text-sm outline-none cursor-not-allowed text-slate-500">
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Section: Sertifikat Prestasi -->
+                            <div id="sectionSertifikatPrestasi">
+                                <div class="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center text-lg">🏆</div>
+                                        <div>
+                                            <h3 class="font-display font-bold text-slate-800">Sertifikat Prestasi</h3>
+                                            <p class="text-xs text-slate-400">Opsional. Tambahkan jika ada.</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="tambahSertifikat()" class="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-semibold transition">+ Tambah</button>
+                                </div>
+                                <div id="sertifikatContainer" class="space-y-4">
+                                    <!-- Dynamic rows will be added here by JS -->
                                 </div>
                             </div>
 
@@ -531,8 +617,8 @@
                                 </div>
                             </div>
 
-                            <!-- Section 5: Score Preview -->
-                            <div>
+                            <!-- Section 5: Score Preview (HIDDEN) -->
+                            <div class="hidden">
                                 <div class="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
                                     <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-lg">📊</div>
                                     <div>
@@ -615,17 +701,18 @@
                     <table class="w-full text-sm">
                         <thead class="bg-gradient-to-r from-slate-50 to-slate-100 text-slate-600 text-xs uppercase tracking-wider">
                             <tr>
+                                <th class="px-4 py-3.5 text-center font-semibold w-16">No</th>
                                 <th class="px-4 py-3.5 text-left font-semibold">NISN</th>
                                 <th class="px-4 py-3.5 text-left font-semibold">Nama Lengkap</th>
                                 <th class="px-4 py-3.5 text-left font-semibold">Asal Sekolah</th>
                                 <th class="px-4 py-3.5 text-center font-semibold">Total TKA</th>
                                 <th class="px-4 py-3.5 text-center font-semibold">Nilai SKL</th>
-                                <th class="px-4 py-3.5 text-center font-semibold">Skor Domisili</th>
+                                <th id="thSkorHasil" class="px-4 py-3.5 text-center font-semibold">Skor Domisili</th>
                                 <th class="px-4 py-3.5 text-center font-semibold">Status</th>
                             </tr>
                         </thead>
                         <tbody id="tableBodyHasil" class="divide-y divide-slate-100">
-                            <tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Klik "Muat Ulang" untuk mengambil data</td></tr>
+                            <tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">Klik "Muat Ulang" untuk mengambil data</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -717,6 +804,61 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+
+        // SERTIFIKAT PRESTASI
+        let sertifikatCount = 0;
+        function tambahSertifikat() {
+            sertifikatCount++;
+            const id = sertifikatCount;
+            const container = document.getElementById('sertifikatContainer');
+            
+            const div = document.createElement('div');
+            div.className = 'grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-4 bg-slate-50 rounded-xl border border-slate-100 relative';
+            div.id = `sertifikatRow_${id}`;
+            
+            div.innerHTML = `
+                <div class="md:col-span-7">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Nama Sertifikat/Prestasi</label>
+                    <input type="text" id="namaSertifikat_${id}" placeholder="Contoh: Juara 1 Cerdas Cermat" class="form-control w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                </div>
+                <div class="md:col-span-4">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Tingkat</label>
+                    <select id="tingkatSertifikat_${id}" class="form-control w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                        <option value="">— Pilih —</option>
+                        <option value="Kabupaten/Kota">Kabupaten/Kota</option>
+                        <option value="Provinsi">Provinsi</option>
+                        <option value="Nasional">Nasional</option>
+                        <option value="Internasional">Internasional</option>
+                    </select>
+                </div>
+                <div class="md:col-span-1 flex justify-end">
+                    <button type="button" onclick="hapusSertifikat(${id})" class="p-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-lg transition" title="Hapus">
+                        🗑️
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+        
+        function hapusSertifikat(id) {
+            const row = document.getElementById(`sertifikatRow_${id}`);
+            if (row) row.remove();
+        }
+        
+        function getSertifikatData() {
+            const container = document.getElementById('sertifikatContainer');
+            const rows = container.children;
+            const data = [];
+            for (let i = 0; i < rows.length; i++) {
+                const rowId = rows[i].id.split('_')[1];
+                const nama = document.getElementById(`namaSertifikat_${rowId}`).value.trim();
+                const tingkat = document.getElementById(`tingkatSertifikat_${rowId}`).value;
+                if (nama && tingkat) {
+                    data.push({ nama, tingkat });
+                }
+            }
+            return data;
+        }
 
         // ============================================================
         // SPA NAVIGATION
@@ -909,8 +1051,13 @@
             if (val('asalSekolah') === 'Lainnya') {
                 if (!validateField('asalSekolahLainnya', val('asalSekolahLainnya') !== '')) valid = false;
             }
-            const rataIjazah = parseFloat(val('rataIjazah'));
-            if (!validateField('rataIjazah', !isNaN(rataIjazah) && rataIjazah >= 0 && rataIjazah <= 100)) valid = false;
+            const rataIjazahStr = val('rataIjazah');
+            if (rataIjazahStr !== '') {
+                const rataIjazah = parseFloat(rataIjazahStr);
+                if (!validateField('rataIjazah', !isNaN(rataIjazah) && rataIjazah >= 0 && rataIjazah <= 100)) valid = false;
+            } else {
+                validateField('rataIjazah', true);
+            }
 
             // TKA optional validation
             const tkaM = val('tkaMatematika');
@@ -957,6 +1104,8 @@
             document.getElementById('jarakRumah').value = '';
             document.getElementById('latUser').value = '';
             document.getElementById('lngUser').value = '';
+            document.getElementById('sertifikatContainer').innerHTML = '';
+            sertifikatCount = 0;
             // Reset score
             resetScorePreview();
             // Reset school
@@ -981,18 +1130,29 @@
         // ============================================================
         // TKA CALCULATION
         // ============================================================
+        function safeFloat(id) {
+            const v = parseFloat(document.getElementById(id)?.value);
+            return isNaN(v) ? 0 : v;
+        }
+
         function hitungTka() {
             const matInput = document.getElementById('tkaMatematika');
-            const bindoInput = document.getElementById('tkaBahasa');
+            const mat = safeFloat('tkaMatematika');
+            const bInd = safeFloat('tkaBahasa');
+            document.getElementById('tkaTotal').value = (mat + bInd).toFixed(2);
+        }
 
-            let mat = parseFloat(matInput.value) || 0;
-            if (mat > 100) { mat = 100; matInput.value = '100'; }
-
-            let bindo = parseFloat(bindoInput.value) || 0;
-            if (bindo > 100) { bindo = 100; bindoInput.value = '100'; }
-
-            const total = mat + bindo;
-            document.getElementById('tkaTotal').value = total.toFixed(2);
+        function hitungRapor() {
+            const r41 = safeFloat('rapor41');
+            const r42 = safeFloat('rapor42');
+            const r51 = safeFloat('rapor51');
+            const r52 = safeFloat('rapor52');
+            const r61 = safeFloat('rapor61');
+            let total = r41 + r42 + r51 + r52 + r61;
+            let count = 0;
+            if(r41>0) count++; if(r42>0) count++; if(r51>0) count++; if(r52>0) count++; if(r61>0) count++;
+            let rata = count > 0 ? (total / count) : 0;
+            document.getElementById('rataRapor').value = rata.toFixed(2);
         }
 
         // ============================================================
@@ -1018,16 +1178,22 @@
             const skorTotal = Math.round((skorJarak + skorUsia) * 100) / 100;
 
             // Helper
-            function safeFloat(id) {
-                const v = parseFloat(document.getElementById(id)?.value);
-                return isNaN(v) ? null : v;
-            }
 
             const asalSekolah = document.getElementById('asalSekolah').value === 'Lainnya'
                 ? document.getElementById('asalSekolahLainnya').value.trim()
                 : document.getElementById('asalSekolah').value;
 
             const nisn = document.getElementById('nisn').value.trim();
+
+            const sertifikatList = getSertifikatData();
+            let poinSertifikat = 0;
+            sertifikatList.forEach(s => {
+                const t = (s.tingkat || '').toLowerCase();
+                if (t.includes('kabupaten')) poinSertifikat += 4;
+                else if (t.includes('provinsi')) poinSertifikat += 7;
+                else if (t.includes('nasional')) poinSertifikat += 10;
+                else if (t.includes('internasional')) poinSertifikat += 15;
+            });
 
             const data = {
                 nisn: nisn,
@@ -1048,8 +1214,18 @@
                 hpSiswa: document.getElementById('hpSiswa').value.trim() || null,
                 hpAyah: document.getElementById('hpAyah').value.trim() || null,
                 hpIbu: document.getElementById('hpIbu').value.trim() || null,
+                namaWali: document.getElementById('namaWali').value.trim() || null,
+                hpWali: document.getElementById('hpWali').value.trim() || null,
                 asalSekolah: asalSekolah,
+                sertifikat: sertifikatList,
+                poinSertifikat: poinSertifikat,
                 rataIjazah: safeFloat('rataIjazah'),
+                rapor41: safeFloat('rapor41'),
+                rapor42: safeFloat('rapor42'),
+                rapor51: safeFloat('rapor51'),
+                rapor52: safeFloat('rapor52'),
+                rapor61: safeFloat('rapor61'),
+                rataRapor: safeFloat('rataRapor'),
                 tkaMatematika: safeFloat('tkaMatematika'),
                 tkaBahasaIndonesia: safeFloat('tkaBahasa'),
                 tkaTotal: safeFloat('tkaTotal'),
@@ -1165,23 +1341,37 @@
                 });
 
                 // Sort
-                if (filterJalur === 'Domisili') {
+                if (['Domisili', 'Afirmasi', 'Mutasi'].includes(filterJalur)) {
                     results.sort((a, b) => {
                         const skorA = (a.skor?.jarak || 0) + (a.skor?.usia || 0);
                         const skorB = (b.skor?.jarak || 0) + (b.skor?.usia || 0);
-                        return skorB - skorA;
+                        if (skorB !== skorA) return skorB - skorA;
+                        // Jika seri, urutkan berdasarkan rataIjazah
+                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
                     });
                 } else if (filterJalur === 'Prestasi') {
                     results.sort((a, b) => {
+                        // Kriteria 1: Nilai Rata-rata Rapor + poin sertifikat
+                        const raporSertifikatA = (a.rataRapor || 0) + (a.poinSertifikat || 0);
+                        const raporSertifikatB = (b.rataRapor || 0) + (b.poinSertifikat || 0);
+                        if (raporSertifikatB !== raporSertifikatA) return raporSertifikatB - raporSertifikatA;
+                        
+                        // Kriteria 2: (Bila kriteria 1 seri): Nilai TKA
                         const tkaA = a.tkaTotal || 0;
                         const tkaB = b.tkaTotal || 0;
-                        if (tkaB !== tkaA) return tkaB - tkaA;
-                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
+                        return tkaB - tkaA;
                     });
+                }
+                
+                // Update table header text
+                const thSkor = document.getElementById('thSkorHasil');
+                if (thSkor) {
+                    if (filterJalur === 'Prestasi') thSkor.innerText = 'Skor Prestasi';
+                    else thSkor.innerText = 'Skor Domisili';
                 }
 
                 let html = '';
-                results.forEach(data => {
+                results.forEach((data, index) => {
                     const statusVal = data.status || 'terdaftar';
                     let statusHtml = '';
                     if (statusVal === 'Lulus') {
@@ -1197,18 +1387,31 @@
                         ? '<span class="text-emerald-500 mr-1" title="Terverifikasi">✅</span>' + (data.nisn || '-')
                         : (data.nisn || '-');
 
-                    const skorDomisili = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
+                    let skorHtml = '';
+                    if (filterJalur === 'Prestasi') {
+                        const skorPres = ((data.rataRapor || 0) + (data.poinSertifikat || 0)).toFixed(2);
+                        skorHtml = `
+                            <div class="font-bold text-blue-800 text-base">${skorPres}</div>
+                            <div class="text-xs text-slate-400">Rapor: ${data.rataRapor || 0} | Sertifikat: ${data.poinSertifikat || 0}</div>
+                        `;
+                    } else {
+                        const skorDomisili = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
+                        skorHtml = `
+                            <div class="font-bold text-blue-800 text-base">${skorDomisili}</div>
+                            <div class="text-xs text-slate-400">Jarak: ${data.skor?.jarak?.toFixed(2) || 0} | Usia: ${data.skor?.usia || 0}</div>
+                        `;
+                    }
 
                     html += `
                         <tr class="hover:bg-slate-50 transition">
+                            <td class="px-4 py-3.5 text-center">${index + 1}</td>
                             <td class="px-4 py-3.5">${nisnDisplay}</td>
                             <td class="px-4 py-3.5 font-medium text-slate-800">${data.namaLengkap || '-'}</td>
                             <td class="px-4 py-3.5 text-slate-600">${data.asalSekolah || '-'}</td>
                             <td class="px-4 py-3.5 text-center">${data.tkaTotal || 0}</td>
                             <td class="px-4 py-3.5 text-center">${data.rataIjazah || 0}</td>
                             <td class="px-4 py-3.5 text-center">
-                                <div class="font-bold text-blue-800 text-base">${skorDomisili}</div>
-                                <div class="text-xs text-slate-400">Jarak: ${data.skor?.jarak?.toFixed(2) || 0} | Usia: ${data.skor?.usia || 0}</div>
+                                ${skorHtml}
                             </td>
                             <td class="px-4 py-3.5 text-center">${statusHtml}</td>
                         </tr>
