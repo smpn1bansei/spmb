@@ -106,8 +106,8 @@
                     <label class="block text-xs font-semibold text-slate-500 mb-1">Status Kelulusan</label>
                     <select id="filterStatusRekap" class="px-4 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 min-w-[200px]">
                         <option value="">Semua Status</option>
-                        <option value="Lulus">Lulus Saja</option>
-                        <option value="Tidak Lulus">Tidak Lulus Saja</option>
+                        <option value="Diterima">Diterima Saja</option>
+                        <option value="Ditolak">Ditolak Saja</option>
                         <option value="Terdaftar">Terdaftar (Menunggu)</option>
                     </select>
                 </div>
@@ -159,129 +159,398 @@
         <!-- SECTION: CETAK INDIVIDU -->
         <section id="section-individu" class="hidden">
             <!-- Controls (No Print) -->
-            <div class="no-print bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-wrap gap-4 items-end">
-                <div class="flex-1">
-                    <label class="block text-xs font-semibold text-slate-500 mb-1">Cari Berdasarkan NISN</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="searchNisn" placeholder="Masukkan 10 digit NISN..." class="w-full px-4 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 max-w-sm">
-                        <button onclick="loadDataIndividu()" class="px-6 py-2 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition">Cari Siswa</button>
+            <div class="no-print bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-gray-800">Daftar Pendaftar (Cetak Individu)</h3>
+                    <div class="relative w-64">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </span>
+                        <input type="text" id="searchIndividuTable" placeholder="Cari Nama atau NISN..." class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" onkeyup="filterIndividuTable()">
                     </div>
                 </div>
                 
-                <div>
-                    <button onclick="window.print()" id="btnCetakIndividu" disabled class="px-6 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 flex items-center gap-2 inline-flex disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="overflow-x-auto border border-gray-100 rounded-xl max-h-96 overflow-y-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50/50 border-b border-gray-100 text-gray-500 uppercase text-xs sticky top-0">
+                            <tr>
+                                <th class="px-4 py-3 font-semibold text-center w-12">No</th>
+                                <th class="px-4 py-3 font-semibold w-24">NISN</th>
+                                <th class="px-4 py-3 font-semibold">Nama Lengkap</th>
+                                <th class="px-4 py-3 font-semibold">Asal Sekolah</th>
+                                <th class="px-4 py-3 font-semibold text-center">Jalur</th>
+                                <th class="px-4 py-3 font-semibold text-center w-24">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="individuTableBody" class="divide-y divide-gray-100">
+                            <tr><td colspan="6" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="flex justify-end mt-2 hidden" id="btnCetakMainWrapper">
+                    <button onclick="window.print()" id="btnCetakIndividu" class="px-6 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 flex items-center gap-2 inline-flex">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                         Cetak Formulir
                     </button>
                 </div>
             </div>
             
-            <div id="individuError" class="no-print text-center text-red-500 font-medium py-4 hidden">Siswa dengan NISN tersebut tidak ditemukan.</div>
+            <div id="individuError" class="no-print text-center text-red-500 font-medium py-4 hidden">Terjadi kesalahan saat memuat data.</div>
 
             <!-- Print Area for Individu (Formulir Pendaftaran A4) -->
-            <div id="printAreaIndividu" class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm print:border-none print:shadow-none print:p-0 hidden">
-                
+            <div id="printAreaIndividu" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm print:border-none print:shadow-none print:p-0 print:m-0 hidden">
+
+                <!-- ===== KANAN HEADER: STATUS BADGE (print only) ===== -->
                 <!-- HEADER FORMULIR -->
-                <div class="flex items-center justify-between border-b-[3px] border-black pb-4 mb-4">
-                    <!-- Logo Kiri: Kabupaten Pelalawan -->
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/archive/3/34/20190704133307%21Pelalawan_logo.png" alt="Logo Kabupaten" class="w-16 h-16 object-contain">
-                    <div class="text-center flex-1 px-4">
-                        <h1 class="text-xl font-bold uppercase leading-tight">FORMULIR PENDAFTARAN MURID BARU</h1>
-                        <h2 class="text-lg font-bold uppercase leading-tight">SMP NEGERI 1 BANDAR SEIKIJANG</h2>
-                        <p class="text-xs mt-1">Tahun Ajaran 2026/2027</p>
+                <div class="border-b-2 border-slate-800 pb-3 mb-3">
+                    <div class="flex items-center gap-3">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/archive/3/34/20190704133307%21Pelalawan_logo.png" alt="Logo Kabupaten" class="w-14 h-14 object-contain flex-shrink-0">
+                        <div class="text-center flex-1">
+                            <div class="text-xs text-slate-500 uppercase tracking-widest">Pemerintah Kabupaten Pelalawan</div>
+                            <div class="font-bold text-base uppercase leading-tight mt-0.5">FORMULIR PENDAFTARAN MURID BARU</div>
+                            <div class="font-bold text-sm uppercase leading-tight">SMP NEGERI 1 BANDAR SEIKIJANG</div>
+                            <div class="text-xs text-slate-500 mt-0.5">Tahun Pelajaran 2026/2027 &nbsp;|&nbsp; SPMB Sistem Daring</div>
+                        </div>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpXOFAf7eGfyyMZ_hwGP28TwDh8znggEHcMw&s" alt="Logo Sekolah" class="w-14 h-14 object-contain flex-shrink-0">
                     </div>
-                    <!-- Logo Kanan: Sekolah -->
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpXOFAf7eGfyyMZ_hwGP28TwDh8znggEHcMw&s" alt="Logo Sekolah" class="w-16 h-16 object-contain">
                 </div>
 
-                <div class="text-center mb-4 font-bold text-sm underline uppercase">Biodata Pendaftar</div>
-
-                <!-- CONTENT GRID -->
-                <div class="grid grid-cols-2 gap-x-8 gap-y-4 text-sm print-grid">
-                    
-                    <!-- KIRI -->
-                    <div class="space-y-2 print-space-y-1">
-                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight">1. Data Diri</div>
-                        <table class="w-full">
-                            <tr><td class="w-32 py-1 text-xs">NISN</td><td class="w-4">:</td><td class="font-semibold" id="ind_nisn">-</td></tr>
-                            <tr><td class="py-1 text-xs">Nama Lengkap</td><td>:</td><td class="font-bold" id="ind_nama">-</td></tr>
-                            <tr><td class="py-1 text-xs">Jenis Kelamin</td><td>:</td><td id="ind_jk">-</td></tr>
-                            <tr><td class="py-1 text-xs">Tempat Lahir</td><td>:</td><td id="ind_tempatLahir">-</td></tr>
-                            <tr><td class="py-1 text-xs">Tgl Lahir</td><td>:</td><td id="ind_tglLahir">-</td></tr>
-                            <tr><td class="py-1 text-xs">Agama</td><td>:</td><td id="ind_agama">-</td></tr>
-                            <tr><td class="py-1 text-xs">Tinggal Dengan</td><td>:</td><td id="ind_tinggal">-</td></tr>
-                        </table>
-
-                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight mt-4 print-mb">2. Data Sekolah Asal</div>
-                        <table class="w-full">
-                            <tr><td class="w-32 py-1 text-xs">Nama Sekolah</td><td class="w-4">:</td><td class="font-semibold" id="ind_sekolah">-</td></tr>
-                        </table>
-
-                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight mt-4 print-mb">3. Data Orang Tua/Wali</div>
-                        <table class="w-full">
-                            <tr><td class="w-32 py-1 text-xs">Nama Ayah</td><td class="w-4">:</td><td id="ind_ayah">-</td></tr>
-                            <tr><td class="py-1 text-xs">Nama Ibu</td><td>:</td><td id="ind_ibu">-</td></tr>
-                            <tr><td class="py-1 text-xs">Nama Wali</td><td>:</td><td id="ind_wali">-</td></tr>
-                            <tr><td class="py-1 text-xs align-top">Alamat Lengkap</td><td class="align-top">:</td><td class="text-xs" id="ind_alamat">-</td></tr>
-                            <tr><td class="py-1 text-xs">No. HP/WA</td><td>:</td><td id="ind_hp">-</td></tr>
-                            <tr><td class="py-1 text-xs">Titik GPS (Lat,Lng)</td><td>:</td><td class="text-xs font-mono" id="ind_gps">-</td></tr>
-                        </table>
+                <!-- STATUS BAR -->
+                <div class="flex items-center justify-between bg-slate-800 text-white px-4 py-1.5 rounded-lg mb-3 text-xs">
+                    <div>Jalur: <span class="font-bold uppercase" id="ind_jalur">-</span></div>
+                    <div class="flex items-center gap-4">
+                        <span>Verifikasi: <span class="font-bold" id="ind_verifikasi">-</span></span>
+                        <span>|</span>
+                        <span>Status: <span class="font-bold uppercase" id="ind_status">-</span></span>
+                        <span>|</span>
+                        <span>Oleh: <span class="italic" id="ind_verifikator">-</span></span>
                     </div>
+                </div>
 
-                    <!-- KANAN -->
-                    <div class="space-y-2 print-space-y-1">
-                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight">4. Jalur & Status</div>
-                        <table class="w-full">
-                            <tr><td class="w-32 py-1 text-xs">Jalur Pendaftaran</td><td class="w-4">:</td><td class="font-bold uppercase" id="ind_jalur">-</td></tr>
-                            <tr><td class="py-1 text-xs">Status Kelulusan</td><td>:</td><td class="font-bold uppercase border border-black inline-block px-2 mt-1" id="ind_status">-</td></tr>
-                            <tr><td class="py-1 text-xs">Verifikasi Panitia</td><td>:</td><td class="font-bold" id="ind_verifikasi">-</td></tr>
-                            <tr><td class="py-1 text-xs">Admin/Verifikator</td><td>:</td><td class="text-xs italic" id="ind_verifikator">-</td></tr>
-                        </table>
+                <!-- ===== BODY: 3 KOLOM ===== -->
+                <div class="grid grid-cols-3 gap-x-4 text-[11px]">
 
-                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight mt-4 print-mb">5. Kelengkapan Berkas</div>
-                        <table class="w-full text-xs">
-                            <tr><td class="w-32 py-0.5">Ijazah / SKL</td><td class="w-4">:</td><td id="ind_berkas_ijz">-</td></tr>
-                            <tr><td class="py-0.5">Ijazah MDA</td><td>:</td><td id="ind_berkas_mda">-</td></tr>
-                            <tr><td class="py-0.5">Akte Kelahiran</td><td>:</td><td id="ind_berkas_akte">-</td></tr>
-                            <tr><td class="py-0.5">Kartu Keluarga</td><td>:</td><td id="ind_berkas_kk">-</td></tr>
-                            <tr><td class="py-0.5">Kartu KIP/PIP</td><td>:</td><td id="ind_berkas_kip">-</td></tr>
-                            <tr><td class="py-0.5">Surat Ket. Domisili</td><td>:</td><td id="ind_berkas_domisili">-</td></tr>
-                            <tr><td class="py-0.5">Surat Ket. Tidak Mampu</td><td>:</td><td id="ind_berkas_sktm">-</td></tr>
-                            <tr><td class="py-0.5">Sertifikat Prestasi</td><td>:</td><td id="ind_berkas_prestasi">-</td></tr>
-                            <tr><td class="py-0.5 font-bold pt-2">Ket. Membaca</td><td class="pt-2">:</td><td class="font-bold pt-2 uppercase" id="ind_berkas_membaca">-</td></tr>
-                        </table>
+                    <!-- =========== KOLOM 1: DATA SISWA & ORTU =========== -->
+                    <div class="col-span-2 space-y-2">
 
-                        <div class="font-bold bg-slate-100 print:bg-slate-100/50 px-2 py-1 print-tight mt-4 print-mb">6. Penilaian Seleksi</div>
-                        <div class="border border-slate-300 p-2">
-                            <table class="w-full text-xs">
-                                <tr><td class="w-24 font-bold pb-1">Skor Total</td><td class="w-4 pb-1">:</td><td class="font-bold text-sm pb-1" id="ind_skor_total">-</td></tr>
-                                <tr><td colspan="3" class="border-b border-slate-300 mb-1"></td></tr>
-                                <tr><td class="pt-1">Jarak Rumah</td><td class="pt-1">:</td><td class="pt-1"><span id="ind_jarak_km">-</span> km (Skor: <span id="ind_skor_jarak">-</span>)</td></tr>
-                                <tr><td>Skor Usia</td><td>:</td><td id="ind_skor_usia">-</td></tr>
-                                <tr><td>Rata2 Ijazah</td><td>:</td><td id="ind_skor_ijazah">-</td></tr>
-                                <tr><td>Total TKA</td><td>:</td><td id="ind_skor_tka">-</td></tr>
+                        <!-- A. DATA DIRI SISWA -->
+                        <div>
+                            <div class="bg-slate-800 text-white font-bold px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-t">A. Data Diri Siswa</div>
+                            <table class="w-full border border-slate-300 border-t-0">
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="w-28 px-2 py-0.5 text-slate-500">NISN</td>
+                                        <td class="w-3 text-slate-400">:</td>
+                                        <td class="px-1 font-bold font-mono" id="ind_nisn">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Nama Lengkap</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1 font-bold uppercase" id="ind_nama">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Jenis Kelamin</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_jk">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Tempat, Tgl Lahir</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1"><span id="ind_tempatLahir">-</span>, <span id="ind_tglLahir">-</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Agama</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_agama">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Tinggal Bersama</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_tinggal">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500 align-top">Alamat Rumah</td>
+                                        <td class="text-slate-400 align-top">:</td>
+                                        <td class="px-1 leading-tight" id="ind_alamat">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Koordinat GPS</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1 font-mono text-[9px]" id="ind_gps">-</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
+
+                        <!-- B. DATA ORANG TUA -->
+                        <div>
+                            <div class="bg-amber-700 text-white font-bold px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-t">B. Data Orang Tua / Wali</div>
+                            <table class="w-full border border-slate-300 border-t-0">
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr class="bg-slate-50">
+                                        <td colspan="3" class="px-2 py-0.5 font-bold text-[10px] text-amber-800">AYAH</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="w-28 px-2 py-0.5 text-slate-500">Nama Ayah</td>
+                                        <td class="w-3 text-slate-400">:</td>
+                                        <td class="px-1 font-semibold" id="ind_nama_ayah">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Status</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_status_ayah">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Pekerjaan</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_kerja_ayah">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Penghasilan</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_gaji_ayah">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">No. HP Ayah</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_hp_ayah">-</td>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <td colspan="3" class="px-2 py-0.5 font-bold text-[10px] text-amber-800">IBU</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Nama Ibu</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1 font-semibold" id="ind_nama_ibu">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Status</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_status_ibu">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Pekerjaan</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_kerja_ibu">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Penghasilan</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_gaji_ibu">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">No. HP Ibu</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_hp_ibu">-</td>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <td colspan="3" class="px-2 py-0.5 font-bold text-[10px] text-slate-500">WALI <span class="font-normal">(jika ada)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Nama Wali</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_wali">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">No. HP Wali</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_hp_wali">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- C. DATA SEKOLAH & NILAI -->
+                        <div>
+                            <div class="bg-emerald-700 text-white font-bold px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-t">C. Data Sekolah & Nilai Akademik</div>
+                            <table class="w-full border border-slate-300 border-t-0">
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="w-28 px-2 py-0.5 text-slate-500">Asal Sekolah</td>
+                                        <td class="w-3 text-slate-400">:</td>
+                                        <td class="px-1 font-semibold" id="ind_sekolah">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Nilai SKL/Ijazah</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1 font-semibold" id="ind_skor_ijazah">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">TKA Matematika</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_tka_mtk">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">TKA B. Indonesia</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_tka_bindo">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- Tabel Rapor -->
+                            <table class="w-full border border-slate-300 border-t-0 text-center mt-0">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th colspan="6" class="px-2 py-0.5 text-left text-[10px] font-semibold text-slate-500 border-t border-slate-200">Nilai Rapor Semester</th>
+                                    </tr>
+                                    <tr class="border-t border-slate-200">
+                                        <th class="border border-slate-200 px-1 py-0.5 font-semibold text-slate-600 text-[9px]">Kls 4.1</th>
+                                        <th class="border border-slate-200 px-1 py-0.5 font-semibold text-slate-600 text-[9px]">Kls 4.2</th>
+                                        <th class="border border-slate-200 px-1 py-0.5 font-semibold text-slate-600 text-[9px]">Kls 5.1</th>
+                                        <th class="border border-slate-200 px-1 py-0.5 font-semibold text-slate-600 text-[9px]">Kls 5.2</th>
+                                        <th class="border border-slate-200 px-1 py-0.5 font-semibold text-slate-600 text-[9px]">Kls 6.1</th>
+                                        <th class="border border-slate-200 px-1 py-0.5 font-bold text-emerald-700 text-[9px]">Rata²</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border border-slate-200 px-1 py-0.5" id="ind_rp41">-</td>
+                                        <td class="border border-slate-200 px-1 py-0.5" id="ind_rp42">-</td>
+                                        <td class="border border-slate-200 px-1 py-0.5" id="ind_rp51">-</td>
+                                        <td class="border border-slate-200 px-1 py-0.5" id="ind_rp52">-</td>
+                                        <td class="border border-slate-200 px-1 py-0.5" id="ind_rp61">-</td>
+                                        <td class="border border-slate-200 px-1 py-0.5 font-bold text-emerald-700" id="ind_skor_rapor">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- D. SERTIFIKAT PRESTASI -->
+                        <div>
+                            <div class="bg-yellow-700 text-white font-bold px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-t">D. Sertifikat Prestasi</div>
+                            <div class="border border-slate-300 border-t-0 px-2 py-1 min-h-[30px]" id="ind_sertifikat_list">
+                                <span class="text-slate-400 italic">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =========== KOLOM 2: BERKAS, SKOR, VERIFIKASI =========== -->
+                    <div class="space-y-2">
+
+                        <!-- E. KELENGKAPAN BERKAS -->
+                        <div>
+                            <div class="bg-indigo-700 text-white font-bold px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-t">E. Kelengkapan Berkas</div>
+                            <table class="w-full border border-slate-300 border-t-0 text-[10px]">
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">KIP / PIP</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1 font-semibold" id="ind_berkas_kip">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Ijazah TK</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_berkas_ijz">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Ijazah MDA</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_berkas_mda">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Akte Kelahiran</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_berkas_akte">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Kartu Keluarga</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_berkas_kk">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Surat Domisili</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_berkas_domisili">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">SKTM</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_berkas_sktm">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">Sertifikat Prst.</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_berkas_prestasi">-</td>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <td class="px-2 py-0.5 text-slate-600 font-bold">Kemamp. Baca</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1 font-bold uppercase" id="ind_berkas_membaca">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- F. SKOR SELEKSI -->
+                        <div>
+                            <div class="bg-blue-800 text-white font-bold px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-t">F. Rincian Skor Seleksi</div>
+                            <div class="border border-slate-300 border-t-0 p-2 space-y-2">
+                                <!-- Skor Akhir -->
+                                <div class="text-center bg-slate-50 rounded py-1 px-2">
+                                    <div class="text-[9px] text-slate-500">SKOR AKHIR (Jalur <span id="ind_jalur_skor">-</span>)</div>
+                                    <div class="font-bold text-lg text-blue-800 leading-none" id="ind_skor_total">-</div>
+                                </div>
+                                <!-- Domisili -->
+                                <div>
+                                    <div class="text-[9px] font-bold text-slate-500 uppercase mb-0.5 border-b border-slate-200 pb-0.5">Domisili / Umum</div>
+                                    <table class="w-full text-[10px]">
+                                        <tr><td class="text-slate-500 py-0">Jarak Rumah</td><td class="font-semibold text-right"><span id="ind_jarak_km">-</span> km</td></tr>
+                                        <tr><td class="text-slate-500 py-0">Skor Jarak</td><td class="font-semibold text-right" id="ind_skor_jarak">-</td></tr>
+                                        <tr><td class="text-slate-500 py-0">Skor Usia</td><td class="font-semibold text-right" id="ind_skor_usia">-</td></tr>
+                                    </table>
+                                </div>
+                                <!-- Prestasi -->
+                                <div>
+                                    <div class="text-[9px] font-bold text-slate-500 uppercase mb-0.5 border-b border-slate-200 pb-0.5">Prestasi</div>
+                                    <table class="w-full text-[10px]">
+                                        <tr><td class="text-slate-500 py-0">Rata² Rapor</td><td class="font-semibold text-right" id="ind_skor_rapor2">-</td></tr>
+                                        <tr><td class="text-slate-500 py-0">Poin Sertifikat</td><td class="font-semibold text-right" id="ind_skor_sertifikat">-</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- G. HP SISWA -->
+                        <div>
+                            <div class="bg-slate-600 text-white font-bold px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-t">G. Kontak Siswa</div>
+                            <table class="w-full border border-slate-300 border-t-0 text-[10px]">
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">HP Siswa</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1" id="ind_hp_siswa">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-2 py-0.5 text-slate-500">HP Utama (WA)</td>
+                                        <td class="text-slate-400">:</td>
+                                        <td class="px-1 font-semibold" id="ind_hp">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- TTD AREA -->
+                        <div class="border border-slate-300 rounded p-2 text-center text-[10px] mt-2 print-only">
+                            <p class="mb-1">Bandar Seikijang, <span class="currentDateStr font-semibold"></span></p>
+                            <div class="grid grid-cols-2 gap-2 mt-1">
+                                <div>
+                                    <p class="mb-8">Orang Tua / Wali,</p>
+                                    <p class="border-b border-black pb-0.5 font-semibold" id="ttd_ortu">(...........................)</p>
+                                </div>
+                                <div>
+                                    <p class="mb-8">Panitia Penerimaan,</p>
+                                    <p class="border-b border-black pb-0.5">(...........................)</p>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- TTD AREA -->
-                <table class="w-full mt-8 print-only text-sm text-center table-fixed">
-                    <tr>
-                        <td class="w-1/2 align-top px-8">
-                            <p class="mb-16 mt-5">Mengetahui,<br>Orang Tua / Wali</p>
-                            <p class="font-bold border-b border-black inline-block min-w-[180px]" id="ttd_ortu"></p>
-                        </td>
-                        <td class="w-1/2 align-top px-8">
-                            <p class="mb-1">Bandar Seikijang, <span class="currentDateStr"></span></p>
-                            <p class="mb-16">Panitia Penerimaan</p>
-                            <p class="font-bold border-b border-black inline-block min-w-[180px]">(..........................................)</p>
-                        </td>
-                    </tr>
-                </table>
-                
-                <div class="mt-4 text-[10px] italic text-center print-only">
-                    Dokumen ini dicetak secara sistem dari Aplikasi SPMB SMPN 1 Bandar Seikijang. Berlaku sebagai bukti sah apabila telah ditandatangani.
+                <!-- FOOTER -->
+                <div class="mt-3 pt-2 border-t border-slate-200 text-[9px] italic text-slate-400 text-center print-only">
+                    Dokumen ini dicetak secara sistem dari Aplikasi SPMB SMPN 1 Bandar Seikijang &bull; Berlaku sebagai bukti sah apabila telah ditandatangani oleh kedua pihak.
                 </div>
 
             </div>
@@ -338,6 +607,9 @@
         function showLoading() { document.getElementById('loadingOverlay').classList.remove('hidden'); }
         function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
 
+        let allDataIndividu = [];
+        let individuLoaded = false;
+
         function switchTab(tab) {
             // Update buttons
             document.getElementById('tab-rekap').className = tab === 'rekap' ? 'px-4 py-2 text-sm font-semibold rounded-lg bg-blue-50 text-blue-700 transition' : 'px-4 py-2 text-sm font-semibold rounded-lg text-slate-600 hover:bg-slate-50 transition';
@@ -346,6 +618,10 @@
             // Update sections
             document.getElementById('section-rekap').classList.toggle('hidden', tab !== 'rekap');
             document.getElementById('section-individu').classList.toggle('hidden', tab !== 'individu');
+            
+            if (tab === 'individu' && !individuLoaded) {
+                loadAllIndividuList();
+            }
         }
 
         // ==================== CETAK REKAP ====================
@@ -376,18 +652,25 @@
                 });
 
                 // Auto-Sort berdasarkan Algoritma Seleksi
-                if (jalur === 'Prestasi') {
-                    results.sort((a, b) => {
-                        const tkaA = a.tkaTotal || 0;
-                        const tkaB = b.tkaTotal || 0;
-                        if (tkaB !== tkaA) return tkaB - tkaA;
-                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
-                    });
-                } else {
+                if (['Domisili', 'Afirmasi', 'Mutasi'].includes(jalur)) {
                     results.sort((a, b) => {
                         const skorA = (a.skor?.jarak || 0) + (a.skor?.usia || 0);
                         const skorB = (b.skor?.jarak || 0) + (b.skor?.usia || 0);
-                        return skorB - skorA;
+                        if (skorB !== skorA) return skorB - skorA;
+                        // Jika seri, urutkan berdasarkan rataIjazah
+                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
+                    });
+                } else if (jalur === 'Prestasi') {
+                    results.sort((a, b) => {
+                        // Kriteria 1: Nilai Rata-rata Rapor + poin sertifikat
+                        const raporSertifikatA = (a.rataRapor || 0) + (a.poinSertifikat || 0);
+                        const raporSertifikatB = (b.rataRapor || 0) + (b.poinSertifikat || 0);
+                        if (raporSertifikatB !== raporSertifikatA) return raporSertifikatB - raporSertifikatA;
+                        
+                        // Kriteria 2: (Bila kriteria 1 seri): Nilai TKA
+                        const tkaA = a.tkaTotal || 0;
+                        const tkaB = b.tkaTotal || 0;
+                        return tkaB - tkaA;
                     });
                 }
 
@@ -397,7 +680,8 @@
                     // Hitung Skor untuk display
                     let skorDisplay = '';
                     if (jalur === 'Prestasi') {
-                        skorDisplay = `TKA: ${item.tkaTotal||0}`;
+                        const skorPres = ((item.rataRapor || 0) + (item.poinSertifikat || 0)).toFixed(2);
+                        skorDisplay = `${skorPres}`;
                     } else {
                         const skorTot = ((item.skor?.jarak || 0) + (item.skor?.usia || 0)).toFixed(2);
                         skorDisplay = `${skorTot}`;
@@ -430,92 +714,183 @@
         }
 
         // ==================== CETAK INDIVIDU ====================
-        async function loadDataIndividu() {
-            const nisn = document.getElementById('searchNisn').value.trim();
+        async function loadAllIndividuList() {
+            const tbody = document.getElementById('individuTableBody');
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>';
+            
+            try {
+                const snapshot = await db.collection('pendaftar').get();
+                allDataIndividu = [];
+                snapshot.forEach(doc => {
+                    allDataIndividu.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Sort by name for better UX
+                allDataIndividu.sort((a, b) => (a.namaLengkap || '').localeCompare(b.namaLengkap || ''));
+                
+                individuLoaded = true;
+                renderIndividuTable(allDataIndividu);
+            } catch(e) {
+                console.error(e);
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-6 text-center text-red-500">Gagal memuat data</td></tr>';
+            }
+        }
+
+        function renderIndividuTable(data) {
+            const tbody = document.getElementById('individuTableBody');
+            if(data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-6 text-center text-gray-500">Data tidak ditemukan</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            data.forEach((item, index) => {
+                html += `
+                    <tr class="hover:bg-gray-50/50">
+                        <td class="px-4 py-2 text-center text-gray-500 border-b border-gray-100">${index + 1}</td>
+                        <td class="px-4 py-2 font-mono text-gray-700 border-b border-gray-100">${item.nisn || '-'}</td>
+                        <td class="px-4 py-2 font-medium text-gray-800 border-b border-gray-100">${item.namaLengkap || '-'}</td>
+                        <td class="px-4 py-2 text-gray-600 border-b border-gray-100">${item.asalSekolah || '-'}</td>
+                        <td class="px-4 py-2 text-center border-b border-gray-100"><span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-lg">${item.jalurPendaftaran || '-'}</span></td>
+                        <td class="px-4 py-2 text-center border-b border-gray-100">
+                            <button onclick="cetakSiswa('${item.id}')" class="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-semibold transition">
+                                Cetak
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function filterIndividuTable() {
+            const q = document.getElementById('searchIndividuTable').value.toLowerCase();
+            const filtered = allDataIndividu.filter(item => 
+                (item.namaLengkap && item.namaLengkap.toLowerCase().includes(q)) || 
+                (item.nisn && item.nisn.toLowerCase().includes(q))
+            );
+            renderIndividuTable(filtered);
+        }
+
+        function cetakSiswa(docId) {
+            const data = allDataIndividu.find(i => i.id === docId);
+            if(!data) return;
+            
             const err = document.getElementById('individuError');
             const printArea = document.getElementById('printAreaIndividu');
-            const btnPrint = document.getElementById('btnCetakIndividu');
+            const btnPrintWrapper = document.getElementById('btnCetakMainWrapper');
             
-            if (!nisn) return;
-            
-            showLoading();
             err.classList.add('hidden');
-            printArea.classList.add('hidden');
-            btnPrint.disabled = true;
+            
+            // --- BIODATA ---
+            document.getElementById('ind_nisn').textContent = data.nisn || '-';
+            document.getElementById('ind_nama').textContent = data.namaLengkap || '-';
+            document.getElementById('ind_jk').textContent = data.jenisKelamin || '-';
+            document.getElementById('ind_tempatLahir').textContent = data.tempatLahir || '-';
+            document.getElementById('ind_tglLahir').textContent = data.tanggalLahir || '-';
+            document.getElementById('ind_agama').textContent = data.agama || '-';
+            document.getElementById('ind_tinggal').textContent = data.tinggalbersama || '-';
+            document.getElementById('ind_alamat').textContent = data.alamat || '-';
+            
+            let gpsText = '-';
+            if (data.koordinatUser && typeof data.koordinatUser === 'object') {
+                gpsText = `${data.koordinatUser.lat?.toFixed(6) || '-'}, ${data.koordinatUser.lng?.toFixed(6) || '-'}`;
+            } else if (typeof data.koordinatUser === 'string') {
+                gpsText = data.koordinatUser;
+            }
+            document.getElementById('ind_gps').textContent = gpsText;
 
-            try {
-                const doc = await db.collection('pendaftar').doc(nisn).get();
-                if (!doc.exists) {
-                    err.classList.remove('hidden');
-                    hideLoading();
-                    return;
-                }
+            // --- SEKOLAH ---
+            document.getElementById('ind_sekolah').textContent = data.asalSekolah || '-';
+            
+            // --- ORTU/WALI (Split Fields) ---
+            document.getElementById('ind_nama_ayah').textContent = data.namaAyah || '-';
+            document.getElementById('ind_status_ayah').textContent = data.statusAyah || '-';
+            document.getElementById('ind_kerja_ayah').textContent = data.pekerjaanAyah || '-';
+            const gajiAyah = data.penghasilanAyah ? 'Rp ' + parseInt(data.penghasilanAyah).toLocaleString('id-ID') : '-';
+            document.getElementById('ind_gaji_ayah').textContent = gajiAyah;
+            document.getElementById('ind_hp_ayah').textContent = data.hpAyah || '-';
 
-                const data = doc.data();
-                
-                // --- BIODATA ---
-                document.getElementById('ind_nisn').textContent = data.nisn || '-';
-                document.getElementById('ind_nama').textContent = data.namaLengkap || '-';
-                document.getElementById('ind_jk').textContent = data.jenisKelamin || '-';
-                document.getElementById('ind_tempatLahir').textContent = data.tempatLahir || '-';
-                document.getElementById('ind_tglLahir').textContent = data.tanggalLahir || '-';
-                document.getElementById('ind_agama').textContent = data.agama || '-';
-                document.getElementById('ind_tinggal').textContent = data.tinggalbersama || '-';
-                
-                // --- SEKOLAH ---
-                document.getElementById('ind_sekolah').textContent = data.asalSekolah || '-';
-                
-                // --- ORTU/WALI ---
-                document.getElementById('ind_ayah').textContent = data.namaAyah || '-';
-                document.getElementById('ind_ibu').textContent = data.namaIbu || '-';
-                document.getElementById('ind_wali').textContent = data.namaWali || '-';
-                document.getElementById('ind_alamat').textContent = data.alamat || '-';
-                document.getElementById('ind_hp').textContent = data.nomorHpWa || '-';
-                document.getElementById('ind_gps').textContent = data.koordinatUser || '-';
-                
-                // --- JALUR & STATUS ---
-                document.getElementById('ind_jalur').textContent = data.jalurPendaftaran || '-';
-                document.getElementById('ind_status').textContent = data.status || 'Terdaftar';
-                document.getElementById('ind_verifikasi').textContent = (data.verifikasi === 'Sudah') ? 'SUDAH (Tervalidasi)' : 'BELUM VERIFIKASI';
-                document.getElementById('ind_verifikator').textContent = data.verifikator || '-';
+            document.getElementById('ind_nama_ibu').textContent = data.namaIbu || '-';
+            document.getElementById('ind_status_ibu').textContent = data.statusIbu || '-';
+            document.getElementById('ind_kerja_ibu').textContent = data.pekerjaanIbu || '-';
+            const gajiIbu = data.penghasilanIbu ? 'Rp ' + parseInt(data.penghasilanIbu).toLocaleString('id-ID') : '-';
+            document.getElementById('ind_gaji_ibu').textContent = gajiIbu;
+            document.getElementById('ind_hp_ibu').textContent = data.hpIbu || '-';
 
-                // --- DOKUMEN ---
-                document.getElementById('ind_berkas_ijz').textContent = data.dokumen?.ijazah_tk || 'Tidak / Belum Verifikasi';
-                document.getElementById('ind_berkas_mda').textContent = data.dokumen?.ijazah_mda || 'Tidak / Belum Verifikasi';
-                document.getElementById('ind_berkas_akte').textContent = data.dokumen?.akte || 'Tidak / Belum Verifikasi';
-                document.getElementById('ind_berkas_kk').textContent = data.dokumen?.kk || 'Tidak / Belum Verifikasi';
-                document.getElementById('ind_berkas_kip').textContent = data.dokumen?.kip || 'Tidak / Belum Verifikasi';
-                document.getElementById('ind_berkas_domisili').textContent = data.dokumen?.domisili || 'Tidak / Belum Verifikasi';
-                document.getElementById('ind_berkas_sktm').textContent = data.dokumen?.sktm || 'Tidak / Belum Verifikasi';
-                document.getElementById('ind_berkas_prestasi').textContent = data.dokumen?.sertifikat || 'Tidak / Belum Verifikasi';
-                document.getElementById('ind_berkas_membaca').textContent = data.dokumen?.membaca || 'Belum Diuji';
-                
-                // --- SKOR ---
-                const skorTot = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
-                document.getElementById('ind_skor_total').textContent = (data.jalurPendaftaran === 'Prestasi') ? (data.tkaTotal || 0) : skorTot;
-                document.getElementById('ind_jarak_km').textContent = data.jarakRumahKm || '-';
-                document.getElementById('ind_skor_jarak').textContent = data.skor?.jarak?.toFixed(2) || 0;
-                document.getElementById('ind_skor_usia').textContent = data.skor?.usia || 0;
-                document.getElementById('ind_skor_ijazah').textContent = data.rataIjazah || 0;
-                document.getElementById('ind_skor_tka').textContent = data.tkaTotal || 0;
+            document.getElementById('ind_wali').textContent = data.namaWali || '-';
+            document.getElementById('ind_hp_wali').textContent = data.hpWali || '-';
 
-                // TTD Nama Ortu
-                let namaWaliPrint = data.namaAyah;
-                if (!namaWaliPrint || namaWaliPrint === '-') namaWaliPrint = data.namaIbu;
-                if (!namaWaliPrint || namaWaliPrint === '-') namaWaliPrint = data.namaWali;
-                document.getElementById('ttd_ortu').textContent = namaWaliPrint || '(..........................................)';
+            // --- KONTAK SISWA ---
+            document.getElementById('ind_hp').textContent = data.nomorHpWa || '-';
+            document.getElementById('ind_hp_siswa').textContent = data.hpSiswa || '-';
+            
+            // --- JALUR & STATUS ---
+            const jalurText = data.jalurPendaftaran || '-';
+            document.getElementById('ind_jalur').textContent = jalurText;
+            document.getElementById('ind_jalur_skor').textContent = jalurText;
+            document.getElementById('ind_status').textContent = data.status || 'Terdaftar';
+            document.getElementById('ind_verifikasi').textContent = (data.verifikasi === 'Sudah') ? '✔ SUDAH DIVERIFIKASI' : '✖ BELUM DIVERIFIKASI';
+            document.getElementById('ind_verifikator').textContent = data.verifikator || '-';
 
-                // Tampilkan Print Area
-                printArea.classList.remove('hidden');
-                btnPrint.disabled = false;
+            // --- DOKUMEN ---
+            document.getElementById('ind_berkas_ijz').textContent = data.dokumen?.ijazah_tk || 'Tidak';
+            document.getElementById('ind_berkas_mda').textContent = data.dokumen?.ijazah_mda || 'Tidak';
+            document.getElementById('ind_berkas_akte').textContent = data.dokumen?.akte || 'Tidak';
+            document.getElementById('ind_berkas_kk').textContent = data.dokumen?.kk || 'Tidak';
+            document.getElementById('ind_berkas_kip').textContent = (data.dokumen?.kip === 'Ada') ? 'Ada (No. ' + (data.dokumen?.kipNo || '-') + ')' : (data.dokumen?.kip || 'Tidak');
+            document.getElementById('ind_berkas_domisili').textContent = data.dokumen?.domisili || 'Tidak';
+            document.getElementById('ind_berkas_sktm').textContent = data.dokumen?.sktm || 'Tidak';
+            document.getElementById('ind_berkas_prestasi').textContent = data.dokumen?.sertifikat || 'Tidak';
+            document.getElementById('ind_berkas_membaca').textContent = data.dokumen?.membaca || 'Belum Diuji';
+            
+            // --- RAPOR ---
+            document.getElementById('ind_rp41').textContent = data.rapor41 || '-';
+            document.getElementById('ind_rp42').textContent = data.rapor42 || '-';
+            document.getElementById('ind_rp51').textContent = data.rapor51 || '-';
+            document.getElementById('ind_rp52').textContent = data.rapor52 || '-';
+            document.getElementById('ind_rp61').textContent = data.rapor61 || '-';
+            document.getElementById('ind_skor_rapor').textContent = data.rataRapor || '-';
 
-            } catch (error) {
-                console.error("Error load individu:", error);
-                err.textContent = "Gagal memuat data. Periksa koneksi atau rules Firebase.";
-                err.classList.remove('hidden');
+            // --- NILAI AKADEMIK ---
+            document.getElementById('ind_skor_ijazah').textContent = data.rataIjazah || '-';
+            document.getElementById('ind_tka_mtk').textContent = data.tkaMatematika || '-';
+            document.getElementById('ind_tka_bindo').textContent = data.tkaBahasaIndonesia || '-';
+
+            // --- SKOR SELEKSI ---
+            const skorTot = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
+            const skorPres = ((data.rataRapor || 0) + (data.poinSertifikat || 0)).toFixed(2);
+            document.getElementById('ind_skor_total').textContent = (data.jalurPendaftaran === 'Prestasi') ? skorPres : skorTot;
+            document.getElementById('ind_jarak_km').textContent = data.jarakRumahKm || '-';
+            document.getElementById('ind_skor_jarak').textContent = data.skor?.jarak?.toFixed(2) || '-';
+            document.getElementById('ind_skor_usia').textContent = data.skor?.usia || '-';
+            document.getElementById('ind_skor_rapor2').textContent = data.rataRapor || '-';
+            document.getElementById('ind_skor_sertifikat').textContent = data.poinSertifikat || '-';
+
+            // --- SERTIFIKAT ---
+            const sertEl = document.getElementById('ind_sertifikat_list');
+            if (data.sertifikat && Array.isArray(data.sertifikat) && data.sertifikat.length > 0) {
+                sertEl.innerHTML = data.sertifikat.map((s, i) => 
+                    `<span class="inline-block">${i+1}. <strong>${s.nama || '-'}</strong> (${s.tingkat || '-'}) &nbsp;</span>`
+                ).join('');
+            } else {
+                sertEl.innerHTML = '<span class="text-slate-400 italic text-[10px]">Tidak ada sertifikat</span>';
             }
 
-            hideLoading();
+            // TTD Nama Ortu
+            let namaWaliPrint = data.namaAyah;
+            if (!namaWaliPrint || namaWaliPrint === '-') namaWaliPrint = data.namaIbu;
+            if (!namaWaliPrint || namaWaliPrint === '-') namaWaliPrint = data.namaWali;
+            document.getElementById('ttd_ortu').textContent = namaWaliPrint || '(..........................................)';
+
+            // Tampilkan Print Area
+            printArea.classList.remove('hidden');
+            btnPrintWrapper.classList.remove('hidden');
+            
+            // Trigger Print otomatis setelah merender formulir (memberi waktu sebentar agar render selesai)
+            setTimeout(() => {
+                window.print();
+            }, 100);
         }
 
         // ==================== EXPORT EXCEL ====================
@@ -557,6 +932,11 @@
                     const d = doc.data();
                     const skorTot = ((d.skor?.jarak || 0) + (d.skor?.usia || 0)).toFixed(2);
                     
+                    let certStr = '';
+                    if(d.sertifikat && Array.isArray(d.sertifikat)) {
+                        certStr = d.sertifikat.map((s, idx) => `${idx+1}. ${s.nama} (${s.tingkat})`).join('\n');
+                    }
+                    
                     dataArray.push({
                         "No": counter++,
                         "NISN": d.nisn || '',
@@ -574,8 +954,17 @@
                         "Nomor HP/WA": d.nomorHpWa || '',
                         "GPS (Lat, Lng)": d.koordinatUser || '',
                         "Jalur Pendaftaran": d.jalurPendaftaran || '',
+                        "Sertifikat Prestasi": certStr,
+                        "Poin Sertifikat": d.poinSertifikat || 0,
                         
-                        "Nilai Rata-Rata Ijazah": d.rataIjazah || 0,
+                        "Rapor 4.1": d.rapor41 || 0,
+                        "Rapor 4.2": d.rapor42 || 0,
+                        "Rapor 5.1": d.rapor51 || 0,
+                        "Rapor 5.2": d.rapor52 || 0,
+                        "Rapor 6.1": d.rapor61 || 0,
+                        "Rata-Rata Rapor": d.rataRapor || 0,
+                        
+                        "Nilai SKL (Ijazah)": d.rataIjazah || 0,
                         "TKA B.Indonesia": d.tkaBahasaIndonesia || 0,
                         "TKA Matematika": d.tkaMatematika || 0,
                         "Total TKA": d.tkaTotal || 0,
