@@ -446,7 +446,7 @@
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Penghasilan Ayah</label>
-                                        <input type="text" id="penghasilanAyah" inputmode="numeric" placeholder="Contoh: 2000000" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <input type="text" id="penghasilanAyah" inputmode="numeric" placeholder="Contoh: 2000000" oninput="formatRupiah(this)" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nama Ibu Kandung <span class="text-red-500">*</span></label>
@@ -468,7 +468,7 @@
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Penghasilan Ibu</label>
-                                        <input type="text" id="penghasilanIbu" inputmode="numeric" placeholder="Contoh: 1000000" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                        <input type="text" id="penghasilanIbu" inputmode="numeric" placeholder="Contoh: 1000000" oninput="formatRupiah(this)" class="form-control w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">No. HP Siswa <span class="text-slate-400 text-xs font-normal">(opsional)</span></label>
@@ -1136,8 +1136,19 @@
         }
 
         // ============================================================
-        // TKA CALCULATION
+        // TKA CALCULATION & FORMATTING
         // ============================================================
+        function formatRupiah(el) {
+            let raw = el.value.replace(/[^0-9]/g, '');
+            el.value = raw ? parseInt(raw, 10).toLocaleString('id-ID') : '';
+        }
+
+        function safeCurrency(id) {
+            const v = document.getElementById(id)?.value || '';
+            const parsed = parseFloat(v.replace(/\./g, ''));
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
         function safeFloat(id) {
             const v = parseFloat(document.getElementById(id)?.value);
             return isNaN(v) ? 0 : v;
@@ -1214,11 +1225,11 @@
                 namaAyah: document.getElementById('namaAyah').value.trim(),
                 statusAyah: document.getElementById('statusAyah').value,
                 pekerjaanAyah: document.getElementById('pekerjaanAyah').value.trim() || null,
-                penghasilanAyah: safeFloat('penghasilanAyah'),
+                penghasilanAyah: safeCurrency('penghasilanAyah'),
                 namaIbu: document.getElementById('namaIbu').value.trim(),
                 statusIbu: document.getElementById('statusIbu').value,
                 pekerjaanIbu: document.getElementById('pekerjaanIbu').value.trim() || null,
-                penghasilanIbu: safeFloat('penghasilanIbu'),
+                penghasilanIbu: safeCurrency('penghasilanIbu'),
                 hpSiswa: document.getElementById('hpSiswa').value.trim() || null,
                 hpAyah: document.getElementById('hpAyah').value.trim() || null,
                 hpIbu: document.getElementById('hpIbu').value.trim() || null,
