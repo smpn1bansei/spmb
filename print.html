@@ -94,6 +94,10 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         Excel
                     </button>
+                    <button onclick="showJsonModal()" class="px-3 py-2 text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        JSON
+                    </button>
                     <button onclick="window.close()" class="px-3 py-2 text-sm font-semibold text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition">✕ Tutup</button>
                 </div>
 
@@ -129,6 +133,10 @@
             <button onclick="showExportModal(); toggleDrawer()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-emerald-700 text-left bg-emerald-50 hover:bg-emerald-100 transition active:scale-[.98]">
                 <span class="text-xl">📊</span>
                 <div><div>Export Excel</div><div class="text-[11px] font-normal text-emerald-500">Unduh data .xlsx</div></div>
+            </button>
+            <button onclick="showJsonModal(); toggleDrawer()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-indigo-700 text-left bg-indigo-50 hover:bg-indigo-100 transition active:scale-[.98]">
+                <span class="text-xl">💾</span>
+                <div><div>Backup JSON</div><div class="text-[11px] font-normal text-indigo-500">Unduh data .json</div></div>
             </button>
         </div>
         <div class="p-4 border-t border-slate-100">
@@ -632,6 +640,21 @@
         </div>
     </div>
 
+    <!-- Confirm JSON Modal -->
+    <div id="confirmJsonModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] flex items-center justify-center p-4 hidden no-print" onclick="if(event.target===this)closeJsonModal()">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-modal-in transform transition-all duration-300 scale-95 opacity-0" id="jsonModalContent">
+            <div class="text-4xl mb-3 text-indigo-500">
+                <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            </div>
+            <h4 class="font-display font-bold text-lg text-slate-800 mb-2">Backup Data ke JSON</h4>
+            <p class="text-sm text-slate-600 leading-relaxed mb-5">Anda akan membackup seluruh data mentah pendaftar ke dalam format JSON. Lanjutkan?</p>
+            <div class="flex gap-3">
+                <button onclick="closeJsonModal()" class="flex-1 py-2.5 rounded-xl font-semibold text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all duration-300">Batal</button>
+                <button onclick="executeBackupJSON()" class="flex-1 py-2.5 rounded-xl font-semibold text-sm bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/30 transition-all duration-300">Ya, Backup</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[200] flex items-center justify-center hidden no-print">
         <div class="bg-white p-6 rounded-2xl shadow-xl flex items-center gap-4">
@@ -1014,7 +1037,7 @@
             const skorTot = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
             const skorPres = ((data.rataRapor || 0) + (data.poinSertifikat || 0)).toFixed(2);
             document.getElementById('ind_skor_total').textContent = (data.jalurPendaftaran === 'Prestasi') ? skorPres : skorTot;
-            document.getElementById('ind_jarak_km').textContent = data.jarakRumahKm || '-';
+            document.getElementById('ind_jarak_km').textContent = data.jarakRumah || data.JarakRumah || data.jarakRumahKm || '-';
             document.getElementById('ind_skor_jarak').textContent = data.skor?.jarak?.toFixed(2) || '-';
             document.getElementById('ind_skor_usia').textContent = data.skor?.usia || '-';
             document.getElementById('ind_skor_rapor2').textContent = data.rataRapor || '-';
@@ -1122,7 +1145,7 @@
                         "TKA Matematika": d.tkaMatematika || 0,
                         "Total TKA": d.tkaTotal || 0,
                         
-                        "Jarak Rumah (KM)": d.jarakRumahKm || 0,
+                        "Jarak Rumah (KM)": d.jarakRumah || d.JarakRumah || d.jarakRumahKm || 0,
                         "Skor Jarak": d.skor?.jarak?.toFixed(2) || 0,
                         "Skor Usia": d.skor?.usia || 0,
                         "Total Skor (Jarak+Usia)": skorTot,
@@ -1156,6 +1179,56 @@
                 alert("Terjadi kesalahan saat mengekspor data. Pastikan Rules Firebase mengizinkan baca data.");
             }
             
+            hideLoading();
+        }
+
+        function showJsonModal() {
+            const modal = document.getElementById('confirmJsonModal');
+            const content = document.getElementById('jsonModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeJsonModal() {
+            const modal = document.getElementById('confirmJsonModal');
+            const content = document.getElementById('jsonModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // ==================== EXPORT JSON ====================
+        async function executeBackupJSON() {
+            closeJsonModal();
+            showLoading();
+            try {
+                const snapshot = await db.collection('pendaftar').get();
+                if (snapshot.empty) {
+                    alert("Tidak ada data untuk dibackup");
+                    hideLoading();
+                    return;
+                }
+                
+                let dataArray = [];
+                snapshot.forEach(doc => {
+                    dataArray.push({ id: doc.id, ...doc.data() });
+                });
+                
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataArray, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "Backup_Pendaftar_SPMB_2026.json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+                
+            } catch (error) {
+                console.error("Backup JSON error:", error);
+                alert("Terjadi kesalahan saat membackup data. Pastikan Rules Firebase mengizinkan baca data.");
+            }
             hideLoading();
         }
 
