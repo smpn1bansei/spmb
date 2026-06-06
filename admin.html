@@ -524,6 +524,20 @@
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1">Jarak Rumah ke Sekolah (KM)</label>
                             <input type="number" id="editJarak" step="0.01" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm" required>
+                            <div id="editKoordinatContainer" class="mt-2 text-[11px] text-gray-500 hidden">
+                                <div class="flex justify-between items-center">
+                                    <span>Koordinat GPS:</span>
+                                    <button type="button" onclick="toggleEditKoordinat()" class="text-blue-500 hover:text-blue-700 underline">Edit Koordinat</button>
+                                </div>
+                                <a id="editKoordinatLink" href="#" target="_blank" class="text-blue-500 hover:text-blue-700 hover:underline font-medium break-all"></a>
+                            </div>
+                            <div id="editKoordinatInputContainer" class="mt-2 hidden">
+                                <label class="block text-[10px] font-semibold text-gray-600 mb-1">Paste Koordinat (Lat, Lng) / <button type="button" onclick="toggleEditKoordinat()" class="text-red-500 hover:underline">Batal</button></label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="editKoordinatInput" placeholder="-0.4263, 101.6466" class="flex-1 px-3 py-1.5 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                                    <button type="button" onclick="applyKoordinat()" class="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-600">Update</button>
+                                </div>
+                            </div>
                         </div>
                         <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tinggal Bersama</label>
                             <select id="editTinggal" class="w-full px-3 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 text-sm">
@@ -1426,6 +1440,60 @@
             el.value = raw ? parseInt(raw, 10).toLocaleString('id-ID') : '';
         }
 
+        let currentKoord = { lat: null, lng: null };
+        const SCHOOL_LAT = 0.4263211352187949;
+        const SCHOOL_LNG = 101.64661693254462;
+
+        function haversineDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function toggleEditKoordinat() {
+            const inputCont = document.getElementById('editKoordinatInputContainer');
+            if (inputCont.classList.contains('hidden')) {
+                inputCont.classList.remove('hidden');
+                document.getElementById('editKoordinatInput').focus();
+            } else {
+                inputCont.classList.add('hidden');
+                document.getElementById('editKoordinatInput').value = '';
+            }
+        }
+
+        function applyKoordinat() {
+            const val = document.getElementById('editKoordinatInput').value.trim();
+            if (!val) return;
+            const parts = val.split(',');
+            if (parts.length === 2) {
+                const lat = parseFloat(parts[0]);
+                const lng = parseFloat(parts[1]);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    currentKoord = { lat, lng };
+                    const dist = haversineDistance(lat, lng, SCHOOL_LAT, SCHOOL_LNG);
+                    const distRounded = Math.round(dist * 100) / 100;
+                    document.getElementById('editJarak').value = distRounded;
+                    
+                    const koordLink = document.getElementById('editKoordinatLink');
+                    koordLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
+                    koordLink.textContent = `${lat}, ${lng}`;
+                    document.getElementById('editKoordinatContainer').classList.remove('hidden');
+                    
+                    toggleEditKoordinat();
+                    showToast(`Koordinat diperbarui. Jarak disesuaikan menjadi ${distRounded} KM.`, 'success');
+                } else {
+                    alert("Format koordinat salah. Gunakan angka.");
+                }
+            } else {
+                alert("Format salah. Pisahkan Latitude dan Longitude dengan tanda koma (,).");
+            }
+        }
+
         function showEditModal(data) {
             document.getElementById('editDocId').value = data.id || '';
             document.getElementById('editNisn').value = data.nisn || '';
@@ -1438,6 +1506,25 @@
             document.getElementById('editTglLahir').value = data.tanggalLahir || '';
             document.getElementById('editAlamat').value = data.alamat || '';
             document.getElementById('editJarak').value = data.jarakRumah || 0;
+            
+            const koordContainer = document.getElementById('editKoordinatContainer');
+            const koordLink = document.getElementById('editKoordinatLink');
+            document.getElementById('editKoordinatInputContainer').classList.add('hidden');
+            document.getElementById('editKoordinatInput').value = '';
+            
+            if (data.koordinatUser && data.koordinatUser.lat && data.koordinatUser.lng) {
+                const lat = data.koordinatUser.lat;
+                const lng = data.koordinatUser.lng;
+                currentKoord = { lat, lng };
+                koordLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
+                koordLink.textContent = `${lat}, ${lng}`;
+                koordContainer.classList.remove('hidden');
+            } else {
+                currentKoord = { lat: null, lng: null };
+                koordLink.href = '#';
+                koordLink.textContent = '';
+                koordContainer.classList.add('hidden');
+            }
             document.getElementById('editTinggal').value = data.tinggalBersama || 'Orang Tua';
 
             document.getElementById('editAyah').value = data.namaAyah || '';
@@ -1563,7 +1650,7 @@
                 tkaBahasaIndonesia: indo,
                 tkaTotal: tkaTotal,
 
-                
+                koordinatUser: currentKoord.lat && currentKoord.lng ? currentKoord : null,
                 skor: { jarak: skorJarak, usia: skorUsia, total: skorTotal },
 
                 dokumen: {
