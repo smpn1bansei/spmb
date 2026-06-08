@@ -797,19 +797,12 @@
     <!-- Firebase SDK (Compat v9) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="config.js"></script>
 
     <script>
         // ============================================================
         // FIREBASE INIT
         // ============================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyBdkf6-EzUHc7AIrwOUz9KdAYlUBmz0QVA",
-            authDomain: "spmb26-a40eb.firebaseapp.com",
-            projectId: "spmb26-a40eb",
-            storageBucket: "spmb26-a40eb.firebasestorage.app",
-            messagingSenderId: "657771871334",
-            appId: "1:657771871334:web:108066841d19d820ae41a7"
-        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
@@ -874,6 +867,15 @@
         const pages = ['home', 'daftar', 'hasil'];
 
         function navigateTo(page) {
+            // Cek apakah pendaftaran ditutup
+            if (page === 'daftar' && typeof STATUS_PENDAFTARAN_DIBUKA !== 'undefined' && !STATUS_PENDAFTARAN_DIBUKA) {
+                showToast('Pendaftaran ditutup sementara waktu. Hubungi admin sekolah untuk pendaftaran manual.', 'error', 6000);
+                if (window.location.hash.replace('#', '') === 'daftar') {
+                    window.location.hash = 'home';
+                }
+                page = 'home';
+            }
+
             // Close mobile menu
             document.getElementById('navbarMenu').classList.remove('open');
 
