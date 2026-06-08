@@ -9,6 +9,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="config.js"></script>
     <!-- SheetJS for Excel Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
@@ -664,22 +665,13 @@
     </div>
 
     <!-- ==================== JAVASCRIPT ==================== -->
+    <script src="config.js"></script>
     <script>
         // Set tanggal
         const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         document.getElementById('currentDateStr').textContent = dateStr;
         document.querySelectorAll('.currentDateStr').forEach(el => el.textContent = dateStr);
 
-        // Firebase Config (Copy dari admin.html)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBdkf6-EzUHc7AIrwOUz9KdAYlUBmz0QVA",
-            authDomain: "spmb26-a40eb.firebaseapp.com",
-            projectId: "spmb26-a40eb",
-            storageBucket: "spmb26-a40eb.firebasestorage.app",
-            messagingSenderId: "542284988770",
-            appId: "1:542284988770:web:48cf0f47e307e5b56247c4"
-        };
-        
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
