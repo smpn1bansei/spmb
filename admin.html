@@ -151,7 +151,7 @@
                     Data Pendaftar
                 </button>
                 <button onclick="showSection('seleksi')" id="sideNav-seleksi"
-                    class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
+                    class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-red-400 hover:text-red-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     Kelola Seleksi
                 </button>
@@ -160,15 +160,15 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
                     Manajemen Data
                 </button>
+                <button onclick="window.location.href='print.html'"
+                    class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                    Cetak Data
+                </button>
                 <button onclick="window.location.href='manual.html'"
                     class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                     Input Manual
-                </button>
-                <button onclick="window.open('print.html', '_blank')"
-                    class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                    Cetak Data
                 </button>
             </nav>
 
@@ -1083,13 +1083,20 @@
             document.getElementById(`section-${section}`).classList.remove('hidden');
 
             document.querySelectorAll('.side-nav-btn').forEach(btn => {
-                btn.classList.remove('bg-sidebar-active', 'text-white');
-                btn.classList.add('text-white/70');
+                btn.classList.remove('bg-sidebar-active', 'text-white', 'text-red-400', 'hover:text-red-300');
+                if (btn.id === 'sideNav-seleksi') {
+                    btn.classList.add('text-red-400', 'hover:text-red-300');
+                    btn.classList.remove('text-white/70');
+                } else {
+                    btn.classList.add('text-white/70');
+                    btn.classList.remove('text-red-400');
+                }
             });
+
             const activeBtn = document.getElementById(`sideNav-${section}`);
             if (activeBtn) {
                 activeBtn.classList.add('bg-sidebar-active', 'text-white');
-                activeBtn.classList.remove('text-white/70');
+                activeBtn.classList.remove('text-white/70', 'text-red-400', 'hover:text-red-300');
             }
 
             const titles = { dashboard: 'Dashboard', pendaftar: 'Data Pendaftar', seleksi: 'Kelola Seleksi', manajemen: 'Manajemen Data' };
