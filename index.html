@@ -689,9 +689,13 @@
         <section class="page-section" id="page-hasil">
             <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                    <div>
+                    <div class="flex-1">
                         <h2 class="font-display font-bold text-xl text-slate-800 flex items-center gap-2">🏆 Data Hasil Seleksi</h2>
                         <p class="text-sm text-slate-500 mt-1">Pilih jalur pendaftaran untuk melihat data</p>
+                    </div>
+                    <div class="w-full sm:w-auto relative">
+                        <input type="text" id="inputCariHasil" onkeyup="cariHasilSeleksi()" placeholder="Cari Nama (min 4 hr) / NISN..." class="w-full sm:w-64 pl-4 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 transition">
+                        <span class="absolute right-3 top-2.5 text-slate-400">🔍</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <select id="filterJalur" onchange="loadHasilSeleksi()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white">
@@ -724,6 +728,11 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="mt-4 flex justify-center">
+                    <button id="btnLoadMoreHasil" onclick="loadMoreHasil()" class="hidden px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold rounded-xl transition">
+                        Muat 10 Data Lagi...
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -731,7 +740,12 @@
 
     <!-- Footer -->
     <footer class="relative z-10 text-center py-6 px-4 text-sm text-slate-400">
-        &copy; 2026 SMPN 1 Bandar Seikijang — Seleksi Penerimaan Murid Baru Tahun Ajaran 2026/2027
+        <div class="mb-3">&copy; 2026 SMPN 1 Bandar Seikijang — Seleksi Penerimaan Murid Baru Tahun Ajaran 2026/2027</div>
+        <div class="flex justify-center items-center opacity-80 hover:opacity-100 transition">
+            <a href="https://hits.seeyoufarm.com" target="_blank" rel="noopener noreferrer" title="Jumlah Pengunjung">
+                <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fsmpn1bansei.github.io%2Fspmb%2Findex.html&count_bg=%231E3A8A&title_bg=%23475569&icon=&icon_color=%23E7E7E7&title=Pengunjung&edge_flat=false" alt="Visitor Count"/>
+            </a>
+        </div>
     </footer>
 
     <!-- Toast Container -->
@@ -1216,10 +1230,21 @@
                 else if (t.includes('internasional')) poinSertifikat += 15;
             });
 
+            let skorAkhirVal = 0;
+            const jalurVal = document.getElementById('jalurPendaftaran').value;
+            const rataRaporVal = safeFloat('rataRapor');
+            
+            if (jalurVal === 'Prestasi') {
+                skorAkhirVal = rataRaporVal + poinSertifikat;
+            } else {
+                skorAkhirVal = skorTotal;
+            }
+
             const data = {
                 nisn: nisn,
-                jalurPendaftaran: document.getElementById('jalurPendaftaran').value,
+                jalurPendaftaran: jalurVal,
                 namaLengkap: document.getElementById('namaLengkap').value.trim(),
+                namaLengkap_lower: document.getElementById('namaLengkap').value.trim().toLowerCase(),
                 jenisKelamin: document.getElementById('jenisKelamin').value,
                 agama: document.getElementById('agama').value,
                 tempatLahir: document.getElementById('tempatLahir').value.trim(),
@@ -1246,7 +1271,7 @@
                 rapor51: safeFloat('rapor51'),
                 rapor52: safeFloat('rapor52'),
                 rapor61: safeFloat('rapor61'),
-                rataRapor: safeFloat('rataRapor'),
+                rataRapor: rataRaporVal,
                 tkaMatematika: safeFloat('tkaMatematika'),
                 tkaBahasaIndonesia: safeFloat('tkaBahasa'),
                 tkaTotal: safeFloat('tkaTotal'),
@@ -1259,6 +1284,7 @@
                 },
                 koordinatSekolah: { lat: 0.4263211352187949, lng: 101.64661693254462 },
                 skor: { jarak: skorJarak, usia: skorUsia, total: skorTotal },
+                skorAkhir: skorAkhirVal,
                 tanggalDaftar: new Date().toISOString(),
                 verifikasi: 'Belum',
                 status: 'terdaftar'
@@ -1336,122 +1362,195 @@
         // ============================================================
         // HASIL SELEKSI
         // ============================================================
-        async function loadHasilSeleksi() {
+        let lastVisibleDoc = null;
+        let isSearchMode = false;
+        let currentSearchQuery = '';
+        let currentRank = 0;
+
+        async function cariHasilSeleksi() {
+            const val = document.getElementById('inputCariHasil').value.trim();
+            if (val.length > 0 && val.length < 4) return; // Wait until 4 chars, unless empty
+            
+            if (val.length >= 4) {
+                isSearchMode = true;
+                currentSearchQuery = val;
+            } else if (val.length === 0) {
+                isSearchMode = false;
+                currentSearchQuery = '';
+            }
+            lastVisibleDoc = null; // Reset pagination
+            await loadHasilSeleksi(true);
+        }
+
+        async function loadMoreHasil() {
+            await loadHasilSeleksi(false);
+        }
+
+        async function loadHasilSeleksi(isNewSearch = true) {
             const btn = document.getElementById('btnRefreshHasil');
             const loading = document.getElementById('hasilLoadingText');
             const tbody = document.getElementById('tableBodyHasil');
             const filterJalur = document.getElementById('filterJalur').value;
+            const btnLoadMore = document.getElementById('btnLoadMoreHasil');
+
+            // Set th title based on filterJalur
+            const thSkor = document.getElementById('thSkorHasil');
+            if (thSkor) {
+                if (filterJalur === 'Prestasi') thSkor.innerText = 'Skor Prestasi';
+                else thSkor.innerText = 'Skor Domisili';
+            }
+
+            if (!isNewSearch && !isSearchMode) {
+                // If it's just refreshing from the button or changing filter, treat as new search but don't reset searchMode if we are in it?
+                // Actually the select filter calls loadHasilSeleksi() without args (so isNewSearch = true).
+                // Wait, if filter changes, we MUST reset search.
+                if (document.getElementById('inputCariHasil').value === '') {
+                    isSearchMode = false;
+                    currentSearchQuery = '';
+                }
+            }
+
+            if (isNewSearch) {
+                lastVisibleDoc = null;
+                currentRank = 0;
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Sedang mengambil data dari database...</td></tr>';
+            }
 
             btn.disabled = true;
             loading.classList.remove('hidden');
-            tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Sedang mengambil data dari database...</td></tr>';
+            if(btnLoadMore) btnLoadMore.classList.add('hidden');
 
             try {
-                const snapshot = await db.collection('pendaftar').where('jalurPendaftaran', '==', filterJalur).get();
+                let query = db.collection('pendaftar');
 
-                if (snapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Belum ada data pendaftar untuk jalur ini.</td></tr>';
+                if (isSearchMode && currentSearchQuery) {
+                    if (/^\d{10}$/.test(currentSearchQuery)) {
+                        // Pencarian NISN (1 read)
+                        const doc = await query.doc(currentSearchQuery).get();
+                        renderTableData(doc.exists ? [doc] : [], isNewSearch, filterJalur);
+                        btn.disabled = false;
+                        loading.classList.add('hidden');
+                        return;
+                    } else {
+                        // Pencarian Nama Prefix
+                        const qLower = currentSearchQuery.toLowerCase();
+                        query = db.collection('pendaftar')
+                                  .where('namaLengkap_lower', '>=', qLower)
+                                  .where('namaLengkap_lower', '<=', qLower + '\uf8ff');
+                    }
+                } else {
+                    // Mode Ranking Normal
+                    query = query.where('jalurPendaftaran', '==', filterJalur)
+                                 .orderBy('skorAkhir', 'desc');
+                }
+
+                if (lastVisibleDoc) {
+                    query = query.startAfter(lastVisibleDoc);
+                }
+
+                query = query.limit(10);
+                const snapshot = await query.get();
+
+                if (!snapshot.empty) {
+                    lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+                    if (snapshot.docs.length === 10 && btnLoadMore) {
+                        btnLoadMore.classList.remove('hidden');
+                    }
+                } else {
+                    if (isNewSearch) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Belum ada data pendaftar untuk kriteria ini.</td></tr>';
+                    }
+                    if(btnLoadMore) btnLoadMore.classList.add('hidden');
                     btn.disabled = false;
                     loading.classList.add('hidden');
                     return;
                 }
 
-                let results = [];
-                snapshot.forEach(doc => {
-                    results.push(doc.data());
-                });
+                renderTableData(snapshot.docs, isNewSearch, filterJalur);
 
-                // Sort
-                if (['Domisili', 'Afirmasi', 'Mutasi'].includes(filterJalur)) {
-                    results.sort((a, b) => {
-                        const skorA = (a.skor?.jarak || 0) + (a.skor?.usia || 0);
-                        const skorB = (b.skor?.jarak || 0) + (b.skor?.usia || 0);
-                        if (skorB !== skorA) return skorB - skorA;
-                        // Jika seri, urutkan berdasarkan rataIjazah
-                        return (b.rataIjazah || 0) - (a.rataIjazah || 0);
-                    });
-                } else if (filterJalur === 'Prestasi') {
-                    results.sort((a, b) => {
-                        // Kriteria 1: Nilai Rata-rata Rapor + poin sertifikat
-                        const raporSertifikatA = (a.rataRapor || 0) + (a.poinSertifikat || 0);
-                        const raporSertifikatB = (b.rataRapor || 0) + (b.poinSertifikat || 0);
-                        if (raporSertifikatB !== raporSertifikatA) return raporSertifikatB - raporSertifikatA;
-                        
-                        // Kriteria 2: (Bila kriteria 1 seri): Nilai TKA
-                        const tkaA = a.tkaTotal || 0;
-                        const tkaB = b.tkaTotal || 0;
-                        return tkaB - tkaA;
-                    });
-                }
-                
-                // Update table header text
-                const thSkor = document.getElementById('thSkorHasil');
-                if (thSkor) {
-                    if (filterJalur === 'Prestasi') thSkor.innerText = 'Skor Prestasi';
-                    else thSkor.innerText = 'Skor Domisili';
-                }
-
-                let html = '';
-                results.forEach((data, index) => {
-                    const statusVal = data.status || 'terdaftar';
-                    let statusHtml = '';
-                    if (statusVal === 'Diterima' || statusVal === 'Lulus') {
-                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">✅ Diterima</span>';
-                    } else if (statusVal === 'Ditolak' || statusVal === 'Tidak Lulus') {
-                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-200">❌ Ditolak</span>';
+            } catch (err) {
+                console.error(err);
+                if (err.code === 'failed-precondition' || (err.message && err.message.toLowerCase().includes('index'))) {
+                    const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
+                    const urlMatch = err.message ? err.message.match(urlRegex) : null;
+                    if (urlMatch) {
+                        tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-red-500 font-bold">Fitur Ranking Firebase Belum Aktif.<br><br>Silakan klik link berikut untuk mengaktifkannya di Firebase Console:<br><a href="${urlMatch[0]}" target="_blank" class="underline text-blue-600 break-all">${urlMatch[0]}</a></td></tr>`;
                     } else {
-                        statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">⏳ Menunggu</span>';
+                        tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-red-500">Firebase Index diperlukan. Buka Console log browser untuk mencari link (klik kanan -> Inspect -> Console). Error asli: ${err.message}</td></tr>`;
                     }
-
-                    const isVerified = data.verifikasi === 'Sudah';
-                    const nisnDisplay = isVerified
-                        ? '<span class="text-emerald-500 mr-1" title="Terverifikasi">✅</span>' + (data.nisn || '-')
-                        : (data.nisn || '-');
-
-                    let skorHtml = '';
-                    if (filterJalur === 'Prestasi') {
-                        const skorPres = ((data.rataRapor || 0) + (data.poinSertifikat || 0)).toFixed(2);
-                        skorHtml = `
-                            <div class="font-bold text-blue-800 text-base">${skorPres}</div>
-                            <div class="text-xs text-slate-400">Rapor: ${data.rataRapor || 0} | Sertifikat: ${data.poinSertifikat || 0}</div>
-                        `;
-                    } else {
-                        const skorDomisili = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
-                        skorHtml = `
-                            <div class="font-bold text-blue-800 text-base">${skorDomisili}</div>
-                            <div class="text-xs text-slate-400">Jarak: ${data.skor?.jarak?.toFixed(2) || 0} | Usia: ${data.skor?.usia || 0}</div>
-                        `;
-                    }
-
-                    html += `
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="px-4 py-3.5 text-center">${index + 1}</td>
-                            <td class="px-4 py-3.5">${nisnDisplay}</td>
-                            <td class="px-4 py-3.5 font-medium text-slate-800">${data.namaLengkap || '-'}</td>
-                            <td class="px-4 py-3.5 text-slate-600">${data.asalSekolah || '-'}</td>
-                            <td class="px-4 py-3.5 text-center">${data.tkaTotal || 0}</td>
-                            <td class="px-4 py-3.5 text-center">${data.rataIjazah || 0}</td>
-                            <td class="px-4 py-3.5 text-center">
-                                ${skorHtml}
-                            </td>
-                            <td class="px-4 py-3.5 text-center">${statusHtml}</td>
-                        </tr>
-                    `;
-                });
-
-                tbody.innerHTML = html;
-            } catch (error) {
-                console.error("Error loadHasilSeleksi:", error);
-                if (error.code === 'permission-denied') {
-                    tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-red-500">Akses ditolak. Pastikan Firestore Rules mengizinkan read.</td></tr>';
-                } else if (error.code === 'failed-precondition') {
-                    tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-amber-600">Index Firestore diperlukan. Periksa console.</td></tr>';
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-red-500">Gagal memuat data: ${error.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-red-500">Error: ${err.message}</td></tr>`;
                 }
             } finally {
                 btn.disabled = false;
                 loading.classList.add('hidden');
+            }
+        }
+
+        function renderTableData(docs, isNewSearch, fallbackJalur) {
+            const tbody = document.getElementById('tableBodyHasil');
+            let html = isNewSearch ? '' : tbody.innerHTML;
+
+            docs.forEach(doc => {
+                const data = doc.data();
+                currentRank++;
+                
+                const statusVal = data.status || 'terdaftar';
+                let statusHtml = '';
+                if (statusVal === 'Diterima' || statusVal === 'Lulus') {
+                    statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">✅ Diterima</span>';
+                } else if (statusVal === 'Ditolak' || statusVal === 'Tidak Lulus') {
+                    statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-200">❌ Ditolak</span>';
+                } else {
+                    statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">⏳ Menunggu</span>';
+                }
+
+                const isVerified = data.verifikasi === 'Sudah';
+                const nisnDisplay = isVerified
+                    ? '<span class="text-emerald-500 mr-1" title="Terverifikasi">✅</span>' + (data.nisn || '-')
+                    : (data.nisn || '-');
+
+                let skorHtml = '';
+                // Since search can return mixed jalurs, we must check the doc's own jalur, fallback to filter if empty
+                const docJalur = data.jalurPendaftaran || fallbackJalur;
+                
+                if (docJalur === 'Prestasi') {
+                    const skorPres = ((data.rataRapor || 0) + (data.poinSertifikat || 0)).toFixed(2);
+                    skorHtml = `
+                        <div class="font-bold text-blue-800 text-base">${skorPres}</div>
+                        <div class="text-xs text-slate-400">Rapor: ${data.rataRapor || 0} | Sertif: ${data.poinSertifikat || 0}</div>
+                    `;
+                } else {
+                    const skorDomisili = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
+                    skorHtml = `
+                        <div class="font-bold text-blue-800 text-base">${skorDomisili}</div>
+                        <div class="text-xs text-slate-400">Jarak: ${data.skor?.jarak?.toFixed(2) || 0} | Usia: ${data.skor?.usia || 0}</div>
+                    `;
+                }
+
+                let rankDisplay = isSearchMode ? '-' : currentRank;
+
+                html += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="px-4 py-3.5 text-center">${rankDisplay}</td>
+                        <td class="px-4 py-3.5">${nisnDisplay}</td>
+                        <td class="px-4 py-3.5 font-medium text-slate-800">${data.namaLengkap || '-'} <br><span class="text-xs font-normal text-slate-400 border border-slate-200 px-1.5 py-0.5 rounded">${docJalur}</span></td>
+                        <td class="px-4 py-3.5 text-slate-600">${data.asalSekolah || '-'}</td>
+                        <td class="px-4 py-3.5 text-center">${data.tkaTotal || 0}</td>
+                        <td class="px-4 py-3.5 text-center">${data.rataIjazah || 0}</td>
+                        <td class="px-4 py-3.5 text-center">
+                            ${skorHtml}
+                        </td>
+                        <td class="px-4 py-3.5 text-center">${statusHtml}</td>
+                    </tr>
+                `;
+            });
+
+            if (isNewSearch) {
+                tbody.innerHTML = html;
+            } else {
+                // If appending, we just override because html already contains the previous tbody.innerHTML
+                tbody.innerHTML = html;
             }
         }
 
