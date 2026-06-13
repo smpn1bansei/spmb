@@ -297,7 +297,6 @@
                         </div>
                     </div>
                 </section>
-                </section>
 
                 <!-- ==================== SECTION MANAJEMEN ==================== -->
                 <section id="section-manajemen" class="hidden fade-in">
@@ -749,11 +748,8 @@
             tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>';
 
             try {
-                const snapshot = await db.collection('pendaftar').where('jalurPendaftaran', '==', jalur).get();
-                allManajemenData = [];
-                snapshot.forEach(doc => {
-                    allManajemenData.push({ id: doc.id, ...doc.data() });
-                });
+                // Filter dari memory (allPendaftar) alih-alih mengunduh ulang dari Firebase
+                allManajemenData = allPendaftar.filter(doc => doc.jalurPendaftaran === jalur);
                 
                 // Sort array automatically like Hasil Seleksi
                 if (jalur === 'Prestasi') {
@@ -1330,9 +1326,8 @@
             tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-gray-400">Memuat data...</td></tr>';
 
             try {
-                const snapshot = await db.collection('pendaftar').where('jalurPendaftaran', '==', jalur).get();
-                let results = [];
-                snapshot.forEach(doc => results.push({ id: doc.id, ...doc.data() }));
+                // Filter langsung dari memory (allPendaftar) agar tidak menarik ulang dari Firebase
+                let results = allPendaftar.filter(doc => doc.jalurPendaftaran === jalur);
 
                 // Sort based on jalur default ranking
                 if (jalur === 'Domisili' || jalur === 'Afirmasi' || jalur === 'Mutasi') {
