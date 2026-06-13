@@ -741,10 +741,9 @@
     <!-- Footer -->
     <footer class="relative z-10 text-center py-6 px-4 text-sm text-slate-400">
         <div class="mb-3">&copy; 2026 SMPN 1 Bandar Seikijang — Seleksi Penerimaan Murid Baru Tahun Ajaran 2026/2027</div>
-        <div class="flex justify-center items-center opacity-80 hover:opacity-100 transition">
-            <a href="https://hits.seeyoufarm.com" target="_blank" rel="noopener noreferrer" title="Jumlah Pengunjung">
-                <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fsmpn1bansei.github.io%2Fspmb%2Findex.html&count_bg=%231E3A8A&title_bg=%23475569&icon=&icon_color=%23E7E7E7&title=Pengunjung&edge_flat=false" alt="Visitor Count"/>
-            </a>
+        <div class="flex justify-center items-center gap-2 text-xs font-medium bg-slate-100/50 text-slate-500 py-1.5 px-3 rounded-full w-max mx-auto border border-slate-200/50 backdrop-blur-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            <span>Pengunjung: <strong id="visitorCount">...</strong></span>
         </div>
     </footer>
 
@@ -1769,6 +1768,15 @@
         // ============================================================
         updateStats();
         updateScorePreview();
+
+        // Visitor Counter API
+        fetch('https://api.counterapi.dev/v1/smpn1bansei/spmb2026/up')
+            .then(response => response.json())
+            .then(data => {
+                const el = document.getElementById('visitorCount');
+                if (el && data.count) el.textContent = data.count.toLocaleString('id-ID');
+            })
+            .catch(err => console.error('Gagal mengambil data pengunjung:', err));
     </script>
 </body>
 </html>
