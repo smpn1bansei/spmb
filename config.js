@@ -1,10 +1,10 @@
 const firebaseConfig = {
-    apiKey: "AIzaSyDKQby76TmOmOaa9GwsGktFFzDxwuVuOV4",
-    authDomain: "spmb26backup.firebaseapp.com",
-    projectId: "spmb26backup",
-    storageBucket: "spmb26backup.firebasestorage.app",
-    messagingSenderId: "365211343902",
-    appId: "1:365211343902:web:d3794c3ef492fb38e8220f"
+    apiKey: "AIzaSyBdkf6-EzUHc7AIrwOUz9KdAYlUBmz0QVA",
+    authDomain: "spmb26-a40eb.firebaseapp.com",
+    projectId: "spmb26-a40eb",
+    storageBucket: "spmb26-a40eb.firebasestorage.app",
+    messagingSenderId: "657771871334",
+    appId: "1:657771871334:web:108066841d19d820ae41a7"
 };
 
 // Atur status pendaftaran di sini
