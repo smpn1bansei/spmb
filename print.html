@@ -199,12 +199,12 @@
                 <div class="table-wrap">
                     <table class="w-full text-sm border-collapse border border-slate-300 min-w-[500px]">
                         <thead class="bg-slate-100 print:bg-slate-100/50">
-                            <tr>
+                            <tr id="rekapTableHeaderRow">
                                 <th class="border border-slate-300 px-3 py-2 text-center w-10">No</th>
                                 <th class="border border-slate-300 px-3 py-2 text-left">NISN</th>
                                 <th class="border border-slate-300 px-3 py-2 text-left">Nama Lengkap</th>
                                 <th class="border border-slate-300 px-3 py-2 text-left">Asal Sekolah</th>
-                                <th class="border border-slate-300 px-3 py-2 text-center">J. Kelamin</th>
+                                <th class="border border-slate-300 px-3 py-2 text-center">Jenkel</th>
                                 <th class="border border-slate-300 px-3 py-2 text-center">Skor Domisili</th>
                                 <th class="border border-slate-300 px-3 py-2 text-center">Skor Prestasi</th>
                                 <th class="border border-slate-300 px-3 py-2 text-center">Status</th>
@@ -725,6 +725,24 @@
             }
         }
 
+        // ==================== GLOBAL DATA CACHE ====================
+        let globalDataPendaftar = null;
+
+        async function fetchGlobalData() {
+            if (globalDataPendaftar !== null) return;
+            showLoading();
+            try {
+                const snapshot = await db.collection('pendaftar').get();
+                globalDataPendaftar = [];
+                snapshot.forEach(doc => globalDataPendaftar.push({ id: doc.id, ...doc.data() }));
+            } catch (error) {
+                console.error("Error fetching global data:", error);
+                throw error;
+            } finally {
+                hideLoading();
+            }
+        }
+
         // ==================== CETAK REKAP ====================
         async function loadDataRekap() {
             const jalur  = document.getElementById('filterJalurRekap').value;
@@ -734,28 +752,48 @@
             showLoading();
 
             try {
-                // Query: filter jalur (opsional) + status (opsional)
-                let query = db.collection('pendaftar');
-                if (jalur)  query = query.where('jalurPendaftaran', '==', jalur);
-                if (status) query = query.where('status', '==', status);
+                // Gunakan cache global
+                if (globalDataPendaftar === null) {
+                    await fetchGlobalData();
+                }
 
-                const snapshot = await query.get();
+                // Filter secara lokal
+                let results = globalDataPendaftar;
+                if (jalur)  results = results.filter(d => d.jalurPendaftaran === jalur);
+                if (status) results = results.filter(d => d.status === status);
 
-                if (snapshot.empty) {
+                if (results.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="8" class="border border-slate-300 px-3 py-6 text-center text-slate-400 no-print">Belum ada data pendaftar.</td></tr>`;
                     hideLoading();
                     return;
                 }
 
-                let results = [];
-                snapshot.forEach(doc => results.push({ id: doc.id, ...doc.data() }));
-
-                // Urutkan berdasarkan Nama Lengkap Ascending
-                results.sort((a, b) => (a.namaLengkap || '').localeCompare(b.namaLengkap || '', 'id'));
+                // Clone array sebelum sort agar tidak merubah global
+                results = [...results];
 
                 // Helper: hitung skor domisili & prestasi
                 const skorDomisili = item => ((item.skor?.jarak || 0) + (item.skor?.usia || 0)).toFixed(2);
                 const skorPrestasi = item => ((item.rataRapor || 0) + (item.poinSertifikat || 0)).toFixed(2);
+
+                // Urutkan berdasarkan jalur
+                if (jalur === 'Domisili' || jalur === 'Afirmasi' || jalur === 'Mutasi') {
+                    results.sort((a, b) => {
+                        const valA = parseFloat(skorDomisili(a));
+                        const valB = parseFloat(skorDomisili(b));
+                        if (valA !== valB) return valB - valA;
+                        return (a.namaLengkap || '').localeCompare(b.namaLengkap || '', 'id');
+                    });
+                } else if (jalur === 'Prestasi') {
+                    results.sort((a, b) => {
+                        const valA = parseFloat(skorPrestasi(a));
+                        const valB = parseFloat(skorPrestasi(b));
+                        if (valA !== valB) return valB - valA;
+                        return (a.namaLengkap || '').localeCompare(b.namaLengkap || '', 'id');
+                    });
+                } else {
+                    // Semua Jalur: Urutkan berdasarkan Nama Lengkap Ascending
+                    results.sort((a, b) => (a.namaLengkap || '').localeCompare(b.namaLengkap || '', 'id'));
+                }
 
                 // Status badge color
                 const statusClass = s => {
@@ -763,6 +801,33 @@
                     if (s === 'Ditolak')  return 'color:#dc2626;font-weight:600';
                     return 'color:#1d4ed8;font-weight:600';
                 };
+
+                // Dinamika Kolom Skor
+                let headerHTML = `
+                    <th class="border border-slate-300 px-3 py-2 text-center w-10">No</th>
+                    <th class="border border-slate-300 px-3 py-2 text-left">NISN</th>
+                    <th class="border border-slate-300 px-3 py-2 text-left">Nama Lengkap</th>
+                    <th class="border border-slate-300 px-3 py-2 text-left">Asal Sekolah</th>
+                    <th class="border border-slate-300 px-3 py-2 text-center">Jenkel</th>
+                `;
+                
+                let showSkor1 = true;
+                let labelSkor1 = 'Skor Domisili';
+                let showSkor2 = true;
+                let labelSkor2 = 'Skor Prestasi';
+                
+                if (jalur === 'Domisili' || jalur === 'Afirmasi' || jalur === 'Mutasi') {
+                    showSkor2 = false;
+                    labelSkor1 = 'Skor ' + jalur;
+                } else if (jalur === 'Prestasi') {
+                    showSkor1 = false;
+                }
+                
+                if (showSkor1) headerHTML += `<th class="border border-slate-300 px-3 py-2 text-center">${labelSkor1}</th>`;
+                if (showSkor2) headerHTML += `<th class="border border-slate-300 px-3 py-2 text-center">${labelSkor2}</th>`;
+                headerHTML += `<th class="border border-slate-300 px-3 py-2 text-center">Status</th>`;
+                
+                document.getElementById('rekapTableHeaderRow').innerHTML = headerHTML;
 
                 // Render Table
                 let html = '';
@@ -774,10 +839,12 @@
                             <td class="border border-slate-300 px-3 py-1 font-mono text-xs">${item.nisn || '-'}</td>
                             <td class="border border-slate-300 px-3 py-1 font-semibold">${item.namaLengkap || '-'}</td>
                             <td class="border border-slate-300 px-3 py-1 text-sm">${item.asalSekolah || '-'}</td>
-                            <td class="border border-slate-300 px-3 py-1 text-center">${item.jenisKelamin === 'Laki-laki' ? 'L' : 'P'}</td>
-                            <td class="border border-slate-300 px-3 py-1 text-center font-bold">${skorDomisili(item)}</td>
-                            <td class="border border-slate-300 px-3 py-1 text-center font-bold">${skorPrestasi(item)}</td>
-                            <td class="border border-slate-300 px-3 py-1 text-center"><span style="${statusClass(st)}">${st}</span></td>
+                            <td class="border border-slate-300 px-3 py-1 text-center">${item.jenisKelamin === 'Laki-laki' ? 'L' : 'P'}</td>`;
+                    
+                    if (showSkor1) html += `<td class="border border-slate-300 px-3 py-1 text-center font-bold">${skorDomisili(item)}</td>`;
+                    if (showSkor2) html += `<td class="border border-slate-300 px-3 py-1 text-center font-bold">${skorPrestasi(item)}</td>`;
+                    
+                    html += `<td class="border border-slate-300 px-3 py-1 text-center"><span style="${statusClass(st)}">${st}</span></td>
                         </tr>
                     `;
                 });
@@ -804,12 +871,11 @@
             tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>';
             
             try {
-                const snapshot = await db.collection('pendaftar').get();
-                allDataIndividu = [];
-                snapshot.forEach(doc => {
-                    allDataIndividu.push({ id: doc.id, ...doc.data() });
-                });
+                if (globalDataPendaftar === null) {
+                    await fetchGlobalData();
+                }
                 
+                allDataIndividu = [...globalDataPendaftar];
                 // Sort by name for better UX
                 allDataIndividu.sort((a, b) => (a.namaLengkap || '').localeCompare(b.namaLengkap || ''));
                 
@@ -941,9 +1007,34 @@
             renderIndividuTable(filtered);
         }
 
-        function cetakSiswa(docId) {
-            const data = allDataIndividu.find(i => i.id === docId);
-            if(!data) return;
+        async function cetakSiswa(docId) {
+            showLoading();
+            let data = allDataIndividu.find(i => i.id === docId); // Fallback lokal
+            
+            try {
+                // Tarik data terbaru khusus 1 orang ini dari server (Realtime/Sync)
+                const docRef = await db.collection('pendaftar').doc(docId).get();
+                if (docRef.exists) {
+                    data = { id: docRef.id, ...docRef.data() };
+                    
+                    // Sinkronisasikan dengan memori lokal agar tabel juga terupdate jika dicetak ulang
+                    if (globalDataPendaftar) {
+                        const globalIdx = globalDataPendaftar.findIndex(i => i.id === docId);
+                        if (globalIdx !== -1) globalDataPendaftar[globalIdx] = data;
+                    }
+                    const indIdx = allDataIndividu.findIndex(i => i.id === docId);
+                    if (indIdx !== -1) allDataIndividu[indIdx] = data;
+                }
+            } catch (error) {
+                console.error("Gagal menarik data terbaru dari server:", error);
+                // Jika tidak ada internet, tetap gunakan variabel `data` dari memori lokal (offline fallback)
+            }
+            hideLoading();
+
+            if(!data) {
+                alert("Data tidak ditemukan");
+                return;
+            }
             
             const err = document.getElementById('individuError');
             const printArea = document.getElementById('printAreaIndividu');
@@ -1197,17 +1288,17 @@
             closeJsonModal();
             showLoading();
             try {
-                const snapshot = await db.collection('pendaftar').get();
-                if (snapshot.empty) {
+                if (globalDataPendaftar === null) {
+                    await fetchGlobalData();
+                }
+                
+                if (globalDataPendaftar.length === 0) {
                     alert("Tidak ada data untuk dibackup");
                     hideLoading();
                     return;
                 }
                 
-                let dataArray = [];
-                snapshot.forEach(doc => {
-                    dataArray.push({ id: doc.id, ...doc.data() });
-                });
+                let dataArray = globalDataPendaftar;
                 
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataArray, null, 2));
                 const downloadAnchorNode = document.createElement('a');
