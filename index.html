@@ -268,7 +268,7 @@
             <!-- Stats -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-center animate-breathe">
-                    <div class="font-display font-extrabold text-3xl text-blue-800 mb-1" id="statPendaftar">0</div>
+                    <div class="font-display font-extrabold text-3xl text-blue-800 mb-1">140+</div>
                     <div class="text-sm text-slate-500 font-medium">Total Pendaftar</div>
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-center">
@@ -1292,7 +1292,7 @@
                 document.getElementById('containerAsalSekolahLainnya').classList.add('hidden');
                 resetScorePreview();
                 showModal(skorJarak, skorUsia, skorTotal);
-                updateStats();
+
             } catch (error) {
                 hideLoading();
                 console.error('Submit error:', error);
@@ -1306,31 +1306,7 @@
             }
         });
 
-        // ============================================================
-        // STATS
-        // ============================================================
-        async function updateStats() {
-            try {
-                const snapshot = await db.collection('pendaftar').get();
-                animateCounter('statPendaftar', snapshot.size);
-            } catch (e) {
-                console.error('Stats error:', e);
-            }
-        }
 
-        function animateCounter(elementId, target) {
-            const el = document.getElementById(elementId);
-            let current = 0;
-            const step = Math.max(1, Math.floor(target / 30));
-            const timer = setInterval(() => {
-                current += step;
-                if (current >= target) {
-                    current = target;
-                    clearInterval(timer);
-                }
-                el.textContent = current;
-            }, 30);
-        }
 
         // ============================================================
         // HASIL SELEKSI
@@ -1723,7 +1699,6 @@
         // ============================================================
         // INIT
         // ============================================================
-        updateStats();
         updateScorePreview();
 
         // Visitor Counter API
