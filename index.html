@@ -687,51 +687,30 @@
 
         <!-- ==================== HASIL SELEKSI PAGE ==================== -->
         <section class="page-section" id="page-hasil">
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                    <div class="flex-1">
-                        <h2 class="font-display font-bold text-xl text-slate-800 flex items-center gap-2">🏆 Data Hasil Seleksi</h2>
-                        <p class="text-sm text-slate-500 mt-1">Pilih jalur pendaftaran untuk melihat data</p>
-                    </div>
-                    <div class="w-full sm:w-auto relative">
-                        <input type="text" id="inputCariHasil" onkeyup="cariHasilSeleksi()" placeholder="Cari Nama (min 4 hr) / NISN..." class="w-full sm:w-64 pl-4 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 transition">
-                        <span class="absolute right-3 top-2.5 text-slate-400">🔍</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <select id="filterJalur" onchange="loadHasilSeleksi()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                            <option value="Domisili">Jalur Domisili</option>
-                            <option value="Prestasi">Jalur Prestasi</option>
-                            <option value="Afirmasi">Jalur Afirmasi</option>
-                            <option value="Mutasi">Jalur Mutasi</option>
-                        </select>
-                        <button onclick="loadHasilSeleksi()" id="btnRefreshHasil" class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-800 text-white text-sm font-semibold rounded-xl hover:bg-blue-900 transition shadow-sm">
-                            🔄 Muat Ulang <span id="hasilLoadingText" class="hidden text-xs">(memuat...)</span>
-                        </button>
-                    </div>
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 max-w-3xl mx-auto">
+                <div class="text-center mb-8">
+                    <h2 class="font-display font-bold text-2xl text-slate-800 mb-2">🔍 Cek Hasil Seleksi Pribadi</h2>
+                    <p class="text-sm text-slate-500">Masukkan 10 digit NISN Anda untuk melihat status kelulusan dan rincian biodata.</p>
                 </div>
-                <div class="overflow-x-auto rounded-xl border border-slate-100">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gradient-to-r from-slate-50 to-slate-100 text-slate-600 text-xs uppercase tracking-wider">
-                            <tr>
-                                <th class="px-4 py-3.5 text-center font-semibold w-16">No</th>
-                                <th class="px-4 py-3.5 text-left font-semibold">NISN</th>
-                                <th class="px-4 py-3.5 text-left font-semibold">Nama Lengkap</th>
-                                <th class="px-4 py-3.5 text-left font-semibold">Asal Sekolah</th>
-                                <th class="px-4 py-3.5 text-center font-semibold">Total TKA</th>
-                                <th class="px-4 py-3.5 text-center font-semibold">Nilai SKL</th>
-                                <th id="thSkorHasil" class="px-4 py-3.5 text-center font-semibold">Skor Domisili</th>
-                                <th class="px-4 py-3.5 text-center font-semibold">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBodyHasil" class="divide-y divide-slate-100">
-                            <tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">Klik "Muat Ulang" untuk mengambil data</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-4 flex justify-center">
-                    <button id="btnLoadMoreHasil" onclick="loadMoreHasil()" class="hidden px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold rounded-xl transition">
-                        Muat 10 Data Lagi...
+                
+                <form id="formCariHasil" onsubmit="cekHasilSiswa(event)" class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto mb-8">
+                    <input type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" id="inputNisnHasil" placeholder="Ketik NISN (10 digit)..." required pattern="[0-9]{10}" class="flex-1 px-5 py-3.5 rounded-xl border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 transition">
+                    <button type="submit" id="btnCekHasil" class="px-6 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2">
+                        <span id="textCekHasil">Cek Data</span>
+                        <div id="hasilSpinner" class="hidden animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
                     </button>
+                    <button type="button" onclick="resetCekHasil()" class="px-6 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition flex items-center justify-center">
+                        Reset
+                    </button>
+                </form>
+
+                <div id="hasilError" class="hidden bg-red-50 text-red-600 p-4 rounded-xl text-center text-sm font-semibold mb-6 border border-red-100">
+                    NISN tidak ditemukan di dalam sistem. Pastikan Anda sudah mendaftar dan NISN yang dimasukkan benar.
+                </div>
+
+                <!-- Detail Result Container -->
+                <div id="detailSiswaResult" class="hidden animate-fade-in">
+                    <!-- Filled by JS -->
                 </div>
             </div>
         </section>
@@ -921,11 +900,6 @@
             // Update hash
             window.location.hash = page;
             window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            // Auto-load Hasil Seleksi
-            if (page === 'hasil') {
-                setTimeout(() => loadHasilSeleksi(), 500);
-            }
         }
 
         function handleHash() {
@@ -1361,196 +1335,179 @@
         // ============================================================
         // HASIL SELEKSI
         // ============================================================
-        let lastVisibleDoc = null;
-        let isSearchMode = false;
-        let currentSearchQuery = '';
-        let currentRank = 0;
+        // ============================================================
+        // HASIL SELEKSI PRIBADI
+        // ============================================================
+        async function cekHasilSiswa(event) {
+            event.preventDefault();
+            const input = document.getElementById('inputNisnHasil').value.trim();
+            const btn = document.getElementById('btnCekHasil');
+            const spinner = document.getElementById('hasilSpinner');
+            const textCek = document.getElementById('textCekHasil');
+            const errBox = document.getElementById('hasilError');
+            const resultBox = document.getElementById('detailSiswaResult');
 
-        async function cariHasilSeleksi() {
-            const val = document.getElementById('inputCariHasil').value.trim();
-            if (val.length > 0 && val.length < 4) return; // Wait until 4 chars, unless empty
-            
-            if (val.length >= 4) {
-                isSearchMode = true;
-                currentSearchQuery = val;
-            } else if (val.length === 0) {
-                isSearchMode = false;
-                currentSearchQuery = '';
-            }
-            lastVisibleDoc = null; // Reset pagination
-            await loadHasilSeleksi(true);
-        }
-
-        async function loadMoreHasil() {
-            await loadHasilSeleksi(false);
-        }
-
-        async function loadHasilSeleksi(isNewSearch = true) {
-            const btn = document.getElementById('btnRefreshHasil');
-            const loading = document.getElementById('hasilLoadingText');
-            const tbody = document.getElementById('tableBodyHasil');
-            const filterJalur = document.getElementById('filterJalur').value;
-            const btnLoadMore = document.getElementById('btnLoadMoreHasil');
-
-            // Set th title based on filterJalur
-            const thSkor = document.getElementById('thSkorHasil');
-            if (thSkor) {
-                if (filterJalur === 'Prestasi') thSkor.innerText = 'Skor Prestasi';
-                else thSkor.innerText = 'Skor Domisili';
+            if (!/^\d{10}$/.test(input)) {
+                showToast('NISN harus 10 digit angka', 'error');
+                return;
             }
 
-            if (!isNewSearch && !isSearchMode) {
-                // If it's just refreshing from the button or changing filter, treat as new search but don't reset searchMode if we are in it?
-                // Actually the select filter calls loadHasilSeleksi() without args (so isNewSearch = true).
-                // Wait, if filter changes, we MUST reset search.
-                if (document.getElementById('inputCariHasil').value === '') {
-                    isSearchMode = false;
-                    currentSearchQuery = '';
-                }
-            }
-
-            if (isNewSearch) {
-                lastVisibleDoc = null;
-                currentRank = 0;
-                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Sedang mengambil data dari database...</td></tr>';
-            }
-
+            // UI Loading state
             btn.disabled = true;
-            loading.classList.remove('hidden');
-            if(btnLoadMore) btnLoadMore.classList.add('hidden');
+            textCek.textContent = 'Mencari...';
+            spinner.classList.remove('hidden');
+            errBox.classList.add('hidden');
+            resultBox.classList.add('hidden');
 
             try {
-                let query = db.collection('pendaftar');
-
-                if (isSearchMode && currentSearchQuery) {
-                    if (/^\d{10}$/.test(currentSearchQuery)) {
-                        // Pencarian NISN (1 read)
-                        const doc = await query.doc(currentSearchQuery).get();
-                        renderTableData(doc.exists ? [doc] : [], isNewSearch, filterJalur);
-                        btn.disabled = false;
-                        loading.classList.add('hidden');
-                        return;
-                    } else {
-                        // Pencarian Nama Prefix
-                        const qLower = currentSearchQuery.toLowerCase();
-                        query = db.collection('pendaftar')
-                                  .where('namaLengkap_lower', '>=', qLower)
-                                  .where('namaLengkap_lower', '<=', qLower + '\uf8ff');
-                    }
+                // Hanya memakan 1 kuota Read dari Firestore
+                const snapshot = await db.collection('pendaftar').where('nisn', '==', input).limit(1).get();
+                
+                if (snapshot.empty) {
+                    errBox.classList.remove('hidden');
                 } else {
-                    // Mode Ranking Normal
-                    query = query.where('jalurPendaftaran', '==', filterJalur)
-                                 .orderBy('skorAkhir', 'desc');
+                    const data = snapshot.docs[0].data();
+                    renderDetailSiswa(data, resultBox);
+                    resultBox.classList.remove('hidden');
                 }
-
-                if (lastVisibleDoc) {
-                    query = query.startAfter(lastVisibleDoc);
-                }
-
-                query = query.limit(10);
-                const snapshot = await query.get();
-
-                if (!snapshot.empty) {
-                    lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-                    if (snapshot.docs.length === 10 && btnLoadMore) {
-                        btnLoadMore.classList.remove('hidden');
-                    }
-                } else {
-                    if (isNewSearch) {
-                        tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Belum ada data pendaftar untuk kriteria ini.</td></tr>';
-                    }
-                    if(btnLoadMore) btnLoadMore.classList.add('hidden');
-                    btn.disabled = false;
-                    loading.classList.add('hidden');
-                    return;
-                }
-
-                renderTableData(snapshot.docs, isNewSearch, filterJalur);
-
             } catch (err) {
-                console.error(err);
-                if (err.code === 'failed-precondition' || (err.message && err.message.toLowerCase().includes('index'))) {
-                    const urlRegex = /(https:\/\/console\.firebase\.google\.com[^\s]+)/g;
-                    const urlMatch = err.message ? err.message.match(urlRegex) : null;
-                    if (urlMatch) {
-                        tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-red-500 font-bold">Fitur Ranking Firebase Belum Aktif.<br><br>Silakan klik link berikut untuk mengaktifkannya di Firebase Console:<br><a href="${urlMatch[0]}" target="_blank" class="underline text-blue-600 break-all">${urlMatch[0]}</a></td></tr>`;
-                    } else {
-                        tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-red-500">Firebase Index diperlukan. Buka Console log browser untuk mencari link (klik kanan -> Inspect -> Console). Error asli: ${err.message}</td></tr>`;
-                    }
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-red-500">Error: ${err.message}</td></tr>`;
-                }
+                console.error("Gagal menarik data hasil:", err);
+                errBox.textContent = 'Terjadi kesalahan jaringan saat mengambil data.';
+                errBox.classList.remove('hidden');
             } finally {
                 btn.disabled = false;
-                loading.classList.add('hidden');
+                textCek.textContent = 'Cek Data';
+                spinner.classList.add('hidden');
             }
         }
 
-        function renderTableData(docs, isNewSearch, fallbackJalur) {
-            const tbody = document.getElementById('tableBodyHasil');
-            let html = isNewSearch ? '' : tbody.innerHTML;
+        function resetCekHasil() {
+            document.getElementById('inputNisnHasil').value = '';
+            document.getElementById('hasilError').classList.add('hidden');
+            document.getElementById('detailSiswaResult').classList.add('hidden');
+            document.getElementById('detailSiswaResult').innerHTML = '';
+            document.getElementById('inputNisnHasil').focus();
+        }
 
-            docs.forEach(doc => {
-                const data = doc.data();
-                currentRank++;
-                
-                const statusVal = data.status || 'terdaftar';
-                let statusHtml = '';
-                if (statusVal === 'Diterima' || statusVal === 'Lulus') {
-                    statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">✅ Diterima</span>';
-                } else if (statusVal === 'Ditolak' || statusVal === 'Tidak Lulus') {
-                    statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-600 border border-red-200">❌ Ditolak</span>';
-                } else {
-                    statusHtml = '<span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">⏳ Menunggu</span>';
-                }
+        function detailRow(label, value) {
+            return `
+                <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 flex flex-col justify-center">
+                    <div class="text-[10px] sm:text-xs text-gray-500 font-medium mb-1 tracking-wide uppercase">${label}</div>
+                    <div class="text-sm font-semibold text-gray-800 break-words">${value || '-'}</div>
+                </div>
+            `;
+        }
 
-                const isVerified = data.verifikasi === 'Sudah';
-                const nisnDisplay = isVerified
-                    ? '<span class="text-emerald-500 mr-1" title="Terverifikasi">✅</span>' + (data.nisn || '-')
-                    : (data.nisn || '-');
-
-                let skorHtml = '';
-                // Since search can return mixed jalurs, we must check the doc's own jalur, fallback to filter if empty
-                const docJalur = data.jalurPendaftaran || fallbackJalur;
-                
-                if (docJalur === 'Prestasi') {
-                    const skorPres = ((data.rataRapor || 0) + (data.poinSertifikat || 0)).toFixed(2);
-                    skorHtml = `
-                        <div class="font-bold text-blue-800 text-base">${skorPres}</div>
-                        <div class="text-xs text-slate-400">Rapor: ${data.rataRapor || 0} | Sertif: ${data.poinSertifikat || 0}</div>
-                    `;
-                } else {
-                    const skorDomisili = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
-                    skorHtml = `
-                        <div class="font-bold text-blue-800 text-base">${skorDomisili}</div>
-                        <div class="text-xs text-slate-400">Jarak: ${data.skor?.jarak?.toFixed(2) || 0} | Usia: ${data.skor?.usia || 0}</div>
-                    `;
-                }
-
-                let rankDisplay = isSearchMode ? '-' : currentRank;
-
-                html += `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="px-4 py-3.5 text-center">${rankDisplay}</td>
-                        <td class="px-4 py-3.5">${nisnDisplay}</td>
-                        <td class="px-4 py-3.5 font-medium text-slate-800">${data.namaLengkap || '-'} <br><span class="text-xs font-normal text-slate-400 border border-slate-200 px-1.5 py-0.5 rounded">${docJalur}</span></td>
-                        <td class="px-4 py-3.5 text-slate-600">${data.asalSekolah || '-'}</td>
-                        <td class="px-4 py-3.5 text-center">${data.tkaTotal || 0}</td>
-                        <td class="px-4 py-3.5 text-center">${data.rataIjazah || 0}</td>
-                        <td class="px-4 py-3.5 text-center">
-                            ${skorHtml}
-                        </td>
-                        <td class="px-4 py-3.5 text-center">${statusHtml}</td>
-                    </tr>
-                `;
-            });
-
-            if (isNewSearch) {
-                tbody.innerHTML = html;
-            } else {
-                // If appending, we just override because html already contains the previous tbody.innerHTML
-                tbody.innerHTML = html;
+        function renderDetailSiswa(data, container) {
+            const skorDom = ((data.skor?.jarak || 0) + (data.skor?.usia || 0)).toFixed(2);
+            const skorPres = ((data.rataRapor || 0) + (data.poinSertifikat || 0)).toFixed(2);
+            let certDetailStr = '-';
+            if (Array.isArray(data.sertifikat) && data.sertifikat.length > 0) {
+                certDetailStr = data.sertifikat.map(s => `${s.nama} (${s.tingkat})`).join('<br>');
             }
+
+            const jalurSiswa = data.jalurPendaftaran || 'Tidak Diketahui';
+            const isPrestasi = jalurSiswa === 'Prestasi';
+
+            let domisiliBoxHtml = '';
+            if (!isPrestasi) {
+                domisiliBoxHtml = `
+                    <div class="md:col-span-2 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 mt-2 flex flex-col md:flex-row items-center justify-between shadow-sm">
+                        <div class="text-center md:text-left mb-3 md:mb-0">
+                            <div class="text-xs text-amber-600 font-bold uppercase tracking-widest mb-1">Total Skor Akhir Jalur ${jalurSiswa}</div>
+                            <div class="text-xs text-amber-800 opacity-80">(Poin Jarak + Poin Usia)</div>
+                            <div class="text-sm font-semibold text-amber-700 mt-1">${(data.skor?.jarak || 0).toFixed(2)} + ${data.skor?.usia || 0}</div>
+                        </div>
+                        <div class="text-3xl font-black text-amber-600">${skorDom}</div>
+                    </div>
+                `;
+            } else {
+                domisiliBoxHtml = `
+                    <div class="md:col-span-2 bg-slate-50 rounded-xl p-5 border border-slate-200 mt-2 flex flex-col md:flex-row items-center justify-between opacity-60 grayscale">
+                        <div class="text-center md:text-left mb-3 md:mb-0">
+                            <div class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Total Skor Akhir Jalur Domisili <span class="normal-case font-normal">(Tidak Dipilih)</span></div>
+                            <div class="text-xs text-slate-500 opacity-80">(Poin Jarak + Poin Usia)</div>
+                            <div class="text-sm font-semibold text-slate-500 mt-1">${(data.skor?.jarak || 0).toFixed(2)} + ${data.skor?.usia || 0}</div>
+                        </div>
+                        <div class="text-3xl font-black text-slate-400">${skorDom}</div>
+                    </div>
+                `;
+            }
+
+            let prestasiBoxHtml = '';
+            if (isPrestasi) {
+                prestasiBoxHtml = `
+                    <div class="md:col-span-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-5 border border-indigo-200 mt-2 flex flex-col md:flex-row items-center justify-between shadow-sm">
+                        <div class="text-center md:text-left mb-3 md:mb-0">
+                            <div class="text-xs text-indigo-600 font-bold uppercase tracking-widest mb-1">Total Skor Akhir Jalur Prestasi</div>
+                            <div class="text-xs text-indigo-800 opacity-80">(Rata Rapor + Poin Sertifikat)</div>
+                            <div class="text-sm font-semibold text-indigo-700 mt-1">${(data.rataRapor || 0).toFixed(2)} + ${data.poinSertifikat || 0}</div>
+                        </div>
+                        <div class="text-3xl font-black text-indigo-600">${skorPres}</div>
+                    </div>
+                `;
+            } else {
+                prestasiBoxHtml = `
+                    <div class="md:col-span-2 bg-slate-50 rounded-xl p-5 border border-slate-200 mt-2 flex flex-col md:flex-row items-center justify-between opacity-60 grayscale">
+                        <div class="text-center md:text-left mb-3 md:mb-0">
+                            <div class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Total Skor Akhir Jalur Prestasi <span class="normal-case font-normal">(Tidak Dipilih)</span></div>
+                            <div class="text-xs text-slate-500 opacity-80">(Rata Rapor + Poin Sertifikat)</div>
+                            <div class="text-sm font-semibold text-slate-500 mt-1">${(data.rataRapor || 0).toFixed(2)} + ${data.poinSertifikat || 0}</div>
+                        </div>
+                        <div class="text-3xl font-black text-slate-400">${skorPres}</div>
+                    </div>
+                `;
+            }
+
+            const statusVal = data.status || 'Terdaftar';
+            let statusHtml = '';
+            if (statusVal === 'Diterima' || statusVal === 'Lulus') {
+                statusHtml = '<div class="px-6 py-3 rounded-xl bg-emerald-100 text-emerald-800 font-black border border-emerald-200 text-lg sm:text-xl shadow-sm">✅ SELAMAT! ANDA LULUS / DITERIMA</div>';
+            } else if (statusVal === 'Ditolak' || statusVal === 'Tidak Lulus') {
+                statusHtml = '<div class="px-6 py-3 rounded-xl bg-red-100 text-red-800 font-black border border-red-200 text-lg sm:text-xl shadow-sm">❌ MOHON MAAF, ANDA TIDAK LULUS</div>';
+            } else {
+                statusHtml = '<div class="px-6 py-3 rounded-xl bg-blue-100 text-blue-800 font-black border border-blue-200 text-lg sm:text-xl shadow-sm">⏳ STATUS: MENUNGGU PENGUMUMAN</div>';
+            }
+
+            container.innerHTML = `
+                <div class="text-center mb-6 mt-4">
+                    ${statusHtml}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    <div class="md:col-span-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                        <div class="text-xs text-blue-600 font-semibold uppercase tracking-wider mb-1">Data Siswa</div>
+                        <div class="text-xl font-bold text-gray-800">${data.namaLengkap || '-'}</div>
+                        <div class="text-sm text-gray-600 mt-1">NISN: ${data.nisn || '-'} · Jalur: ${data.jalurPendaftaran || '-'}</div>
+                    </div>
+                    ${detailRow('Jenis Kelamin', data.jenisKelamin)}
+                    ${detailRow('Agama', data.agama)}
+                    ${detailRow('Tempat Lahir', data.tempatLahir)}
+                    ${detailRow('Tanggal Lahir', data.tanggalLahir)}
+                    ${detailRow('Alamat', data.alamat)}
+                    ${detailRow('Jarak Rumah', data.jarakRumah ? data.jarakRumah + ' KM' : '-')}
+                </div>
+                <hr class="my-6 border-slate-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    <div class="md:col-span-2 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+                        <div class="text-xs text-green-600 font-semibold uppercase tracking-wider mb-1">Nilai & Skor</div>
+                    </div>
+                    ${detailRow('Asal Sekolah', data.asalSekolah)}
+                    ${detailRow('Nilai SKL/Ijazah', data.rataIjazah)}
+                    ${detailRow('Rapor 4.1', data.rapor41)}
+                    ${detailRow('Rapor 4.2', data.rapor42)}
+                    ${detailRow('Rapor 5.1', data.rapor51)}
+                    ${detailRow('Rapor 5.2', data.rapor52)}
+                    ${detailRow('Rapor 6.1', data.rapor61)}
+                    ${detailRow('Rata-rata Rapor (NRP)', data.rataRapor)}
+                    ${detailRow('Sertifikat Prestasi', certDetailStr)}
+                    ${detailRow('TKA Matematika', data.tkaMatematika)}
+                    ${detailRow('TKA B. Indonesia', data.tkaBahasaIndonesia)}
+                    ${detailRow('Total TKA', data.tkaTotal)}
+                    
+                    ${domisiliBoxHtml}
+                    ${prestasiBoxHtml}
+                </div>
+            `;
         }
 
         // ============================================================
