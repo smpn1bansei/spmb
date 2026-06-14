@@ -10,4 +10,4 @@ const firebaseConfig = {
 // Atur status pendaftaran di sini _ ini adalah server kedua
 // true = Pendaftaran Terbuka (bisa akses form)
 // false = Pendaftaran Ditutup (user akan dialihkan ke home dan diminta menghubungi admin)
-const STATUS_PENDAFTARAN_DIBUKA = true;
+const STATUS_PENDAFTARAN_DIBUKA = false;
