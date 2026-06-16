@@ -147,9 +147,14 @@
                 </button>
 
                 <button onclick="showSection('seleksi')" id="sideNav-seleksi"
-                    class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-red-400 hover:text-red-300">
+                    class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     Kelola Seleksi
+                </button>
+                <button onclick="showSection('verifikator')" id="sideNav-verifikator"
+                    class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    Verifikator
                 </button>
                 <button onclick="showSection('manajemen')" id="sideNav-manajemen"
                     class="side-nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-sidebar-hover text-white/70 hover:text-white">
@@ -225,7 +230,7 @@
                                 </div>
                             </div>
                             <div class="text-3xl font-extrabold text-gray-800" id="statMenunggu">0</div>
-                            <div class="text-sm text-gray-500 mt-1">Menunggu Seleksi</div>
+                            <div class="text-sm text-gray-500 mt-1">Telah Terverifikasi</div>
                         </div>
                         <div class="stat-card bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                             <div class="flex items-center justify-between mb-3">
@@ -254,25 +259,55 @@
                             <div class="bg-blue-50 rounded-xl p-4 text-center">
                                 <div class="text-2xl font-extrabold text-blue-700" id="statDomisili">0</div>
                                 <div class="text-xs text-blue-600 font-medium mt-1">Domisili</div>
+                                <div class="text-[10px] text-blue-400 font-semibold mt-1">Kuota: 96</div>
                             </div>
                             <div class="bg-purple-50 rounded-xl p-4 text-center">
                                 <div class="text-2xl font-extrabold text-purple-700" id="statPrestasi">0</div>
                                 <div class="text-xs text-purple-600 font-medium mt-1">Prestasi</div>
+                                <div class="text-[10px] text-purple-400 font-semibold mt-1">Kuota: 48</div>
                             </div>
                             <div class="bg-teal-50 rounded-xl p-4 text-center">
                                 <div class="text-2xl font-extrabold text-teal-700" id="statAfirmasi">0</div>
                                 <div class="text-xs text-teal-600 font-medium mt-1">Afirmasi</div>
+                                <div class="text-[10px] text-teal-400 font-semibold mt-1">Kuota: 38</div>
                             </div>
                             <div class="bg-orange-50 rounded-xl p-4 text-center">
                                 <div class="text-2xl font-extrabold text-orange-700" id="statMutasi">0</div>
                                 <div class="text-xs text-orange-600 font-medium mt-1">Mutasi</div>
+                                <div class="text-[10px] text-orange-400 font-semibold mt-1">Kuota: 10</div>
                             </div>
                         </div>
                     </div>
 
                 </section>
 
-                <!-- ==================== SECTION MANAJEMEN ==================== -->
+                <section id="section-verifikator" class="hidden fade-in">
+                    <div class="card p-6 border-0 shadow-sm rounded-2xl mb-6 bg-white">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">Statistik Verifikator</h2>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-4 font-semibold rounded-l-xl">No</th>
+                                        <th class="px-6 py-4 font-semibold">Email Verifikator</th>
+                                        <th class="px-6 py-4 font-semibold rounded-r-xl">Dokumen Diselesaikan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="verifikatorTableBody" class="divide-y divide-gray-100">
+                                    <tr><td colspan="3" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== SECTION: MANAJEMEN DATA ==================== -->
                 <section id="section-manajemen" class="hidden fade-in">
                     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
@@ -650,6 +685,42 @@
             
             document.getElementById('manajemenStatsCard').classList.remove('hidden');
         }
+        // ============================================================
+        // VERIFIKATOR DATA
+        // ============================================================
+        function loadVerifikatorData() {
+            const emails = [
+                'jefrison43@guru.smp.belajar.id',
+                'resi@smp.belajar.id',
+                'rantisiti@smp.belajar.id',
+                'dwi8733@guru.smp.belajar.id',
+                'andrifernanda93@guru.smp.belajar.id',
+                'fatimahnuraini68@guru.smp.belajar.id'
+            ];
+            
+            const tbody = document.getElementById('verifikatorTableBody');
+            let html = '';
+            
+            emails.forEach((email, index) => {
+                // Hitung dari memori lokal (0 reads Firebase)
+                const count = allPendaftar.filter(d => d.verifikator === email).length;
+                
+                html += `
+                    <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 rounded-l-xl text-gray-500">${index + 1}</td>
+                        <td class="px-6 py-4 font-medium text-gray-800">${email}</td>
+                        <td class="px-6 py-4 rounded-r-xl">
+                            <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-bold bg-purple-100 text-purple-700">
+                                ${count} Dokumen
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
 
         async function loadManajemenData() {
             const jalur = document.getElementById('filterJalurManajemen').value;
@@ -766,8 +837,10 @@
 
         async function quickChangeStatus(docId, newStatus) {
             try {
+                const currentUserEmail = firebase.auth().currentUser ? firebase.auth().currentUser.email : 'Sistem';
                 await db.collection('pendaftar').doc(docId).update({
                     status: newStatus,
+                    verifikator: currentUserEmail,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 showToast('Status berhasil diubah', 'success');
@@ -1012,8 +1085,12 @@
                 activeBtn.classList.remove('text-white/70', 'text-red-400', 'hover:text-red-300');
             }
 
-            const titles = { dashboard: 'Dashboard', seleksi: 'Kelola Seleksi', manajemen: 'Manajemen Data' };
+            const titles = { dashboard: 'Dashboard', seleksi: 'Kelola Seleksi', verifikator: 'Statistik Verifikator', manajemen: 'Manajemen Data' };
             document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
+
+            if (section === 'verifikator') {
+                loadVerifikatorData();
+            }
 
             // Close mobile sidebar
             document.getElementById('sidebar').classList.remove('open');
@@ -1044,7 +1121,7 @@
         // ============================================================
         function updateDashboardStats() {
             document.getElementById('statTotal').textContent = allPendaftar.length;
-            document.getElementById('statMenunggu').textContent = allPendaftar.filter(d => d.status === 'terdaftar' || !d.status).length;
+            document.getElementById('statMenunggu').textContent = allPendaftar.filter(d => d.verifikasi === 'Sudah').length;
             document.getElementById('statLulus').textContent = allPendaftar.filter(d => d.status === 'Diterima' || d.status === 'Lulus').length;
             document.getElementById('statTidakLulus').textContent = allPendaftar.filter(d => d.status === 'Ditolak' || d.status === 'Tidak Lulus').length;
 
@@ -1181,7 +1258,11 @@
         // ============================================================
         async function updateStatus(docId, nisn, newStatus) {
             try {
-                await db.collection('pendaftar').doc(docId).set({ status: newStatus }, { merge: true });
+                const currentUserEmail = firebase.auth().currentUser ? firebase.auth().currentUser.email : 'Sistem';
+                await db.collection('pendaftar').doc(docId).set({ 
+                    status: newStatus,
+                    verifikator: currentUserEmail
+                }, { merge: true });
                 showAdminToast(`Status ${nisn} diubah menjadi "${newStatus}"`, 'success');
                 // Update local data too
                 const idx = allPendaftar.findIndex(d => d.id === docId);
@@ -1198,7 +1279,11 @@
         // ============================================================
         async function updateVerifikasi(docId, nisn, newVerif) {
             try {
-                await db.collection('pendaftar').doc(docId).set({ verifikasi: newVerif }, { merge: true });
+                const currentUserEmail = firebase.auth().currentUser ? firebase.auth().currentUser.email : 'Sistem';
+                await db.collection('pendaftar').doc(docId).set({ 
+                    verifikasi: newVerif,
+                    verifikator: currentUserEmail 
+                }, { merge: true });
                 showAdminToast(`Verifikasi ${nisn}: ${newVerif}`, 'success');
                 const idx = allPendaftar.findIndex(d => d.id === docId);
                 if (idx !== -1) allPendaftar[idx].verifikasi = newVerif;
