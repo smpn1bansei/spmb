@@ -208,6 +208,7 @@
                                 <th class="border border-slate-300 px-3 py-2 text-center">Skor Domisili</th>
                                 <th class="border border-slate-300 px-3 py-2 text-center">Skor Prestasi</th>
                                 <th class="border border-slate-300 px-3 py-2 text-center">Status</th>
+                                <th class="border border-slate-300 px-3 py-2 text-center">Verifikasi</th>
                             </tr>
                         </thead>
                         <tbody id="rekapTableBody">
@@ -826,6 +827,7 @@
                 if (showSkor1) headerHTML += `<th class="border border-slate-300 px-3 py-2 text-center">${labelSkor1}</th>`;
                 if (showSkor2) headerHTML += `<th class="border border-slate-300 px-3 py-2 text-center">${labelSkor2}</th>`;
                 headerHTML += `<th class="border border-slate-300 px-3 py-2 text-center">Status</th>`;
+                headerHTML += `<th class="border border-slate-300 px-3 py-2 text-center w-16">Verifikasi</th>`;
                 
                 document.getElementById('rekapTableHeaderRow').innerHTML = headerHTML;
 
@@ -833,6 +835,10 @@
                 let html = '';
                 results.forEach((item, index) => {
                     const st = item.status || 'Terdaftar';
+                    const verif = item.verifikasi === 'Sudah' 
+                        ? '<span class="text-green-600 font-bold">✔</span>' 
+                        : '<span class="text-red-600 font-bold">✖</span>';
+                    
                     html += `
                         <tr class="${index % 2 === 0 ? '' : 'bg-slate-50/60'}">
                             <td class="border border-slate-300 px-3 py-1 text-center text-slate-500">${index + 1}</td>
@@ -845,6 +851,7 @@
                     if (showSkor2) html += `<td class="border border-slate-300 px-3 py-1 text-center font-bold">${skorPrestasi(item)}</td>`;
                     
                     html += `<td class="border border-slate-300 px-3 py-1 text-center"><span style="${statusClass(st)}">${st}</span></td>
+                             <td class="border border-slate-300 px-3 py-1 text-center text-base">${verif}</td>
                         </tr>
                     `;
                 });
