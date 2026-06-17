@@ -296,11 +296,12 @@
                                     <tr>
                                         <th class="px-6 py-4 font-semibold rounded-l-xl">No</th>
                                         <th class="px-6 py-4 font-semibold">Email Verifikator</th>
-                                        <th class="px-6 py-4 font-semibold rounded-r-xl">Dokumen Diselesaikan</th>
+                                        <th class="px-6 py-4 font-semibold">Dokumen Diselesaikan</th>
+                                        <th class="px-6 py-4 font-semibold rounded-r-xl">Gross Salary</th>
                                     </tr>
                                 </thead>
                                 <tbody id="verifikatorTableBody" class="divide-y divide-gray-100">
-                                    <tr><td colspan="3" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>
+                                    <tr><td colspan="4" class="px-6 py-10 text-center"><div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div></td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -704,15 +705,20 @@
             emails.forEach((email, index) => {
                 // Hitung dari memori lokal (0 reads Firebase)
                 const count = allPendaftar.filter(d => d.verifikator === email).length;
+                const grossSalary = count * 15000;
+                const formattedSalary = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(grossSalary);
                 
                 html += `
                     <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 rounded-l-xl text-gray-500">${index + 1}</td>
                         <td class="px-6 py-4 font-medium text-gray-800">${email}</td>
-                        <td class="px-6 py-4 rounded-r-xl">
+                        <td class="px-6 py-4">
                             <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-bold bg-purple-100 text-purple-700">
                                 ${count} Dokumen
                             </span>
+                        </td>
+                        <td class="px-6 py-4 rounded-r-xl font-bold text-green-600">
+                            ${formattedSalary}
                         </td>
                     </tr>
                 `;
