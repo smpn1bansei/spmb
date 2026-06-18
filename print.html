@@ -836,8 +836,8 @@
                 results.forEach((item, index) => {
                     const st = item.status || 'Terdaftar';
                     const verif = item.verifikasi === 'Sudah' 
-                        ? '<span class="text-green-600 font-bold">✔</span>' 
-                        : '<span class="text-red-600 font-bold">✖</span>';
+                        ? '<span class="text-blue-600 font-bold text-xs">Sudah</span>' 
+                        : '<span class="text-red-600 font-bold text-xs">Belum</span>';
                     
                     html += `
                         <tr class="${index % 2 === 0 ? '' : 'bg-slate-50/60'}">
